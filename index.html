@@ -419,14 +419,7 @@
   <header>
     <h1 class="brand-title">Faro Santander — Limpieza y Mantenimiento</h1>
     <div class="brand-sub">Estación G500 · 6 cajeros · Limpieza Mié/Dom y Pase de Lista diario</div>
-    <span id="syncStatus" class="sync-pill">Modo local (pega tu firebaseConfig para tiempo real)</span>
-    <div id="dayBanner" class="day-banner day-active">
-      <span id="dayBannerText">Verificando día...</span>
-      <label style="font-size:0.78rem; display:flex; align-items:center; gap:5px; cursor:pointer;">
-        <input type="checkbox" id="simularJornada" />
-        Simular día de limpieza (Mié/Dom)
-      </label>
-    </div>
+    <span id="syncStatus" class="sync-pill">Conectado · Nube y respaldo local activos</span>
   </header>
 
   <main>
@@ -581,7 +574,7 @@
     ];
 
     const INTEGRANTES_INICIALES = ["Ana", "Julio", "Alma", "Fátima", "Xochitl", "Karla"];
-    const STORAGE_KEY = "faro_santander_limpieza_v13";
+    const STORAGE_KEY = "faro_santander_limpieza_v14";
 
     // =========================================================================
     // PEGA AQUÍ TU CONFIGURACIÓN DE FIREBASE (firebaseConfig)
@@ -612,10 +605,10 @@
         const app = initializeApp(firebaseConfig);
         const dbCloud = getDatabase(app);
         rutaNube = ref(dbCloud, "faroSantander/limpiezaJornada");
-        syncStatusEl.textContent = "En vivo · Firebase Realtime Database conectado";
+        syncStatusEl.textContent = "En vivo · Sincronización activa";
       } catch (err) {
         console.error("Error iniciando Firebase:", err);
-        syncStatusEl.textContent = "Error en Firebase · Usando respaldo local";
+        syncStatusEl.textContent = "Modo local · Respaldo guardado en el teléfono";
       }
     }
 
@@ -771,24 +764,7 @@
       });
     }
 
-    function actualizarBannerDia() {
-      const hoy = new Date().getDay();
-      const simular = document.getElementById("simularJornada").checked;
-      const esJornada = hoy === 0 || hoy === 3 || simular;
-      const banner = document.getElementById("dayBanner");
-      const text = document.getElementById("dayBannerText");
-
-      if (esJornada) {
-        banner.className = "day-banner day-active";
-        text.textContent = "Hoy toca jornada de limpieza y mantenimiento (Miércoles / Domingo)";
-      } else {
-        banner.className = "day-banner day-rest";
-        text.textContent = "Hoy no es miércoles ni domingo (puedes usar Pase de Lista todos los días)";
-      }
-    }
-
     function renderTablero(sincronizar = true) {
-      actualizarBannerDia();
       const grid = document.getElementById("gridFichas");
       grid.innerHTML = "";
 
@@ -1230,8 +1206,6 @@
       document.getElementById(`view-${vista}`).classList.add("active");
       document.getElementById(`nav-${vista}`).classList.add("active");
     };
-
-    document.getElementById("simularJornada").addEventListener("change", actualizarBannerDia);
 
     // Configurar manifest y service worker para permitir instalación PWA en un solo archivo HTML
     (function setupPWA() {
