@@ -419,7 +419,7 @@
   <header>
     <h1 class="brand-title">Faro Santander — Limpieza y Mantenimiento</h1>
     <div class="brand-sub">Estación G500 · 6 cajeros · Limpieza Mié/Dom y Pase de Lista diario</div>
-    <span id="syncStatus" class="sync-pill">Conectado · Nube y respaldo local activos</span>
+    <span id="syncStatus" class="sync-pill">Nube y respaldo local activos</span>
   </header>
 
   <main>
@@ -574,7 +574,8 @@
     ];
 
     const INTEGRANTES_INICIALES = ["Ana", "Julio", "Alma", "Fátima", "Xochitl", "Karla"];
-    const STORAGE_KEY = "faro_santander_limpieza_v14";
+    const STORAGE_KEY = "faro_santander_limpieza_v16";
+    const ULTIMA_FECHA_KEY = "faro_santander_ultima_fecha_v16";
 
     // =========================================================================
     // PEGA AQUÍ TU CONFIGURACIÓN DE FIREBASE (firebaseConfig)
@@ -605,10 +606,10 @@
         const app = initializeApp(firebaseConfig);
         const dbCloud = getDatabase(app);
         rutaNube = ref(dbCloud, "faroSantander/limpiezaJornada");
-        syncStatusEl.textContent = "En vivo · Sincronización activa";
+        syncStatusEl.textContent = "Nube y respaldo local activos";
       } catch (err) {
         console.error("Error iniciando Firebase:", err);
-        syncStatusEl.textContent = "Modo local · Respaldo guardado en el teléfono";
+        syncStatusEl.textContent = "Respaldo guardado en el teléfono";
       }
     }
 
@@ -1236,6 +1237,62 @@
         console.warn("PWA setup:", err);
       }
     })();
+
+    function reiniciarPaseListaDiaSilencioso(fechaISO) {
+      if (!db.paseLista || typeof db.paseLista !== "object") {
+        db.paseLista = {};
+      }
+      db.paseLista[fechaISO] = crearDiaPaseListaVacio();
+    }
+
+    function aplicarReinicioAutomaticoDelDia(hoyISO) {
+      fechaSeleccionada = hoyISO;
+      inputFechaPase.value = hoyISO;
+      reiniciarPaseListaDiaSilencioso(hoyISO);
+      db.fichas = db.fichas.map(f => ({
+        ...f,
+        estado: f.noParticipa ? "descanso" : "pendiente",
+        nota: "",
+        fotos: [],
+        horaSubida: ""
+      }));
+      localStorage.setItem(ULTIMA_FECHA_KEY, hoyISO);
+      guardarYRefrescar(true);
+    }
+
+    function verificarCambioDeDiaAutomatico(forzarRender = true) {
+      const hoyISO = obtenerFechaHoyISO();
+      const ultimaFechaGuardada = localStorage.getItem(ULTIMA_FECHA_KEY);
+
+      if (ultimaFechaGuardada !== hoyISO) {
+        aplicarReinicioAutomaticoDelDia(hoyISO);
+        if (forzarRender) {
+          renderTablero(false);
+          renderPaseLista();
+        }
+        return true;
+      }
+
+      if (!db.paseLista || !db.paseLista[hoyISO]) {
+        reiniciarPaseListaDiaSilencioso(hoyISO);
+        localStorage.setItem(ULTIMA_FECHA_KEY, hoyISO);
+        guardarYRefrescar(true);
+        if (forzarRender) {
+          renderPaseLista();
+        }
+      }
+      return false;
+    }
+
+    // Revisar automáticamente al cargar, al volver a abrir/enfocar la app y cada 15 segundos
+    verificarCambioDeDiaAutomatico(false);
+    document.addEventListener("visibilitychange", () => {
+      if (!document.hidden) {
+        verificarCambioDeDiaAutomatico(true);
+      }
+    });
+    window.addEventListener("focus", () => verificarCambioDeDiaAutomatico(true));
+    setInterval(() => verificarCambioDeDiaAutomatico(true), 15000);
 
     renderTablero(false);
     renderPaseLista();
