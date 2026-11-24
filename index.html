@@ -1,0 +1,1210 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0c4a6e" />
+  <title>Faro Santander — Limpieza y Mantenimiento</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: #1e293b;
+      --card-2: #0b1220;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --border: #334155;
+      --accent: #0ea5e9;
+      --green: #16a34a;
+      --green-bg: rgba(22, 163, 74, 0.16);
+      --red: #dc2626;
+      --red-bg: rgba(220, 38, 38, 0.18);
+      --amber: #d97706;
+      --amber-bg: rgba(217, 119, 6, 0.16);
+      --off: #64748b;
+      --off-bg: rgba(100, 116, 139, 0.16);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      padding-bottom: 84px;
+    }
+
+    header {
+      background: linear-gradient(135deg, #0c4a6e, #0f172a);
+      border-bottom: 1px solid var(--border);
+      padding: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+
+    .brand-title {
+      font-size: 1.15rem;
+      font-weight: 800;
+      margin: 0;
+    }
+
+    .brand-sub {
+      font-size: 0.82rem;
+      color: #bae6fd;
+      margin-top: 2px;
+    }
+
+    .sync-pill {
+      display: inline-block;
+      margin-top: 8px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.65);
+      border: 1px solid #38bdf8;
+      color: #e0f2fe;
+    }
+
+    .day-banner {
+      margin-top: 10px;
+      padding: 8px 12px;
+      border-radius: 10px;
+      font-size: 0.84rem;
+      font-weight: 600;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .day-active {
+      background: rgba(14, 165, 233, 0.2);
+      border: 1px solid #38bdf8;
+      color: #e0f2fe;
+    }
+
+    .day-rest {
+      background: rgba(148, 163, 184, 0.15);
+      border: 1px solid #475569;
+      color: #cbd5e1;
+    }
+
+    main {
+      padding: 14px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .summary-box {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      margin-bottom: 14px;
+    }
+
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-top: 10px;
+      text-align: center;
+    }
+
+    .stats-row-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-top: 10px;
+      text-align: center;
+    }
+
+    .stat {
+      background: var(--card-2);
+      border-radius: 10px;
+      padding: 8px 6px;
+      border: 1px solid var(--border);
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 1.1rem;
+    }
+
+    .stat span {
+      font-size: 0.72rem;
+      color: var(--muted);
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .horario-tabs {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .horario-btn {
+      background: var(--card-2);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: 10px 8px;
+      border-radius: 10px;
+      font-size: 0.84rem;
+      font-weight: 800;
+    }
+
+    .horario-btn.active {
+      background: rgba(14, 165, 233, 0.22);
+      border-color: #38bdf8;
+      color: #f8fafc;
+    }
+
+    button {
+      border: none;
+      border-radius: 10px;
+      padding: 9px 12px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      color: #fff;
+      background: var(--accent);
+    }
+
+    button.secondary {
+      background: #334155;
+      color: #f8fafc;
+    }
+
+    button.danger {
+      background: var(--red);
+    }
+
+    button.success {
+      background: var(--green);
+    }
+
+    button.ghost-toggle {
+      background: #1e293b;
+      border: 1px solid #475569;
+      color: #e2e8f0;
+    }
+
+    .grid-6 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 12px;
+    }
+
+    .ficha {
+      background: var(--card);
+      border: 2px solid var(--border);
+      border-radius: 16px;
+      padding: 14px;
+      transition: transform 0.12s ease, border-color 0.15s ease;
+    }
+
+    .ficha.estado-verde {
+      border-color: var(--green);
+      background: linear-gradient(180deg, var(--green-bg), var(--card));
+    }
+
+    .ficha.estado-rojo {
+      border-color: var(--red);
+      background: linear-gradient(180deg, var(--red-bg), var(--card));
+    }
+
+    .ficha.estado-pendiente {
+      border-color: var(--amber);
+      background: linear-gradient(180deg, var(--amber-bg), var(--card));
+    }
+
+    .ficha.estado-descanso {
+      border-color: var(--off);
+      background: linear-gradient(180deg, var(--off-bg), var(--card));
+      opacity: 0.9;
+    }
+
+    .ficha-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nombre-btn {
+      background: none;
+      padding: 0;
+      font-size: 1.12rem;
+      font-weight: 800;
+      color: var(--text);
+      text-align: left;
+    }
+
+    .badge {
+      font-size: 0.74rem;
+      font-weight: 800;
+      padding: 4px 9px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+
+    .badge-verde { background: var(--green); color: #fff; }
+    .badge-rojo { background: var(--red); color: #fff; }
+    .badge-pendiente { background: var(--amber); color: #fff; }
+    .badge-descanso { background: var(--off); color: #fff; }
+
+    .no-participa-msg {
+      margin: 10px 0;
+      padding: 10px;
+      border-radius: 10px;
+      background: rgba(15, 23, 42, 0.55);
+      border: 1px dashed #64748b;
+      color: #cbd5e1;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .campos {
+      margin-top: 10px;
+      display: grid;
+      gap: 8px;
+    }
+
+    select, input[type="text"], input[type="date"], textarea {
+      width: 100%;
+      background: var(--card-2);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      padding: 8px 10px;
+      font-size: 0.84rem;
+    }
+
+    .ficha-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .thumbs-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      margin-top: 10px;
+    }
+
+    .thumbs-grid img {
+      width: 100%;
+      height: 62px;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+
+    .meta-small {
+      font-size: 0.76rem;
+      color: var(--muted);
+      margin-top: 6px;
+    }
+
+    .status-note {
+      font-size: 0.78rem;
+      color: #7dd3fc;
+      margin-top: 6px;
+      font-weight: 600;
+    }
+
+    .section-view { display: none; }
+    .section-view.active { display: block; }
+
+    .rol-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      margin-bottom: 12px;
+      line-height: 1.45;
+    }
+
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #0b1220;
+      border-top: 1px solid var(--border);
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      z-index: 30;
+    }
+
+    .nav-btn {
+      background: none;
+      border-radius: 0;
+      padding: 12px 4px;
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+
+    .nav-btn.active {
+      color: #38bdf8;
+      background: rgba(14, 165, 233, 0.1);
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.72);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 50;
+    }
+
+    .modal-backdrop.open { display: flex; }
+
+    .modal-box {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px;
+      width: 100%;
+      max-width: 460px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1 class="brand-title">Faro Santander — Limpieza y Mantenimiento</h1>
+    <div class="brand-sub">Estación G500 · 6 cajeros · Limpieza Mié/Dom y Pase de Lista diario</div>
+    <span id="syncStatus" class="sync-pill">Modo local (pega tu firebaseConfig para tiempo real)</span>
+    <div id="dayBanner" class="day-banner day-active">
+      <span id="dayBannerText">Verificando día...</span>
+      <label style="font-size:0.78rem; display:flex; align-items:center; gap:5px; cursor:pointer;">
+        <input type="checkbox" id="simularJornada" />
+        Simular día de limpieza (Mié/Dom)
+      </label>
+    </div>
+  </header>
+
+  <main>
+    <!-- VISTA 1: TABLERO DE LIMPIEZA (MIÉRCOLES Y DOMINGOS) -->
+    <section id="view-tablero" class="section-view active">
+      <div class="summary-box">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+          <strong>Avance de la jornada (4 participan · 2 descansan)</strong>
+          <span id="resumenTexto" style="font-size:0.88rem; font-weight:700; color:#38bdf8;">0 / 4 listos</span>
+        </div>
+
+        <div class="stats-row">
+          <div class="stat">
+            <strong id="countVerde" style="color:#4ade80;">0</strong>
+            <span>En verde</span>
+          </div>
+          <div class="stat">
+            <strong id="countRojo" style="color:#f87171;">0</strong>
+            <span>En rojo</span>
+          </div>
+          <div class="stat">
+            <strong id="countPendiente" style="color:#fbbf24;">0</strong>
+            <span>Pendientes</span>
+          </div>
+          <div class="stat">
+            <strong id="countDescanso" style="color:#cbd5e1;">2</strong>
+            <span>No les toca hoy</span>
+          </div>
+        </div>
+
+        <div class="toolbar">
+          <button class="danger" onclick="marcarPendientesEnRojo()">Cerrar día / Marcar sin evidencia en rojo</button>
+          <button class="secondary" onclick="rotarSugerencia()">Rotar áreas y turnos</button>
+          <button class="ghost-toggle" onclick="nuevaJornada()">Reiniciar jornada</button>
+        </div>
+      </div>
+
+      <div id="gridFichas" class="grid-6"></div>
+    </section>
+
+    <!-- VISTA 2: PASE DE LISTA DIARIO (MAÑANA, TARDE Y NOCHE) -->
+    <section id="view-asistencia" class="section-view">
+      <div class="summary-box">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+          <strong>Pase de lista diario (quién trabajó)</strong>
+          <input type="date" id="fechaPaseLista" style="width:auto;" />
+        </div>
+
+        <div class="horario-tabs">
+          <button type="button" id="tab-Manana" class="horario-btn active" onclick="seleccionarHorario('Manana')">Mañana</button>
+          <button type="button" id="tab-Tarde" class="horario-btn" onclick="seleccionarHorario('Tarde')">Tarde</button>
+          <button type="button" id="tab-Noche" class="horario-btn" onclick="seleccionarHorario('Noche')">Noche</button>
+        </div>
+
+        <div class="stats-row-3">
+          <div class="stat">
+            <strong id="countHorarioManana" style="color:#4ade80;">0</strong>
+            <span>Trabajaron Mañana</span>
+          </div>
+          <div class="stat">
+            <strong id="countHorarioTarde" style="color:#38bdf8;">0</strong>
+            <span>Trabajaron Tarde</span>
+          </div>
+          <div class="stat">
+            <strong id="countHorarioNoche" style="color:#c084fc;">0</strong>
+            <span>Trabajaron Noche</span>
+          </div>
+        </div>
+
+        <div class="toolbar">
+          <button class="danger" onclick="cerrarHorarioSinMarcar()">Cerrar horario (marcar falta sin registro)</button>
+          <button class="ghost-toggle" onclick="limpiarHorarioActual()">Limpiar horario actual</button>
+        </div>
+      </div>
+
+      <div id="gridPaseLista" class="grid-6"></div>
+    </section>
+
+    <!-- VISTA 3: ROL -->
+    <section id="view-rol" class="section-view">
+      <div class="rol-card">
+        <h3>Regla General Diaria</h3>
+        <p style="margin:0; color:#cbd5e1;">
+          Cada turno debe entregar su área limpia y ordenada al terminar labores: islas, bombas, pasillos, jardineras y áreas perimetrales.
+        </p>
+      </div>
+      <div class="rol-card">
+        <h3>Mantenimiento Específico (Miércoles y Domingos)</h3>
+        <p style="margin:6px 0;"><strong>Turno Matutino:</strong> Isla A, Bocatomas rojas, Cuarto de basura, Isla B, Bocatomas verdes.</p>
+        <p style="margin:6px 0;"><strong>Turno Vespertino:</strong> Bocatomas de diésel, Cuarto eléctrico, Pozos de registro, Cuarto de la compresora.</p>
+      </div>
+      <div class="rol-card">
+        <h3>Pase de Lista y Limpieza</h3>
+        <p style="margin:6px 0;">1. En <strong>Pase de Lista</strong> revisa cualquier día en <strong>Mañana</strong>, <strong>Tarde</strong> o <strong>Noche</strong> para marcar quién trabajó.</p>
+        <p style="margin:6px 0;">2. En <strong>Limpieza (6)</strong> (miércoles y domingos), marca quién no participa hoy, asigna turno/área y sube <strong>de 1 a 20 fotos</strong>. Al cierre del día, quien participó y no subió evidencia pasa automáticamente a <strong>rojo</strong> (o con el botón de cierre de día).</p>
+      </div>
+    </section>
+  </main>
+
+  <!-- MODAL SUBIR EVIDENCIA -->
+  <div id="modalEvidencia" class="modal-backdrop">
+    <div class="modal-box">
+      <h3 id="modalTitulo" style="margin-top:0;">Subir evidencia</h3>
+      <div class="campos">
+        <label style="font-size:0.82rem; color:#cbd5e1;">
+          Fotos al momento (de 1 hasta 20 fotos, selecciona varias a la vez o agrega más):
+          <input type="file" id="inputFoto" accept="image/*" multiple style="margin-top:6px;" />
+        </label>
+        <div id="contadorFotosModal" class="status-note">Fotos seleccionadas: 0 / 20 (máx. 20)</div>
+        <div id="avisoLimiteModal" class="meta-small" style="color:#fbbf24;"></div>
+        <div id="previewGridModal" class="thumbs-grid"></div>
+        <div class="ficha-actions" style="margin-top:6px;">
+          <button type="button" class="secondary" style="padding:6px 10px; font-size:0.78rem;" onclick="limpiarFotosModal()">Quitar fotos seleccionadas</button>
+        </div>
+        <label style="font-size:0.82rem; color:#cbd5e1;">
+          Comentario rápido (opcional):
+          <input type="text" id="inputNota" placeholder="Ej. Área limpia y sin residuos" style="margin-top:6px;" />
+        </label>
+      </div>
+      <div class="ficha-actions" style="margin-top:14px;">
+        <button class="success" onclick="guardarEvidencia()">Guardar y poner en verde</button>
+        <button class="secondary" onclick="cerrarModal()">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <nav class="bottom-nav">
+    <button id="nav-tablero" class="nav-btn active" onclick="cambiarVista('tablero')">Limpieza (6)</button>
+    <button id="nav-asistencia" class="nav-btn" onclick="cambiarVista('asistencia')">Pase de Lista</button>
+    <button id="nav-rol" class="nav-btn" onclick="cambiarVista('rol')">Rol y Áreas</button>
+  </nav>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+    const MAX_FOTOS = 20;
+    const HORARIOS = ["Manana", "Tarde", "Noche"];
+    const ETIQUETAS_HORARIO = {
+      Manana: "Mañana",
+      Tarde: "Tarde",
+      Noche: "Noche"
+    };
+
+    const AREAS = [
+      "Isla A y bocatomas rojas",
+      "Cuarto de basura",
+      "Isla B y bocatomas verdes",
+      "Bocatomas de diésel",
+      "Cuarto eléctrico",
+      "Pozos de registro y cuarto de la compresora"
+    ];
+
+    const INTEGRANTES_INICIALES = ["Ana", "Julio", "Alma", "Fátima", "Xochitl", "Karla"];
+    const STORAGE_KEY = "faro_santander_limpieza_v8";
+
+    // =========================================================================
+    // PEGA AQUÍ TU CONFIGURACIÓN DE FIREBASE (firebaseConfig)
+    // Cuando reemplaces "TU_API_KEY" y "TU_PROYECTO", se activa en tiempo real
+    // =========================================================================
+    const firebaseConfig = {
+      apiKey: "TU_API_KEY",
+      authDomain: "TU_PROYECTO.firebaseapp.com",
+      databaseURL: "https://TU_PROYECTO-default-rtdb.firebaseio.com",
+      projectId: "TU_PROYECTO",
+      appId: "TU_APP_ID"
+    };
+
+    const firebaseConfigurado =
+      Boolean(firebaseConfig.apiKey) &&
+      !firebaseConfig.apiKey.startsWith("TU_") &&
+      Boolean(firebaseConfig.databaseURL) &&
+      !firebaseConfig.databaseURL.includes("TU_PROYECTO");
+
+    let rutaNube = null;
+    const syncStatusEl = document.getElementById("syncStatus");
+
+    if (firebaseConfigurado) {
+      try {
+        const app = initializeApp(firebaseConfig);
+        const dbCloud = getDatabase(app);
+        rutaNube = ref(dbCloud, "faroSantander/limpiezaJornada");
+        syncStatusEl.textContent = "En vivo · Firebase Realtime Database conectado";
+      } catch (err) {
+        console.error("Error iniciando Firebase:", err);
+        syncStatusEl.textContent = "Error en Firebase · Usando respaldo local";
+      }
+    }
+
+    function obtenerFechaHoyISO() {
+      const now = new Date();
+      const offsetMs = now.getTimezoneOffset() * 60000;
+      return new Date(now.getTime() - offsetMs).toISOString().slice(0, 10);
+    }
+
+    function crearDiaPaseListaVacio() {
+      const dia = {};
+      HORARIOS.forEach((h) => {
+        dia[h] = {};
+        INTEGRANTES_INICIALES.forEach((nombre) => {
+          dia[h][nombre] = {
+            estado: "sin_marcar",
+            nota: "",
+            actualizado: ""
+          };
+        });
+      });
+      return dia;
+    }
+
+    function normalizarDatos(rawObj) {
+      const base = estadoInicial();
+      if (!rawObj || typeof rawObj !== "object") return base;
+
+      const fichasNormalizadas = Array.isArray(rawObj.fichas) && rawObj.fichas.length === 6
+        ? rawObj.fichas.map((f, idx) => ({
+            id: typeof f.id === "number" ? f.id : idx,
+            nombre: f.nombre || INTEGRANTES_INICIALES[idx],
+            noParticipa: Boolean(f.noParticipa),
+            estado: f.estado || (f.noParticipa ? "descanso" : "pendiente"),
+            turno: f.turno || (idx < 3 ? "Matutino" : "Vespertino"),
+            area: f.area || AREAS[idx % AREAS.length],
+            nota: f.nota || "",
+            fotos: Array.isArray(f.fotos) ? f.fotos.slice(0, MAX_FOTOS) : (f.foto ? [f.foto] : []),
+            horaSubida: f.horaSubida || ""
+          }))
+        : base.fichas;
+
+      const evidenciasNormalizadas = Array.isArray(rawObj.evidencias)
+        ? rawObj.evidencias.map(ev => ({
+            ...ev,
+            fotos: Array.isArray(ev.fotos) ? ev.fotos.slice(0, MAX_FOTOS) : (ev.foto ? [ev.foto] : [])
+          }))
+        : [];
+
+      const paseListaNormalizado = {};
+      if (rawObj.paseLista && typeof rawObj.paseLista === "object") {
+        Object.keys(rawObj.paseLista).forEach((fechaKey) => {
+          const limpio = crearDiaPaseListaVacio();
+          const origenFecha = rawObj.paseLista[fechaKey] || {};
+          HORARIOS.forEach((h) => {
+            const origenHorario = origenFecha[h] || {};
+            INTEGRANTES_INICIALES.forEach((nombre) => {
+              const item = origenHorario[nombre];
+              if (item && typeof item === "object") {
+                limpio[h][nombre] = {
+                  estado: item.estado || "sin_marcar",
+                  nota: item.nota || "",
+                  actualizado: item.actualizado || ""
+                };
+              }
+            });
+          });
+          paseListaNormalizado[fechaKey] = limpio;
+        });
+      }
+
+      return {
+        fichas: fichasNormalizadas,
+        evidencias: evidenciasNormalizadas,
+        paseLista: paseListaNormalizado
+      };
+    }
+
+    function estadoInicial() {
+      const hoyISO = obtenerFechaHoyISO();
+      return {
+        fichas: INTEGRANTES_INICIALES.map((nombre, idx) => ({
+          id: idx,
+          nombre,
+          noParticipa: idx >= 4,
+          estado: idx >= 4 ? "descanso" : "pendiente",
+          turno: idx < 3 ? "Matutino" : "Vespertino",
+          area: AREAS[idx % AREAS.length],
+          nota: "",
+          fotos: [],
+          horaSubida: ""
+        })),
+        evidencias: [],
+        paseLista: {
+          [hoyISO]: crearDiaPaseListaVacio()
+        }
+      };
+    }
+
+    function cargarDBLocal() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return estadoInicial();
+        return normalizarDatos(JSON.parse(raw));
+      } catch {
+        return estadoInicial();
+      }
+    }
+
+    let db = cargarDBLocal();
+    let fechaSeleccionada = obtenerFechaHoyISO();
+    let horarioSeleccionado = "Manana";
+    let fichaActivaModal = null;
+    let fotosTemporalesModal = [];
+
+    const inputFechaPase = document.getElementById("fechaPaseLista");
+    inputFechaPase.value = fechaSeleccionada;
+
+    function asegurarRegistroFecha(fechaISO) {
+      if (!db.paseLista || typeof db.paseLista !== "object") {
+        db.paseLista = {};
+      }
+      if (!db.paseLista[fechaISO]) {
+        db.paseLista[fechaISO] = crearDiaPaseListaVacio();
+      }
+      return db.paseLista[fechaISO];
+    }
+
+    function guardarYRefrescar(esCambioLocal = true) {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
+      } catch (err) {
+        alert("El almacenamiento local está lleno por la cantidad de fotos. Limpia el historial anterior o reduce el número de fotos.");
+      }
+
+      if (esCambioLocal && rutaNube) {
+        set(rutaNube, db).catch((err) => {
+          console.error("Error sincronizando en nube:", err);
+        });
+      }
+    }
+
+    if (rutaNube) {
+      onValue(rutaNube, (snapshot) => {
+        if (snapshot.exists()) {
+          db = normalizarDatos(snapshot.val());
+          try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
+          } catch {}
+          renderTablero(false);
+          renderPaseLista();
+        }
+      });
+    }
+
+    function actualizarBannerDia() {
+      const hoy = new Date().getDay();
+      const simular = document.getElementById("simularJornada").checked;
+      const esJornada = hoy === 0 || hoy === 3 || simular;
+      const banner = document.getElementById("dayBanner");
+      const text = document.getElementById("dayBannerText");
+
+      if (esJornada) {
+        banner.className = "day-banner day-active";
+        text.textContent = "Hoy toca jornada de limpieza y mantenimiento (Miércoles / Domingo)";
+      } else {
+        banner.className = "day-banner day-rest";
+        text.textContent = "Hoy no es miércoles ni domingo (puedes usar Pase de Lista todos los días)";
+      }
+    }
+
+    function renderTablero(sincronizar = true) {
+      actualizarBannerDia();
+      const grid = document.getElementById("gridFichas");
+      grid.innerHTML = "";
+
+      let verdes = 0, rojos = 0, pendientes = 0, descansos = 0, activos = 0;
+
+      const esFinDeDia = new Date().getHours() >= 20;
+
+      db.fichas.forEach((f) => {
+        const tieneEvidencia = Array.isArray(f.fotos) && f.fotos.length > 0;
+        if (f.noParticipa) {
+          f.estado = "descanso";
+          descansos++;
+        } else {
+          activos++;
+          if (tieneEvidencia || f.estado === "verde") {
+            f.estado = "verde";
+            verdes++;
+          } else if (f.estado === "rojo" || esFinDeDia) {
+            f.estado = "rojo";
+            rojos++;
+          } else {
+            f.estado = "pendiente";
+            pendientes++;
+          }
+        }
+
+        const badgeMap = {
+          verde: { cls: "badge-verde", label: "CUMPLIÓ · VERDE" },
+          rojo: { cls: "badge-rojo", label: "SIN EVIDENCIA · ROJO" },
+          pendiente: { cls: "badge-pendiente", label: "PENDIENTE" },
+          descanso: { cls: "badge-descanso", label: "HOY NO LE TOCA" }
+        };
+
+        const b = badgeMap[f.estado];
+        const totalFotos = Array.isArray(f.fotos) ? f.fotos.length : 0;
+
+        const card = document.createElement("div");
+        card.className = `ficha estado-${f.estado}`;
+
+        card.innerHTML = `
+          <div class="ficha-top">
+            <button class="nombre-btn" data-action="toggle" data-id="${f.id}" title="Toca para alternar si hoy no participa">
+              ${f.nombre}
+            </button>
+            <span class="badge ${b.cls}">${b.label}</span>
+          </div>
+
+          <div class="ficha-actions" style="margin-top:8px;">
+            <button class="ghost-toggle" style="padding:6px 10px; font-size:0.78rem;" data-action="toggle" data-id="${f.id}">
+              ${f.noParticipa ? "Marcar que SÍ participa hoy" : "Hoy no participa en la limpieza"}
+            </button>
+          </div>
+
+          ${
+            f.noParticipa
+              ? `<div class="no-participa-msg">Hoy no le toca / Hoy no participa en la limpieza. No cuenta en rojo.</div>`
+              : `
+                <div class="campos">
+                  <select data-action="turno" data-id="${f.id}">
+                    <option value="Matutino" ${f.turno === "Matutino" ? "selected" : ""}>Turno Matutino</option>
+                    <option value="Vespertino" ${f.turno === "Vespertino" ? "selected" : ""}>Turno Vespertino</option>
+                  </select>
+
+                  <select data-action="area" data-id="${f.id}">
+                    ${AREAS.map(a => `<option value="${a}" ${f.area === a ? "selected" : ""}>${a}</option>`).join("")}
+                  </select>
+                </div>
+
+                ${
+                  totalFotos > 0
+                    ? `
+                      <div class="status-note">Fotos subidas: ${totalFotos} / ${MAX_FOTOS}</div>
+                      <div class="thumbs-grid">
+                        ${f.fotos.slice(0, 4).map(src => `<img src="${src}" alt="Evidencia de ${f.nombre}" />`).join("")}
+                      </div>
+                    `
+                    : ""
+                }
+                ${f.horaSubida ? `<div class="meta-small">Última subida: ${f.horaSubida}${f.nota ? " · " + f.nota : ""}</div>` : ""}
+
+                <div class="ficha-actions">
+                  <button class="success" data-action="subir" data-id="${f.id}">${totalFotos > 0 ? "Editar / Agregar fotos" : "Subir evidencia (1-20)"}</button>
+                </div>
+              `
+          }
+        `;
+
+        grid.appendChild(card);
+      });
+
+      document.getElementById("countVerde").textContent = verdes;
+      document.getElementById("countRojo").textContent = rojos;
+      document.getElementById("countPendiente").textContent = pendientes;
+      document.getElementById("countDescanso").textContent = descansos;
+      document.getElementById("resumenTexto").textContent =
+        `${verdes} / ${activos} listos · ${descansos} descansan hoy`;
+
+      if (sincronizar) {
+        guardarYRefrescar(true);
+      }
+    }
+
+    function renderPaseLista() {
+      const registroDia = asegurarRegistroFecha(fechaSeleccionada);
+
+      HORARIOS.forEach((h) => {
+        const btn = document.getElementById(`tab-${h}`);
+        if (btn) btn.classList.toggle("active", h === horarioSeleccionado);
+        const totalTrabajaron = INTEGRANTES_INICIALES.filter(
+          (nombre) => registroDia[h][nombre]?.estado === "trabajo"
+        ).length;
+        const counterEl = document.getElementById(`countHorario${h}`);
+        if (counterEl) counterEl.textContent = totalTrabajaron;
+      });
+
+      const grid = document.getElementById("gridPaseLista");
+      grid.innerHTML = "";
+
+      const datosHorario = registroDia[horarioSeleccionado];
+
+      INTEGRANTES_INICIALES.forEach((nombre) => {
+        const item = datosHorario[nombre] || { estado: "sin_marcar", nota: "", actualizado: "" };
+        const estadoClassMap = {
+          trabajo: "estado-verde",
+          falta: "estado-rojo",
+          descanso: "estado-descanso",
+          sin_marcar: "estado-pendiente"
+        };
+        const badgeMap = {
+          trabajo: { cls: "badge-verde", label: "TRABAJÓ" },
+          falta: { cls: "badge-rojo", label: "FALTA" },
+          descanso: { cls: "badge-descanso", label: "DESCANSO" },
+          sin_marcar: { cls: "badge-pendiente", label: "SIN MARCAR" }
+        };
+
+        const b = badgeMap[item.estado] || badgeMap.sin_marcar;
+        const card = document.createElement("div");
+        card.className = `ficha ${estadoClassMap[item.estado] || "estado-pendiente"}`;
+
+        card.innerHTML = `
+          <div class="ficha-top">
+            <strong style="font-size:1.08rem;">${nombre}</strong>
+            <span class="badge ${b.cls}">${b.label}</span>
+          </div>
+          <div class="meta-small">Fecha: ${fechaSeleccionada} · Horario: ${ETIQUETAS_HORARIO[horarioSeleccionado]}</div>
+
+          <div class="campos">
+            <input
+              type="text"
+              data-pase-nota="${nombre}"
+              value="${(item.nota || "").replace(/"/g, "&quot;")}"
+              placeholder="Nota opcional (ej. cubrió turno, apoyo)"
+            />
+          </div>
+
+          ${item.actualizado ? `<div class="meta-small">Actualizado: ${item.actualizado}</div>` : ""}
+
+          <div class="ficha-actions">
+            <button class="success" data-pase-nombre="${nombre}" data-pase-estado="trabajo">Trabajó</button>
+            <button class="secondary" data-pase-nombre="${nombre}" data-pase-estado="descanso">Descanso</button>
+            <button class="danger" data-pase-nombre="${nombre}" data-pase-estado="falta">Falta</button>
+          </div>
+        `;
+
+        grid.appendChild(card);
+      });
+    }
+
+    window.seleccionarHorario = function (horario) {
+      if (!HORARIOS.includes(horario)) return;
+      horarioSeleccionado = horario;
+      renderPaseLista();
+    };
+
+    inputFechaPase.addEventListener("change", (e) => {
+      fechaSeleccionada = e.target.value || obtenerFechaHoyISO();
+      asegurarRegistroFecha(fechaSeleccionada);
+      renderPaseLista();
+    });
+
+    document.getElementById("gridPaseLista").addEventListener("click", (e) => {
+      const btn = e.target.closest("[data-pase-nombre]");
+      if (!btn) return;
+      const nombre = btn.getAttribute("data-pase-nombre");
+      const nuevoEstado = btn.getAttribute("data-pase-estado");
+      const registroDia = asegurarRegistroFecha(fechaSeleccionada);
+      const inputNota = document.querySelector(`[data-pase-nota="${nombre}"]`);
+
+      registroDia[horarioSeleccionado][nombre] = {
+        estado: nuevoEstado,
+        nota: inputNota ? inputNota.value.trim() : "",
+        actualizado: new Date().toLocaleString("es-MX", { dateStyle: "short", timeStyle: "short" })
+      };
+
+      guardarYRefrescar(true);
+      renderPaseLista();
+    });
+
+    document.getElementById("gridPaseLista").addEventListener("change", (e) => {
+      const inputNota = e.target.closest("[data-pase-nota]");
+      if (!inputNota) return;
+      const nombre = inputNota.getAttribute("data-pase-nota");
+      const registroDia = asegurarRegistroFecha(fechaSeleccionada);
+      const actual = registroDia[horarioSeleccionado][nombre] || { estado: "sin_marcar", nota: "", actualizado: "" };
+
+      registroDia[horarioSeleccionado][nombre] = {
+        ...actual,
+        nota: inputNota.value.trim(),
+        actualizado: new Date().toLocaleString("es-MX", { dateStyle: "short", timeStyle: "short" })
+      };
+
+      guardarYRefrescar(true);
+    });
+
+    window.cerrarHorarioSinMarcar = function () {
+      const etiqueta = ETIQUETAS_HORARIO[horarioSeleccionado];
+      if (!confirm(`¿Cerrar ${etiqueta} (${fechaSeleccionada}) y marcar en rojo (falta) a quienes no marcaron su asistencia?`)) return;
+      const registroDia = asegurarRegistroFecha(fechaSeleccionada);
+      const ahora = new Date().toLocaleString("es-MX", { dateStyle: "short", timeStyle: "short" });
+      INTEGRANTES_INICIALES.forEach((nombre) => {
+        const actual = registroDia[horarioSeleccionado][nombre] || { estado: "sin_marcar", nota: "", actualizado: "" };
+        if (actual.estado === "sin_marcar") {
+          registroDia[horarioSeleccionado][nombre] = {
+            estado: "falta",
+            nota: actual.nota || "No marcó asistencia al cierre",
+            actualizado: ahora
+          };
+        }
+      });
+      guardarYRefrescar(true);
+      renderPaseLista();
+    };
+
+    window.limpiarHorarioActual = function () {
+      const etiqueta = ETIQUETAS_HORARIO[horarioSeleccionado];
+      if (!confirm(`¿Limpiar el pase de lista de ${etiqueta} en la fecha ${fechaSeleccionada}?`)) return;
+      const registroDia = asegurarRegistroFecha(fechaSeleccionada);
+      INTEGRANTES_INICIALES.forEach((nombre) => {
+        registroDia[horarioSeleccionado][nombre] = {
+          estado: "sin_marcar",
+          nota: "",
+          actualizado: ""
+        };
+      });
+      guardarYRefrescar(true);
+      renderPaseLista();
+    };
+
+    document.getElementById("gridFichas").addEventListener("click", (e) => {
+      const btn = e.target.closest("[data-action]");
+      if (!btn) return;
+      const action = btn.getAttribute("data-action");
+      const id = Number(btn.getAttribute("data-id"));
+      const f = db.fichas.find(x => x.id === id);
+      if (!f) return;
+
+      if (action === "toggle") {
+        f.noParticipa = !f.noParticipa;
+        if (!f.noParticipa) {
+          f.estado = (Array.isArray(f.fotos) && f.fotos.length > 0) ? "verde" : "pendiente";
+        }
+        renderTablero(true);
+      } else if (action === "subir") {
+        abrirModal(id);
+      }
+    });
+
+    document.getElementById("gridFichas").addEventListener("change", (e) => {
+      const el = e.target;
+      const action = el.getAttribute("data-action");
+      const id = Number(el.getAttribute("data-id"));
+      const f = db.fichas.find(x => x.id === id);
+      if (!f) return;
+
+      if (action === "turno") {
+        f.turno = el.value;
+        guardarYRefrescar(true);
+      } else if (action === "area") {
+        f.area = el.value;
+        guardarYRefrescar(true);
+      }
+    });
+
+    window.marcarPendientesEnRojo = function () {
+      db.fichas.forEach(f => {
+        if (!f.noParticipa && f.estado !== "verde") {
+          f.estado = "rojo";
+        }
+      });
+      renderTablero(true);
+    };
+
+    window.rotarSugerencia = function () {
+      db.fichas.forEach((f, idx) => {
+        f.area = AREAS[(idx + 1) % AREAS.length];
+        f.turno = f.turno === "Matutino" ? "Vespertino" : "Matutino";
+      });
+      renderTablero(true);
+    };
+
+    window.nuevaJornada = function () {
+      if (!confirm("¿Reiniciar las 6 fichas para una nueva jornada?")) return;
+      db.fichas = db.fichas.map(f => ({
+        ...f,
+        estado: f.noParticipa ? "descanso" : "pendiente",
+        nota: "",
+        fotos: [],
+        horaSubida: ""
+      }));
+      renderTablero(true);
+    };
+
+    function actualizarPreviewModal() {
+      const contador = document.getElementById("contadorFotosModal");
+      const aviso = document.getElementById("avisoLimiteModal");
+      const grid = document.getElementById("previewGridModal");
+
+      contador.textContent = `Fotos seleccionadas: ${fotosTemporalesModal.length} / ${MAX_FOTOS} (máx. ${MAX_FOTOS})`;
+      aviso.textContent = fotosTemporalesModal.length >= MAX_FOTOS
+        ? `Se alcanzó el límite de ${MAX_FOTOS} fotos por persona.`
+        : "";
+
+      grid.innerHTML = fotosTemporalesModal
+        .map((src, i) => `<img src="${src}" alt="Foto ${i + 1}" />`)
+        .join("");
+    }
+
+    window.limpiarFotosModal = function () {
+      fotosTemporalesModal = [];
+      document.getElementById("inputFoto").value = "";
+      actualizarPreviewModal();
+    };
+
+    function abrirModal(id) {
+      fichaActivaModal = db.fichas.find(x => x.id === id);
+      if (!fichaActivaModal) return;
+      fotosTemporalesModal = Array.isArray(fichaActivaModal.fotos)
+        ? [...fichaActivaModal.fotos].slice(0, MAX_FOTOS)
+        : [];
+      document.getElementById("modalTitulo").textContent = `Evidencia de ${fichaActivaModal.nombre}`;
+      document.getElementById("inputFoto").value = "";
+      document.getElementById("inputNota").value = fichaActivaModal.nota || "";
+      actualizarPreviewModal();
+      document.getElementById("modalEvidencia").classList.add("open");
+    }
+
+    window.cerrarModal = function () {
+      fichaActivaModal = null;
+      fotosTemporalesModal = [];
+      document.getElementById("modalEvidencia").classList.remove("open");
+    };
+
+    document.getElementById("inputFoto").addEventListener("change", async function (e) {
+      const files = Array.from(e.target.files || []);
+      if (!files.length) return;
+
+      const espacioDisponible = MAX_FOTOS - fotosTemporalesModal.length;
+      if (espacioDisponible <= 0) {
+        alert(`Ya tienes el máximo de ${MAX_FOTOS} fotos seleccionadas para este reporte.`);
+        e.target.value = "";
+        return;
+      }
+
+      let seleccionados = files;
+      if (files.length > espacioDisponible) {
+        alert(`Solo se pueden subir hasta ${MAX_FOTOS} fotos por persona. Se tomarán las primeras ${espacioDisponible} disponibles.`);
+        seleccionados = files.slice(0, espacioDisponible);
+      }
+
+      for (const file of seleccionados) {
+        const comprimida = await comprimirImagenAsync(file, 850, 0.65);
+        if (fotosTemporalesModal.length < MAX_FOTOS) {
+          fotosTemporalesModal.push(comprimida);
+        }
+      }
+
+      e.target.value = "";
+      actualizarPreviewModal();
+    });
+
+    function comprimirImagenAsync(file, maxWidth, quality) {
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = function (ev) {
+          const img = new Image();
+          img.onload = function () {
+            const scale = Math.min(1, maxWidth / img.width);
+            const canvas = document.createElement("canvas");
+            canvas.width = Math.max(1, Math.round(img.width * scale));
+            canvas.height = Math.max(1, Math.round(img.height * scale));
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            resolve(canvas.toDataURL("image/jpeg", quality));
+          };
+          img.src = ev.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    window.guardarEvidencia = function () {
+      if (!fichaActivaModal) return;
+      if (!fotosTemporalesModal.length) {
+        alert("Selecciona o toma al menos 1 foto (hasta 20) antes de guardar.");
+        return;
+      }
+
+      const fotosFinales = fotosTemporalesModal.slice(0, MAX_FOTOS);
+      const nota = document.getElementById("inputNota").value.trim();
+      const ahora = new Date().toLocaleString("es-MX", {
+        dateStyle: "short",
+        timeStyle: "short"
+      });
+
+      fichaActivaModal.fotos = fotosFinales;
+      fichaActivaModal.nota = nota;
+      fichaActivaModal.horaSubida = ahora;
+      fichaActivaModal.estado = "verde";
+      fichaActivaModal.noParticipa = false;
+
+      db.evidencias.unshift({
+        id: Date.now(),
+        nombre: fichaActivaModal.nombre,
+        turno: fichaActivaModal.turno,
+        area: fichaActivaModal.area,
+        nota,
+        hora: ahora,
+        fotos: fotosFinales
+      });
+
+      guardarYRefrescar(true);
+      cerrarModal();
+      renderTablero(false);
+    };
+
+    window.cambiarVista = function (vista) {
+      document.querySelectorAll(".section-view").forEach(s => s.classList.remove("active"));
+      document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
+      document.getElementById(`view-${vista}`).classList.add("active");
+      document.getElementById(`nav-${vista}`).classList.add("active");
+    };
+
+    document.getElementById("simularJornada").addEventListener("change", actualizarBannerDia);
+
+    renderTablero(false);
+    renderPaseLista();
+  </script>
+</body>
+</html>
