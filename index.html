@@ -312,6 +312,21 @@
       border: 1px solid var(--border);
     }
 
+    .galeria-thumbs {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(95px, 1fr));
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .galeria-thumbs img {
+      width: 100%;
+      height: 95px;
+      object-fit: cover;
+      border-radius: 9px;
+      border: 1px solid var(--border);
+    }
+
     .meta-small {
       font-size: 0.76rem;
       color: var(--muted);
@@ -327,6 +342,14 @@
 
     .section-view { display: none; }
     .section-view.active { display: block; }
+
+    .galeria-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px;
+      margin-bottom: 12px;
+    }
 
     .rol-card {
       background: var(--card);
@@ -345,7 +368,7 @@
       background: #0b1220;
       border-top: 1px solid var(--border);
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(4, 1fr);
       z-index: 30;
     }
 
@@ -554,7 +577,7 @@
     ];
 
     const INTEGRANTES_INICIALES = ["Ana", "Julio", "Alma", "Fátima", "Xochitl", "Karla"];
-    const STORAGE_KEY = "faro_santander_limpieza_v8";
+    const STORAGE_KEY = "faro_santander_limpieza_v10";
 
     // =========================================================================
     // PEGA AQUÍ TU CONFIGURACIÓN DE FIREBASE (firebaseConfig)
@@ -601,7 +624,7 @@
         dia[h] = {};
         INTEGRANTES_INICIALES.forEach((nombre) => {
           dia[h][nombre] = {
-            estado: "sin_marcar",
+            estado: "sin_marcar", // "trabajo" | "descanso" | "falta" | "sin_marcar"
             nota: "",
             actualizado: ""
           };
