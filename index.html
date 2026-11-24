@@ -4,6 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#0c4a6e" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="Faro Santander" />
+  <link id="pwaManifestLink" rel="manifest" />
   <title>Faro Santander — Limpieza y Mantenimiento</title>
   <style>
     :root {
@@ -577,7 +581,7 @@
     ];
 
     const INTEGRANTES_INICIALES = ["Ana", "Julio", "Alma", "Fátima", "Xochitl", "Karla"];
-    const STORAGE_KEY = "faro_santander_limpieza_v12";
+    const STORAGE_KEY = "faro_santander_limpieza_v13";
 
     // =========================================================================
     // PEGA AQUÍ TU CONFIGURACIÓN DE FIREBASE (firebaseConfig)
@@ -1228,6 +1232,36 @@
     };
 
     document.getElementById("simularJornada").addEventListener("change", actualizarBannerDia);
+
+    // Configurar manifest y service worker para permitir instalación PWA en un solo archivo HTML
+    (function setupPWA() {
+      try {
+        const manifestData = {"name": "Faro Santander — Limpieza y Mantenimiento", "short_name": "Faro Santander", "start_url": ".", "scope": ".", "display": "standalone", "background_color": "#0f172a", "theme_color": "#0c4a6e", "icons": [{"src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='36' fill='%230c4a6e'/%3E%3Ctext x='50%25' y='56%25' dominant-baseline='middle' text-anchor='middle' font-size='96' fill='%23f8fafc' font-family='Arial,sans-serif' font-weight='bold'%3EFS%3C/text%3E%3C/svg%3E", "sizes": "192x192", "type": "image/svg+xml", "purpose": "any maskable"}, {"src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='96' fill='%230c4a6e'/%3E%3Ctext x='50%25' y='56%25' dominant-baseline='middle' text-anchor='middle' font-size='250' fill='%23f8fafc' font-family='Arial,sans-serif' font-weight='bold'%3EFS%3C/text%3E%3C/svg%3E", "sizes": "512x512", "type": "image/svg+xml", "purpose": "any maskable"}]};
+        const manifestBlob = new Blob([JSON.stringify(manifestData)], { type: "application/manifest+json" });
+        const manifestUrl = URL.createObjectURL(manifestBlob);
+        const linkEl = document.getElementById("pwaManifestLink");
+        if (linkEl) linkEl.href = manifestUrl;
+
+        if ("serviceWorker" in navigator) {
+          const swCode = `
+            self.addEventListener("install", (event) => {
+              self.skipWaiting();
+            });
+            self.addEventListener("activate", (event) => {
+              event.waitUntil(self.clients.claim());
+            });
+            self.addEventListener("fetch", (event) => {
+              // Dejar pasar peticiones normales
+            });
+          `;
+          const swBlob = new Blob([swCode], { type: "application/javascript" });
+          const swUrl = URL.createObjectURL(swBlob);
+          navigator.serviceWorker.register(swUrl).catch(() => {});
+        }
+      } catch (err) {
+        console.warn("PWA setup:", err);
+      }
+    })();
 
     renderTablero(false);
     renderPaseLista();
