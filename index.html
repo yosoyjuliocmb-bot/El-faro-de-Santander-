@@ -372,7 +372,7 @@
       background: #0b1220;
       border-top: 1px solid var(--border);
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(4, 1fr);
       z-index: 30;
     }
 
@@ -821,7 +821,10 @@
       return {
         fichas: fichasNormalizadas,
         evidencias: evidenciasNormalizadas,
-        paseLista: paseListaNormalizado
+        paseLista: paseListaNormalizado,
+        cierresMedianoche: rawObj.cierresMedianoche && typeof rawObj.cierresMedianoche === "object"
+          ? rawObj.cierresMedianoche
+          : {}
       };
     }
 
@@ -845,7 +848,8 @@
         evidencias: [],
         paseLista: {
           [hoyISO]: crearDiaPaseListaVacio()
-        }
+        },
+        cierresMedianoche: {}
       };
     }
 
@@ -1091,7 +1095,6 @@
               `
               : `<div class="meta-small" style="color:#94a3b8;">Sin foto de salida aún</div>`
           }
-          ${horarioEstaCerradoAuto(fechaSeleccionada, horarioSeleccionado) ? `<div class="meta-small" style="color:#f87171; font-weight:700;">Cierre automático general a las ${HORA_CIERRE_GENERAL.etiqueta} (todos los turnos/horarios)</div>` : ""}
           ${item.actualizado ? `<div class="meta-small">Actualizado: ${item.actualizado}</div>` : ""}
 
           <div class="ficha-actions">
@@ -1161,10 +1164,6 @@
 
     function lanzarCamara(ctx) {
       const registroDia = asegurarRegistroFecha(ctx.fecha);
-      if (horarioEstaCerradoAuto(ctx.fecha, ctx.horario)) {
-        alert(`El cierre automático aplica para todos los turnos y horarios a las ${HORA_CIERRE_GENERAL.etiqueta}. Entradas y salidas cerradas.`);
-        return;
-      }
       const actual = registroDia[ctx.horario][ctx.nombre] || {};
       if (ctx.tipo === "entrada" && actual.entradaAceptada) {
         alert(`La foto de ENTRADA de ${ctx.nombre} ya fue aceptada y no se puede corregir.`);
@@ -1208,7 +1207,7 @@
       if (tipo === "entrada") {
         registroDia[horario][nombre] = {
           ...actual,
-          estado: marcarTrabajo ? "trabajo" : (actual.estado === "sin_marcar" ? "trabajo" : actual.estado),
+          estado: "trabajo",
           nota: notaFinal,
           fotoBiometrico: imgData,
           horaBiometrico: horaStr,
@@ -1324,11 +1323,6 @@
       const registroDia = asegurarRegistroFecha(fechaSeleccionada);
       const inputNota = document.querySelector(`[data-pase-nota="${nombre}"]`);
       const previo = registroDia[horarioSeleccionado][nombre] || {};
-
-      if (horarioEstaCerradoAuto(fechaSeleccionada, horarioSeleccionado)) {
-        alert(`El horario de ${ETIQUETAS_HORARIO[horarioSeleccionado]} ya cerró automáticamente.`);
-        return;
-      }
 
       registroDia[horarioSeleccionado][nombre] = {
         estado: nuevoEstado,
@@ -1673,49 +1667,63 @@
     const HORA_CIERRE_GENERAL = { hora: 0, minuto: 0, etiqueta: "00:00 (0 horas)" };
 
     function horarioEstaCerradoAuto(fechaISO, horario) {
-      const hoyISO = obtenerFechaHoyISO();
-      if (fechaISO < hoyISO) return true;
-      if (fechaISO === hoyISO) {
-        const ahora = new Date();
-        return (ahora.getHours() * 60 + ahora.getMinutes()) >= 0;
-      }
       return false;
+    }
+
+    function generarResumenCierreMedianoche(fechaISO) {
+      const registroDia = asegurarRegistroFecha(fechaISO);
+      const resumen = {
+        fecha: fechaISO,
+        generadoA: "00:00",
+        actualizado: new Date().toLocaleString("es-MX", { dateStyle: "short", timeStyle: "short" }),
+        porHorario: {}
+      };
+      HORARIOS.forEach((h) => {
+        const trabajaron = [];
+        const faltaron = [];
+        const descansaron = [];
+        const sinMarcar = [];
+        INTEGRANTES_INICIALES.forEach((nombre) => {
+          const item = registroDia[h]?.[nombre] || { estado: "sin_marcar" };
+          if (item.estado === "trabajo") trabajaron.push(nombre);
+          else if (item.estado === "falta") faltaron.push(nombre);
+          else if (item.estado === "descanso") descansaron.push(nombre);
+          else sinMarcar.push(nombre);
+        });
+        resumen.porHorario[h] = { trabajaron, faltaron, descansaron, sinMarcar };
+      });
+      return resumen;
     }
 
     function aplicarCierreAutomaticoEntradasSalidas(forzarRender = true) {
       const hoyISO = obtenerFechaHoyISO();
-      const registroHoy = asegurarRegistroFecha(hoyISO);
-      const ahoraStr = new Date().toLocaleString("es-MX", { dateStyle: "short", timeStyle: "short" });
+      const ahora = new Date();
+      const pasoMedianocheHoy = (ahora.getHours() * 60 + ahora.getMinutes()) >= 0;
       let huboCambios = false;
 
-      HORARIOS.forEach((h) => {
-        if (!horarioEstaCerradoAuto(hoyISO, h)) return;
-        INTEGRANTES_INICIALES.forEach((nombre) => {
-          const item = registroHoy[h][nombre];
-          if (!item) return;
+      if (!db.cierresMedianoche || typeof db.cierresMedianoche !== "object") {
+        db.cierresMedianoche = {};
+      }
 
-          const noMarcoNada = item.estado === "sin_marcar";
-          const faltaCerrar = !item.cerradoAuto && (noMarcoNada || !item.entradaAceptada || !item.salidaAceptada);
+      Object.keys(db.paseLista || {}).forEach((fechaKey) => {
+        const esDiaAnterior = fechaKey < hoyISO;
+        const esHoyDespuesMedianoche = fechaKey === hoyISO && pasoMedianocheHoy;
+        if (!esDiaAnterior && !esHoyDespuesMedianoche) return;
 
-          if (faltaCerrar) {
-            registroHoy[h][nombre] = {
-              ...item,
-              estado: noMarcoNada ? "falta" : item.estado,
-              nota: noMarcoNada && !item.nota ? `Cierre automático a las ${HORA_CIERRE_GENERAL.etiqueta}` : item.nota,
-              entradaAceptada: Boolean(item.entradaAceptada),
-              salidaAceptada: Boolean(item.salidaAceptada),
-              cerradoAuto: true,
-              actualizado: item.actualizado || ahoraStr
-            };
-            huboCambios = true;
-          }
-        });
+        const resumenGenerado = generarResumenCierreMedianoche(fechaKey);
+        const previoResumen = JSON.stringify(db.cierresMedianoche[fechaKey] || {});
+        const nuevoResumen = JSON.stringify(resumenGenerado);
+        if (previoResumen !== nuevoResumen) {
+          db.cierresMedianoche[fechaKey] = resumenGenerado;
+          huboCambios = true;
+        }
       });
 
       if (huboCambios) {
         guardarYRefrescar(true);
         if (forzarRender) {
           renderPaseLista();
+          renderPanelEncargada();
         }
       }
       return huboCambios;
@@ -1866,7 +1874,20 @@
       });
 
       const listaQuienes = Array.from(trabajaronSet);
+      const cierreDia = db.cierresMedianoche && db.cierresMedianoche[fechaConsulta];
+      const resumenCorteHtml = cierreDia
+        ? `<div style="margin-bottom:10px; padding:10px; border-radius:10px; background:rgba(14,165,233,0.12); border:1px solid #38bdf8;">
+             <div style="font-weight:800; color:#7dd3fc; font-size:0.84rem;">Corte automático de las 12:00 a.m. (00:00) · ${fechaConsulta}</div>
+             <div class="meta-small" style="color:#e2e8f0; margin-top:4px;">
+               • Mañana trabajaron: ${cierreDia.porHorario?.Manana?.trabajaron?.join(", ") || "Ninguno"}<br/>
+               • Tarde trabajaron: ${cierreDia.porHorario?.Tarde?.trabajaron?.join(", ") || "Ninguno"}<br/>
+               • Noche trabajaron: ${cierreDia.porHorario?.Noche?.trabajaron?.join(", ") || "Ninguno"}
+             </div>
+           </div>`
+        : `<div class="meta-small" style="margin-bottom:8px;">Corte automático programado a las 12:00 a.m. (00:00) para resumen de encargados.</div>`;
+
       contAsistencia.innerHTML = `
+        ${resumenCorteHtml}
         <div class="status-note" style="margin-bottom:8px;">
           Sí trabajaron (${listaQuienes.length}): ${listaQuienes.length ? listaQuienes.join(", ") : "Nadie marcado como 'Trabajó' aún"}
         </div>
