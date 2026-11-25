@@ -564,8 +564,8 @@
           • Arriba elige la <strong>fecha</strong> y apachurra tu horario: <strong>Mañana</strong>, <strong>Tarde</strong> o <strong>Noche</strong>.<br/>
           • Busca tu ficha y apachurra <strong>Trabajó</strong>: se abrirá la cámara para tu foto de <strong>Entrada</strong>.<br/>
           • En la vista previa, si se ve clara y bien la hora, apachurra <strong>Aceptar foto</strong> (una vez aceptada ya no se puede corregir). Si salió borrosa o mal, apachurra <strong>Tomar otra</strong>.<br/>
-          • Al terminar tu turno, apachurra <strong>Salida (foto)</strong>, toma la foto de salida y apachurra <strong>Aceptar foto</strong>.<br/>
-          • Si hoy descansaste o faltaste, apachurra <strong>Descanso</strong> o <strong>Falta</strong>.
+          • Al terminar tu turno, apachurra <strong>Salida (foto)</strong>, toma la foto de <strong>Salida</strong> y apachurra <strong>Aceptar foto</strong>.<br/>
+          • Si hoy descansaste, apachurra <strong>Descanso</strong>.
         </p>
       </div>
 
@@ -1132,7 +1132,6 @@
       renderPaseLista();
     });
 
-
     const inputFotoBiometrico = document.createElement("input");
     inputFotoBiometrico.type = "file";
     inputFotoBiometrico.accept = "image/*";
@@ -1612,32 +1611,9 @@
       document.getElementById(`nav-${vista}`).classList.add("active");
     };
 
-    // Configurar manifest y service worker para permitir instalación PWA en un solo archivo HTML
     (function setupPWA() {
       try {
-        const manifestData = {
-          "name": "Faro Santander — Limpieza y Mantenimiento",
-          "short_name": "Faro Santander",
-          "start_url": ".",
-          "scope": ".",
-          "display": "standalone",
-          "background_color": "#0f172a",
-          "theme_color": "#0c4a6e",
-          "icons": [
-            {
-              "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='36' fill='%230c4a6e'/%3E%3Ctext x='50%25' y='56%25' dominant-baseline='middle' text-anchor='middle' font-size='96' fill='%23f8fafc' font-family='Arial,sans-serif' font-weight='bold'%3EFS%3C/text%3E%3C/svg%3E",
-              "sizes": "192x192",
-              "type": "image/svg+xml",
-              "purpose": "any maskable"
-            },
-            {
-              "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='96' fill='%230c4a6e'/%3E%3Ctext x='50%25' y='56%25' dominant-baseline='middle' text-anchor='middle' font-size='250' fill='%23f8fafc' font-family='Arial,sans-serif' font-weight='bold'%3EFS%3C/text%3E%3C/svg%3E",
-              "sizes": "512x512",
-              "type": "image/svg+xml",
-              "purpose": "any maskable"
-            }
-          ]
-        };
+        const manifestData = {"name": "Faro Santander — Limpieza y Mantenimiento", "short_name": "Faro Santander", "start_url": ".", "scope": ".", "display": "standalone", "background_color": "#0f172a", "theme_color": "#0c4a6e", "icons": [{"src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='36' fill='%230c4a6e'/%3E%3Ctext x='50%25' y='56%25' dominant-baseline='middle' text-anchor='middle' font-size='96' fill='%23f8fafc' font-family='Arial,sans-serif' font-weight='bold'%3EFS%3C/text%3E%3C/svg%3E", "sizes": "192x192", "type": "image/svg+xml", "purpose": "any maskable"}, {"src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='96' fill='%230c4a6e'/%3E%3Ctext x='50%25' y='56%25' dominant-baseline='middle' text-anchor='middle' font-size='250' fill='%23f8fafc' font-family='Arial,sans-serif' font-weight='bold'%3EFS%3C/text%3E%3C/svg%3E", "sizes": "512x512", "type": "image/svg+xml", "purpose": "any maskable"}]};
         const manifestBlob = new Blob([JSON.stringify(manifestData)], { type: "application/manifest+json" });
         const manifestUrl = URL.createObjectURL(manifestBlob);
         const linkEl = document.getElementById("pwaManifestLink");
@@ -1652,7 +1628,6 @@
               event.waitUntil(self.clients.claim());
             });
             self.addEventListener("fetch", (event) => {
-              // Dejar pasar peticiones normales
             });
           `;
           const swBlob = new Blob([swCode], { type: "application/javascript" });
@@ -1980,7 +1955,6 @@
     if (fechaControlEncargadaEl) fechaControlEncargadaEl.addEventListener("change", renderPanelEncargada);
     if (turnoControlEncargadaEl) turnoControlEncargadaEl.addEventListener("change", renderPanelEncargada);
 
-    // Revisar automáticamente al cargar, al volver a abrir/enfocar la app y cada 15 segundos
     verificarCambioDeDiaAutomatico(false);
     aplicarCierreAutomaticoEntradasSalidas(false);
     document.addEventListener("visibilitychange", () => {
