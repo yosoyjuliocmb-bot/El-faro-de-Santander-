@@ -112,7 +112,7 @@
 
     .stats-row {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(3, 1fr);
       gap: 8px;
       margin-top: 10px;
       text-align: center;
@@ -303,7 +303,7 @@
 
     .thumbs-grid {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(3, 1fr);
       gap: 6px;
       margin-top: 10px;
     }
@@ -419,7 +419,11 @@
   <header>
     <h1 class="brand-title">Faro Santander — Limpieza y Mantenimiento</h1>
     <div class="brand-sub">Estación G500 · 6 cajeros · Limpieza Mié/Dom y Pase de Lista diario</div>
-    <span id="syncStatus" class="sync-pill">Nube y respaldo local activos</span>
+    <div style="display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin-top:8px;">
+      <span id="syncStatus" class="sync-pill" style="margin-top:0;">Nube y respaldo local activos</span>
+      <button type="button" id="btnModoEncargada" class="ghost-toggle" style="padding:5px 11px; font-size:0.76rem; border-radius:999px;" onclick="toggleModoEncargada()">Modo Encargados: Bloqueado (solo lectura)</button>
+      <span id="badgeEncargadaActiva" style="display:none; background:rgba(22,163,74,0.22); border:1px solid #4ade80; color:#dcfce7; font-size:0.74rem; font-weight:800; padding:4px 10px; border-radius:999px;">ENCARGADOS ACTIVOS (control exclusivo)</span>
+    </div>
   </header>
 
   <main>
@@ -498,23 +502,99 @@
       <div id="gridPaseLista" class="grid-6"></div>
     </section>
 
-    <!-- VISTA 3: ROL -->
-    <section id="view-rol" class="section-view">
-      <div class="rol-card">
-        <h3>Regla General Diaria</h3>
-        <p style="margin:0; color:#cbd5e1;">
-          Cada turno debe entregar su área limpia y ordenada al terminar labores: islas, bombas, pasillos, jardineras y áreas perimetrales.
+    <!-- VISTA ENCARGADA: CONTROL EXCLUSIVO DE CALIFICACIÓN, COMENTARIOS Y ASISTENCIA -->
+    <section id="view-encargada" class="section-view">
+      <div class="summary-box">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+          <strong>Panel de los Encargados — Asistencia, Calificación y Comentarios</strong>
+          <span id="estadoEncargadaPanel" class="badge badge-descanso">SOLO LECTURA</span>
+        </div>
+        <p class="meta-small" style="margin-top:6px;">
+          Solo los encargados con su clave de acceso pueden publicar comentarios, calificar las fotos y administrar el control. Los demás compañeros solo pueden consultar lo publicado.
+        </p>
+        <div class="toolbar">
+          <button type="button" id="btnPanelAccesoEncargada" class="success" onclick="toggleModoEncargada()">Entrar como Encargados (PIN)</button>
+          <button type="button" id="btnPanelSalirEncargada" class="secondary" style="display:none;" onclick="cerrarSesionEncargada()">Cerrar sesión de Encargados</button>
+        </div>
+      </div>
+
+      <div class="summary-box">
+        <strong>Resumen de quiénes sí fueron y quiénes trabajaron</strong>
+        <div class="meta-small">Consulta por fecha y turno quiénes marcaron "Trabajó", quiénes tienen foto de entrada/salida y quiénes faltaron o descansaron.</div>
+        <div class="toolbar" style="margin-top:8px;">
+          <input type="date" id="fechaControlEncargada" style="width:auto;" />
+          <select id="turnoControlEncargada" style="width:auto;">
+            <option value="TODOS">Todos los horarios (Mañana / Tarde / Noche)</option>
+            <option value="Manana">Mañana</option>
+            <option value="Tarde">Tarde</option>
+            <option value="Noche">Noche</option>
+          </select>
+        </div>
+        <div id="resumenQuienesTrabajaron" style="margin-top:12px;"></div>
+      </div>
+
+      <div class="summary-box">
+        <strong>Calificación y comentarios exclusivos de los Encargados (Fotos de Limpieza)</strong>
+        <div class="meta-small">Califica del 1 al 5 y escribe observaciones exclusivas en cada ficha con evidencia.</div>
+        <div id="listaCalificacionEncargada" style="margin-top:12px;"></div>
+      </div>
+    </section>
+
+    <!-- VISTA AYUDA: INSTRUCCIONES PASO A PASO Y ROL DE LIMPIEZA -->
+    <section id="view-ayuda" class="section-view">
+      <div class="summary-box">
+        <strong>Centro de Ayuda — Cómo usar la aplicación paso a paso</strong>
+        <p class="meta-small" style="margin-top:6px;">
+          Guía rápida para usar el pase de lista, subir fotos de limpieza y consultar las reglas del turno desde el teléfono.
         </p>
       </div>
+
       <div class="rol-card">
-        <h3>Mantenimiento Específico (Miércoles y Domingos)</h3>
-        <p style="margin:6px 0;"><strong>Turno Matutino:</strong> Isla A, Bocatomas rojas, Cuarto de basura, Isla B, Bocatomas verdes.</p>
-        <p style="margin:6px 0;"><strong>Turno Vespertino:</strong> Bocatomas de diésel, Cuarto eléctrico, Pozos de registro, Cuarto de la compresora.</p>
+        <h3>1. Abrir o instalar la app en tu teléfono</h3>
+        <p style="margin:6px 0; color:#cbd5e1;">
+          • Abre el enlace que te compartieron en el navegador de tu teléfono.<br/>
+          • Para tenerla como ícono en tu pantalla: apachurra los <strong>tres puntitos</strong> del navegador y toca <strong>Agregar a pantalla principal</strong> o <strong>Instalar aplicación</strong>.
+        </p>
       </div>
+
       <div class="rol-card">
-        <h3>Pase de Lista y Limpieza</h3>
-        <p style="margin:6px 0;">1. En <strong>Pase de Lista</strong> revisa cualquier día en <strong>Mañana</strong>, <strong>Tarde</strong> o <strong>Noche</strong> para marcar quién trabajó.</p>
-        <p style="margin:6px 0;">2. En <strong>Limpieza (6)</strong> (miércoles y domingos), marca quién no participa hoy, asigna turno/área y sube <strong>de 1 a 20 fotos</strong>. Al cierre del día, quien participó y no subió evidencia pasa automáticamente a <strong>rojo</strong> (o con el botón de cierre de día).</p>
+        <h3>2. Pase de Lista diario (Mañana, Tarde y Noche)</h3>
+        <p style="margin:6px 0; color:#cbd5e1;">
+          • Abajo en la barra, apachurra <strong>Pase de Lista</strong>.<br/>
+          • Arriba elige la <strong>fecha</strong> y apachurra tu horario: <strong>Mañana</strong>, <strong>Tarde</strong> o <strong>Noche</strong>.<br/>
+          • Busca tu ficha y apachurra <strong>Trabajó</strong>: se abrirá la cámara para tu foto de <strong>Entrada</strong>.<br/>
+          • En la vista previa, si se ve clara y bien la hora, apachurra <strong>Aceptar foto</strong> (una vez aceptada ya no se puede corregir). Si salió borrosa o mal, apachurra <strong>Tomar otra</strong>.<br/>
+          • Al terminar tu turno, apachurra <strong>Salida (foto)</strong>, toma la foto de salida y apachurra <strong>Aceptar foto</strong>.<br/>
+          • Si hoy descansaste o faltaste, apachurra <strong>Descanso</strong> o <strong>Falta</strong>.
+        </p>
+      </div>
+
+      <div class="rol-card">
+        <h3>3. Limpieza y Mantenimiento (Miércoles y Domingos)</h3>
+        <p style="margin:6px 0; color:#cbd5e1;">
+          • Abajo en la barra, apachurra <strong>Limpieza (6)</strong>.<br/>
+          • Si hoy <strong>no</strong> te toca participar, apachurra <strong>Hoy no participa en la limpieza</strong> (quedará en gris y no contará en rojo).<br/>
+          • Si <strong>sí</strong> te toca: elige tu <strong>Turno Matutino</strong> o <strong>Turno Vespertino</strong> y tu <strong>Área</strong>, luego apachurra <strong>Subir evidencia (1-20)</strong>.<br/>
+          • Selecciona o toma de <strong>1 a 20 fotos</strong>, escribe un comentario si gustas y apachurra <strong>Guardar y poner en verde</strong>.<br/>
+          • Si no subes evidencia, queda pendiente y al cierre pasa a <strong>rojo</strong>.
+        </p>
+      </div>
+
+      <div class="rol-card">
+        <h3>4. Panel de Encargados y cierre automático</h3>
+        <p style="margin:6px 0; color:#cbd5e1;">
+          • En <strong>Encargados</strong> puedes consultar quiénes trabajaron y ver calificaciones/comentarios publicados. Los encargados entran con su PIN para calificar y comentar.<br/>
+          • A las <strong>00:00</strong> se aplica el cierre automático del día y al cambiar de día se prepara la nueva jornada.
+        </p>
+      </div>
+
+      <div class="rol-card">
+        <h3>5. Regla General y Rol de Áreas</h3>
+        <p style="margin:6px 0; color:#cbd5e1;">
+          • <strong>Regla general:</strong> cada turno debe entregar su área limpia y ordenada al terminar labores (islas, bombas, pasillos, jardineras y áreas perimetrales).<br/>
+          • <strong>Turno Matutino:</strong> Isla A, Bocatomas rojas, Cuarto de basura, Isla B, Bocatomas verdes.<br/>
+          • <strong>Turno Vespertino:</strong> Bocatomas de diésel, Cuarto eléctrico, Pozos de registro, Cuarto de la compresora.
+        </p>
       </div>
     </section>
   </main>
@@ -532,6 +612,27 @@
       <div class="ficha-actions" style="margin-top:14px;">
         <button type="button" class="success" id="btnAceptarFotoRevision">Aceptar foto</button>
         <button type="button" class="danger" id="btnTomarOtraFotoRevision">Tomar otra</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL ACCESO EXCLUSIVO ENCARGADA -->
+  <div id="modalPinEncargada" class="modal-backdrop">
+    <div class="modal-box">
+      <h3 style="margin-top:0;">Acceso exclusivo — Encargados</h3>
+      <p style="font-size:0.84rem; color:#cbd5e1; margin-top:4px;">
+        Ingresa tu clave (PIN) de encargados para poder publicar comentarios, calificar fotos y revisar el control. (PIN de encargados: <strong>1985</strong>).
+      </p>
+      <div class="campos">
+        <label style="font-size:0.82rem; color:#cbd5e1;">
+          PIN de Encargados:
+          <input type="password" id="inputPinEncargada" inputmode="numeric" maxlength="10" placeholder="Escribe tu PIN" style="margin-top:6px;" />
+        </label>
+        <div id="errorPinEncargada" class="meta-small" style="color:#f87171;"></div>
+      </div>
+      <div class="ficha-actions" style="margin-top:14px;">
+        <button type="button" class="success" onclick="validarPinEncargada()">Desbloquear control</button>
+        <button type="button" class="secondary" onclick="cerrarModalPinEncargada()">Cancelar</button>
       </div>
     </div>
   </div>
@@ -566,7 +667,8 @@
   <nav class="bottom-nav">
     <button id="nav-tablero" class="nav-btn active" onclick="cambiarVista('tablero')">Limpieza (6)</button>
     <button id="nav-asistencia" class="nav-btn" onclick="cambiarVista('asistencia')">Pase de Lista</button>
-    <button id="nav-rol" class="nav-btn" onclick="cambiarVista('rol')">Rol y Áreas</button>
+    <button id="nav-encargada" class="nav-btn" onclick="cambiarVista('encargada')">Encargados</button>
+    <button id="nav-ayuda" class="nav-btn" onclick="cambiarVista('ayuda')">Ayuda</button>
   </nav>
 
   <script type="module">
@@ -591,8 +693,8 @@
     ];
 
     const INTEGRANTES_INICIALES = ["Ana", "Julio", "Alma", "Fátima", "Xochitl", "Karla"];
-    const STORAGE_KEY = "faro_santander_limpieza_v24";
-    const ULTIMA_FECHA_KEY = "faro_santander_ultima_fecha_v24";
+    const STORAGE_KEY = "faro_santander_limpieza_v28";
+    const ULTIMA_FECHA_KEY = "faro_santander_ultima_fecha_v28";
 
     // =========================================================================
     // PEGA AQUÍ TU CONFIGURACIÓN DE FIREBASE (firebaseConfig)
@@ -675,7 +777,10 @@
             area: f.area || AREAS[idx % AREAS.length],
             nota: f.nota || "",
             fotos: Array.isArray(f.fotos) ? f.fotos.slice(0, MAX_FOTOS) : (f.foto ? [f.foto] : []),
-            horaSubida: f.horaSubida || ""
+            horaSubida: f.horaSubida || "",
+            calificacionEncargados: typeof f.calificacionEncargada === "number" ? f.calificacionEncargada : (Number(f.calificacionEncargada) || 0),
+            comentarioEncargados: f.comentarioEncargada || "",
+            fechaCalificacionEncargados: f.fechaCalificacionEncargada || ""
           }))
         : base.fichas;
 
@@ -737,7 +842,10 @@
           area: AREAS[idx % AREAS.length],
           nota: "",
           fotos: [],
-          horaSubida: ""
+          horaSubida: "",
+          calificacionEncargados: 0,
+          comentarioEncargados: "",
+          fechaCalificacionEncargados: ""
         })),
         evidencias: [],
         paseLista: {
@@ -798,6 +906,7 @@
           } catch {}
           renderTablero(false);
           renderPaseLista();
+          renderPanelEncargada();
         }
       });
     }
@@ -882,6 +991,15 @@
                     : ""
                 }
                 ${f.horaSubida ? `<div class="meta-small">Última subida: ${f.horaSubida}${f.nota ? " · " + f.nota : ""}</div>` : ""}
+                ${
+                  (f.calificacionEncargada || f.comentarioEncargada)
+                    ? `<div class="status-note" style="color:#fde047; margin-top:8px; padding:8px; border-radius:8px; background:rgba(15,23,42,0.65); border:1px solid #475569;">
+                        Encargados: ${f.calificacionEncargada ? "★".repeat(f.calificacionEncargada) + "☆".repeat(5 - f.calificacionEncargada) + ` (${f.calificacionEncargada}/5)` : "Sin calificación"}
+                        ${f.comentarioEncargada ? `<div style="color:#f8fafc; font-weight:500; margin-top:4px;">"${f.comentarioEncargada}"</div>` : ""}
+                        ${f.fechaCalificacionEncargada ? `<div class="meta-small">Calificado: ${f.fechaCalificacionEncargada}</div>` : ""}
+                      </div>`
+                    : ""
+                }
 
                 <div class="ficha-actions">
                   <button class="success" data-action="subir" data-id="${f.id}">${totalFotos > 0 ? "Editar / Agregar fotos" : "Subir evidencia (1-20)"}</button>
@@ -1029,8 +1147,8 @@
     inputFotoSalida.style.display = "none";
     document.body.appendChild(inputFotoSalida);
 
-    let contextoCaptura = null; // { tipo: "entrada" | "salida", nombre, horario, fecha, nota, marcarTrabajo }
-    let fotoEnRevision = null;  // { tipo: "entrada" | "salida", nombre, horario, fecha, nota, marcarTrabajo, imgData, horaStr }
+    let contextoCaptura = null;
+    let fotoEnRevision = null;
 
     const modalRevisionEl = document.getElementById("modalRevisionFoto");
     const revisionTituloEl = document.getElementById("revisionTitulo");
@@ -1205,8 +1323,6 @@
         });
       }
     });
-
-    let pendienteTrabajarConFoto = null;
 
     document.getElementById("gridPaseLista").addEventListener("click", (e) => {
       const btn = e.target.closest("[data-pase-nombre]");
@@ -1487,7 +1603,7 @@
       guardarYRefrescar(true);
       cerrarModal();
       renderTablero(false);
-      };
+    };
 
     window.cambiarVista = function (vista) {
       document.querySelectorAll(".section-view").forEach(s => s.classList.remove("active"));
@@ -1496,12 +1612,32 @@
       document.getElementById(`nav-${vista}`).classList.add("active");
     };
 
-
-
     // Configurar manifest y service worker para permitir instalación PWA en un solo archivo HTML
     (function setupPWA() {
       try {
-        const manifestData = {"name": "Faro Santander — Limpieza y Mantenimiento", "short_name": "Faro Santander", "start_url": ".", "scope": ".", "display": "standalone", "background_color": "#0f172a", "theme_color": "#0c4a6e", "icons": [{"src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='36' fill='%230c4a6e'/%3E%3Ctext x='50%25' y='56%25' dominant-baseline='middle' text-anchor='middle' font-size='96' fill='%23f8fafc' font-family='Arial,sans-serif' font-weight='bold'%3EFS%3C/text%3E%3C/svg%3E", "sizes": "192x192", "type": "image/svg+xml", "purpose": "any maskable"}, {"src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='96' fill='%230c4a6e'/%3E%3Ctext x='50%25' y='56%25' dominant-baseline='middle' text-anchor='middle' font-size='250' fill='%23f8fafc' font-family='Arial,sans-serif' font-weight='bold'%3EFS%3C/text%3E%3C/svg%3E", "sizes": "512x512", "type": "image/svg+xml", "purpose": "any maskable"}]};
+        const manifestData = {
+          "name": "Faro Santander — Limpieza y Mantenimiento",
+          "short_name": "Faro Santander",
+          "start_url": ".",
+          "scope": ".",
+          "display": "standalone",
+          "background_color": "#0f172a",
+          "theme_color": "#0c4a6e",
+          "icons": [
+            {
+              "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='36' fill='%230c4a6e'/%3E%3Ctext x='50%25' y='56%25' dominant-baseline='middle' text-anchor='middle' font-size='96' fill='%23f8fafc' font-family='Arial,sans-serif' font-weight='bold'%3EFS%3C/text%3E%3C/svg%3E",
+              "sizes": "192x192",
+              "type": "image/svg+xml",
+              "purpose": "any maskable"
+            },
+            {
+              "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='96' fill='%230c4a6e'/%3E%3Ctext x='50%25' y='56%25' dominant-baseline='middle' text-anchor='middle' font-size='250' fill='%23f8fafc' font-family='Arial,sans-serif' font-weight='bold'%3EFS%3C/text%3E%3C/svg%3E",
+              "sizes": "512x512",
+              "type": "image/svg+xml",
+              "purpose": "any maskable"
+            }
+          ]
+        };
         const manifestBlob = new Blob([JSON.stringify(manifestData)], { type: "application/manifest+json" });
         const manifestUrl = URL.createObjectURL(manifestBlob);
         const linkEl = document.getElementById("pwaManifestLink");
@@ -1527,7 +1663,6 @@
         console.warn("PWA setup:", err);
       }
     })();
-
 
     function reiniciarPaseListaDiaSilencioso(fechaISO) {
       if (!db.paseLista || typeof db.paseLista !== "object") {
@@ -1560,6 +1695,7 @@
         if (forzarRender) {
           renderTablero(false);
           renderPaseLista();
+          renderPanelEncargada();
         }
         return true;
       }
@@ -1575,15 +1711,11 @@
       return false;
     }
 
-
     const HORA_CIERRE_GENERAL = { hora: 0, minuto: 0, etiqueta: "00:00 (0 horas)" };
 
     function horarioEstaCerradoAuto(fechaISO, horario) {
       const hoyISO = obtenerFechaHoyISO();
-      // Cualquier día anterior ya pasó de las 0 horas (00:00)
       if (fechaISO < hoyISO) return true;
-      // En el día actual (hoyISO), el cierre automático general para todos los turnos y horarios es a las 0 horas (00:00)
-      // Si el reloj del dispositivo ya está en el día actual (después de las 00:00), o si es un día pasado, aplica cierre automático a las 0 horas
       if (fechaISO === hoyISO) {
         const ahora = new Date();
         return (ahora.getHours() * 60 + ahora.getMinutes()) >= 0;
@@ -1630,6 +1762,224 @@
       return huboCambios;
     }
 
+    const PIN_ENCARGADA = "1985";
+    const SESSION_ENCARGADA_KEY = "faro_santander_encargados_activos_v28";
+    let esEncargadaActiva = sessionStorage.getItem(SESSION_ENCARGADA_KEY) === "1";
+
+    const fechaControlEncargadaEl = document.getElementById("fechaControlEncargada");
+    const turnoControlEncargadaEl = document.getElementById("turnoControlEncargada");
+    if (fechaControlEncargadaEl) fechaControlEncargadaEl.value = obtenerFechaHoyISO();
+
+    function actualizarInterfazEncargada() {
+      const btnHeader = document.getElementById("btnModoEncargada");
+      const badgeHeader = document.getElementById("badgeEncargadaActiva");
+      const estadoPanel = document.getElementById("estadoEncargadaPanel");
+      const btnEntrar = document.getElementById("btnPanelAccesoEncargada");
+      const btnSalir = document.getElementById("btnPanelSalirEncargada");
+
+      if (esEncargadaActiva) {
+        if (btnHeader) {
+          btnHeader.textContent = "Encargados activos (salir)";
+          btnHeader.className = "success";
+          btnHeader.style.padding = "5px 11px";
+          btnHeader.style.fontSize = "0.76rem";
+          btnHeader.style.borderRadius = "999px";
+        }
+        if (badgeHeader) badgeHeader.style.display = "inline-block";
+        if (estadoPanel) {
+          estadoPanel.textContent = "ENCARGADOS AUTORIZADOS";
+          estadoPanel.className = "badge badge-verde";
+        }
+        if (btnEntrar) btnEntrar.style.display = "none";
+        if (btnSalir) btnSalir.style.display = "inline-block";
+      } else {
+        if (btnHeader) {
+          btnHeader.textContent = "Modo Encargados: Bloqueado (solo lectura)";
+          btnHeader.className = "ghost-toggle";
+          btnHeader.style.padding = "5px 11px";
+          btnHeader.style.fontSize = "0.76rem";
+          btnHeader.style.borderRadius = "999px";
+        }
+        if (badgeHeader) badgeHeader.style.display = "none";
+        if (estadoPanel) {
+          estadoPanel.textContent = "SOLO LECTURA";
+          estadoPanel.className = "badge badge-descanso";
+        }
+        if (btnEntrar) btnEntrar.style.display = "inline-block";
+        if (btnSalir) btnSalir.style.display = "none";
+      }
+      renderPanelEncargada();
+    }
+
+    window.toggleModoEncargada = function () {
+      if (esEncargadaActiva) {
+        cerrarSesionEncargada();
+        return;
+      }
+      const errEl = document.getElementById("errorPinEncargada");
+      const inputEl = document.getElementById("inputPinEncargada");
+      if (errEl) errEl.textContent = "";
+      if (inputEl) inputEl.value = "";
+      document.getElementById("modalPinEncargada").classList.add("open");
+      if (inputEl) setTimeout(() => inputEl.focus(), 60);
+    };
+
+    window.cerrarModalPinEncargada = function () {
+      document.getElementById("modalPinEncargada").classList.remove("open");
+    };
+
+    window.validarPinEncargada = function () {
+      const inputEl = document.getElementById("inputPinEncargada");
+      const errEl = document.getElementById("errorPinEncargada");
+      const pinIngresado = (inputEl ? inputEl.value : "").trim();
+      if (pinIngresado === PIN_ENCARGADA) {
+        esEncargadaActiva = true;
+        sessionStorage.setItem(SESSION_ENCARGADA_KEY, "1");
+        cerrarModalPinEncargada();
+        actualizarInterfazEncargada();
+      } else if (errEl) {
+        errEl.textContent = "PIN incorrecto. Solo los encargados con el PIN autorizado pueden desbloquear esta función.";
+      }
+    };
+
+    window.cerrarSesionEncargada = function () {
+      esEncargadaActiva = false;
+      sessionStorage.removeItem(SESSION_ENCARGADA_KEY);
+      actualizarInterfazEncargada();
+    };
+
+    window.guardarEvaluacionEncargada = function (fichaId) {
+      if (!esEncargadaActiva) {
+        alert("Solo los encargados con sesión activa pueden calificar y publicar comentarios.");
+        toggleModoEncargada();
+        return;
+      }
+      const f = db.fichas.find(x => x.id === fichaId);
+      if (!f) return;
+
+      const selCal = document.getElementById(`cal-encargada-${fichaId}`);
+      const inpCom = document.getElementById(`com-encargada-${fichaId}`);
+      const cal = selCal ? Number(selCal.value) : 0;
+      const com = inpCom ? inpCom.value.trim() : "";
+      const ahora = new Date().toLocaleString("es-MX", { dateStyle: "short", timeStyle: "short" });
+
+      f.calificacionEncargada = cal;
+      f.comentarioEncargada = com;
+      f.fechaCalificacionEncargada = ahora;
+
+      guardarYRefrescar(true);
+      renderTablero(false);
+      renderPanelEncargada();
+      alert(`Evaluación de ${f.nombre} guardada.`);
+    };
+
+    function renderPanelEncargada() {
+      const contAsistencia = document.getElementById("resumenQuienesTrabajaron");
+      const contCalif = document.getElementById("listaCalificacionEncargada");
+      if (!contAsistencia || !contCalif) return;
+
+      const fechaConsulta = (fechaControlEncargadaEl && fechaControlEncargadaEl.value) || obtenerFechaHoyISO();
+      const turnoFiltro = (turnoControlEncargadaEl && turnoControlEncargadaEl.value) || "TODOS";
+      const registroDia = asegurarRegistroFecha(fechaConsulta);
+
+      const horariosAMostrar = turnoFiltro === "TODOS" ? HORARIOS : [turnoFiltro];
+      const trabajaronSet = new Set();
+      const filasHtml = [];
+
+      horariosAMostrar.forEach((h) => {
+        INTEGRANTES_INICIALES.forEach((nombre) => {
+          const item = registroDia[h][nombre] || { estado: "sin_marcar" };
+          if (item.estado === "trabajo") trabajaronSet.add(nombre);
+          const etiquetaEstado = {
+            trabajo: "TRABAJÓ",
+            falta: "FALTA",
+            descanso: "DESCANSO",
+            sin_marcar: "SIN MARCAR"
+          }[item.estado] || "SIN MARCAR";
+
+          const badgeCls = {
+            trabajo: "badge-verde",
+            falta: "badge-rojo",
+            descanso: "badge-descanso",
+            sin_marcar: "badge-pendiente"
+          }[item.estado] || "badge-pendiente";
+
+          filasHtml.push(`
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; padding:8px 10px; border-radius:10px; background:var(--card-2); border:1px solid var(--border); margin-bottom:6px; flex-wrap:wrap;">
+              <div>
+                <strong>${nombre}</strong>
+                <span class="meta-small" style="margin-left:6px;">· ${ETIQUETAS_HORARIO[h]}</span>
+                ${item.horaBiometrico ? `<div class="meta-small">Entrada: ${item.horaBiometrico}</div>` : ""}
+                ${item.horaSalida ? `<div class="meta-small">Salida: ${item.horaSalida}</div>` : ""}
+                ${item.nota ? `<div class="meta-small">Nota: ${item.nota}</div>` : ""}
+              </div>
+              <span class="badge ${badgeCls}">${etiquetaEstado}</span>
+            </div>
+          `);
+        });
+      });
+
+      const listaQuienes = Array.from(trabajaronSet);
+      contAsistencia.innerHTML = `
+        <div class="status-note" style="margin-bottom:8px;">
+          Sí trabajaron (${listaQuienes.length}): ${listaQuienes.length ? listaQuienes.join(", ") : "Nadie marcado como 'Trabajó' aún"}
+        </div>
+        ${filasHtml.join("")}
+      `;
+
+      contCalif.innerHTML = db.fichas.map((f) => {
+        const cantFotos = Array.isArray(f.fotos) ? f.fotos.length : 0;
+        return `
+          <div class="galeria-card">
+            <div class="ficha-top">
+              <strong>${f.nombre}</strong>
+              <span class="badge ${cantFotos > 0 ? "badge-verde" : "badge-pendiente"}">${cantFotos} foto(s)</span>
+            </div>
+            <div class="meta-small">Turno: ${f.turno} · Área: ${f.area}</div>
+            ${
+              cantFotos > 0
+                ? `<div class="thumbs-grid">${f.fotos.slice(0, 8).map(src => `<img src="${src}" alt="Foto de ${f.nombre}" />`).join("")}</div>`
+                : `<div class="meta-small" style="color:#fbbf24;">Sin fotos subidas todavía</div>`
+            }
+            ${
+              esEncargadaActiva
+                ? `
+                  <div class="campos" style="margin-top:10px;">
+                    <label style="font-size:0.78rem; color:#cbd5e1;">
+                      Calificación (1 a 5):
+                      <select id="cal-encargada-${f.id}" style="margin-top:4px;">
+                        <option value="0" ${!f.calificacionEncargada ? "selected" : ""}>Sin calificar</option>
+                        <option value="1" ${f.calificacionEncargada === 1 ? "selected" : ""}>★☆☆☆☆ (1 - Deficiente)</option>
+                        <option value="2" ${f.calificacionEncargada === 2 ? "selected" : ""}>★★☆☆☆ (2 - Regular)</option>
+                        <option value="3" ${f.calificacionEncargada === 3 ? "selected" : ""}>★★★☆☆ (3 - Aceptable)</option>
+                        <option value="4" ${f.calificacionEncargada === 4 ? "selected" : ""}>★★★★☆ (4 - Buena)</option>
+                        <option value="5" ${f.calificacionEncargada === 5 ? "selected" : ""}>★★★★★ (5 - Excelente)</option>
+                      </select>
+                    </label>
+                    <label style="font-size:0.78rem; color:#cbd5e1;">
+                      Comentario exclusivo de los Encargados:
+                      <input type="text" id="com-encargada-${f.id}" value="${(f.comentarioEncargada || "").replace(/"/g, "&quot;")}" placeholder="Escribe tu observación o comentario..." style="margin-top:4px;" />
+                    </label>
+                  </div>
+                  <div class="ficha-actions">
+                    <button type="button" class="success" onclick="guardarEvaluacionEncargada(${f.id})">Publicar calificación y comentario</button>
+                  </div>
+                `
+                : `
+                  <div class="meta-small" style="color:#94a3b8; margin-top:8px;">
+                    <strong>Calificación:</strong> ${f.calificacionEncargada ? "★".repeat(f.calificacionEncargada) + ` (${f.calificacionEncargada}/5)` : "Sin calificar"}<br/>
+                    <strong>Comentario de Encargados:</strong> ${f.comentarioEncargada ? `"${f.comentarioEncargada}"` : "Sin comentario publicado"}
+                  </div>
+                `
+            }
+          </div>
+        `;
+      }).join("");
+    }
+
+    if (fechaControlEncargadaEl) fechaControlEncargadaEl.addEventListener("change", renderPanelEncargada);
+    if (turnoControlEncargadaEl) turnoControlEncargadaEl.addEventListener("change", renderPanelEncargada);
+
     // Revisar automáticamente al cargar, al volver a abrir/enfocar la app y cada 15 segundos
     verificarCambioDeDiaAutomatico(false);
     aplicarCierreAutomaticoEntradasSalidas(false);
@@ -1650,6 +2000,7 @@
 
     renderTablero(false);
     renderPaseLista();
+    actualizarInterfazEncargada();
   </script>
 </body>
 </html>
