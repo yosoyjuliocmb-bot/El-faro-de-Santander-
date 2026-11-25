@@ -519,6 +519,23 @@
     </section>
   </main>
 
+  <!-- MODAL REVISIÓN INMEDIATA DE FOTO (ENTRADA / SALIDA) -->
+  <div id="modalRevisionFoto" class="modal-backdrop">
+    <div class="modal-box">
+      <h3 id="revisionTitulo" style="margin-top:0;">Revisar foto tomada</h3>
+      <p id="revisionSubtitulo" style="font-size:0.84rem; color:#cbd5e1; margin-top:4px;">
+        Si se ve clara y bien la hora, pulsa <strong>Aceptar foto</strong> (una vez aceptada ya no se puede corregir). Si se ve borrosa o mal, pulsa <strong>Tomar otra</strong>.
+      </p>
+      <div style="margin-top:10px;">
+        <img id="revisionImg" src="" alt="Vista previa de foto" style="width:100%; max-height:260px; object-fit:contain; border-radius:12px; border:1px solid var(--border); background:#0b1220;" />
+      </div>
+      <div class="ficha-actions" style="margin-top:14px;">
+        <button type="button" class="success" id="btnAceptarFotoRevision">Aceptar foto</button>
+        <button type="button" class="danger" id="btnTomarOtraFotoRevision">Tomar otra</button>
+      </div>
+    </div>
+  </div>
+
   <!-- MODAL SUBIR EVIDENCIA -->
   <div id="modalEvidencia" class="modal-backdrop">
     <div class="modal-box">
@@ -574,8 +591,8 @@
     ];
 
     const INTEGRANTES_INICIALES = ["Ana", "Julio", "Alma", "Fátima", "Xochitl", "Karla"];
-    const STORAGE_KEY = "faro_santander_limpieza_v16";
-    const ULTIMA_FECHA_KEY = "faro_santander_ultima_fecha_v16";
+    const STORAGE_KEY = "faro_santander_limpieza_v24";
+    const ULTIMA_FECHA_KEY = "faro_santander_ultima_fecha_v24";
 
     // =========================================================================
     // PEGA AQUÍ TU CONFIGURACIÓN DE FIREBASE (firebaseConfig)
@@ -627,7 +644,17 @@
           dia[h][nombre] = {
             estado: "sin_marcar", // "trabajo" | "descanso" | "falta" | "sin_marcar"
             nota: "",
-            actualizado: ""
+            actualizado: "",
+            fotoBiometrico: "",
+            horaBiometrico: "",
+            entradaTomada: false,
+            entradaAceptada: false,
+            fotoSalida: "",
+            horaSalida: "",
+            salidaTomada: false,
+            salidaAceptada: false,
+            cerradoAuto: false,
+            obsFoto: ""
           };
         });
       });
@@ -672,7 +699,17 @@
                 limpio[h][nombre] = {
                   estado: item.estado || "sin_marcar",
                   nota: item.nota || "",
-                  actualizado: item.actualizado || ""
+                  actualizado: item.actualizado || "",
+                  fotoBiometrico: item.fotoBiometrico || "",
+                  horaBiometrico: item.horaBiometrico || "",
+                  entradaTomada: Boolean(item.entradaTomada || item.fotoBiometrico),
+                  entradaAceptada: Boolean(item.entradaAceptada),
+                  fotoSalida: item.fotoSalida || "",
+                  horaSalida: item.horaSalida || "",
+                  salidaTomada: Boolean(item.salidaTomada || item.fotoSalida),
+                  salidaAceptada: Boolean(item.salidaAceptada),
+                  cerradoAuto: Boolean(item.cerradoAuto),
+                  obsFoto: item.obsFoto || ""
                 };
               }
             });
@@ -921,12 +958,43 @@
             />
           </div>
 
+          ${
+            item.fotoBiometrico
+              ? `
+                <div class="status-note">Entrada ${item.entradaAceptada ? "(ACEPTADA · bloqueada)" : "(pendiente aceptar)"}: ${item.horaBiometrico || "registrada"}</div>
+                <div style="margin-top:6px;">
+                  <img src="${item.fotoBiometrico}" alt="Foto biométrico entrada de ${nombre}" style="width:100%; max-height:130px; object-fit:cover; border-radius:9px; border:1px solid var(--border);" />
+                </div>
+              `
+              : `<div class="meta-small" style="color:#fbbf24;">Sin foto de entrada aún</div>`
+          }
+          ${
+            item.fotoSalida
+              ? `
+                <div class="status-note" style="color:#4ade80;">Salida ${item.salidaAceptada ? "(ACEPTADA · bloqueada)" : "(pendiente aceptar)"}: ${item.horaSalida || "registrada"}</div>
+                <div style="margin-top:6px;">
+                  <img src="${item.fotoSalida}" alt="Foto biométrico salida de ${nombre}" style="width:100%; max-height:130px; object-fit:cover; border-radius:9px; border:1px solid var(--border);" />
+                </div>
+              `
+              : `<div class="meta-small" style="color:#94a3b8;">Sin foto de salida aún</div>`
+          }
+          ${horarioEstaCerradoAuto(fechaSeleccionada, horarioSeleccionado) ? `<div class="meta-small" style="color:#f87171; font-weight:700;">Cierre automático general a las ${HORA_CIERRE_GENERAL.etiqueta} (todos los turnos/horarios)</div>` : ""}
           ${item.actualizado ? `<div class="meta-small">Actualizado: ${item.actualizado}</div>` : ""}
 
           <div class="ficha-actions">
             <button class="success" data-pase-nombre="${nombre}" data-pase-estado="trabajo">Trabajó</button>
+            ${
+              item.salidaAceptada
+                ? `<span class="badge badge-verde">SALIDA ACEPTADA</span>`
+                : `<button class="ghost-toggle" data-pase-salida="${nombre}">Salida (foto)</button>`
+            }
             <button class="secondary" data-pase-nombre="${nombre}" data-pase-estado="descanso">Descanso</button>
             <button class="danger" data-pase-nombre="${nombre}" data-pase-estado="falta">Falta</button>
+            ${
+              item.entradaAceptada
+                ? `<span class="badge badge-verde">ENTRADA ACEPTADA</span>`
+                : `<button class="ghost-toggle" data-pase-foto="${nombre}">Entrada (foto)</button>`
+            }
           </div>
         `;
 
@@ -946,6 +1014,200 @@
       renderPaseLista();
     });
 
+
+    const inputFotoBiometrico = document.createElement("input");
+    inputFotoBiometrico.type = "file";
+    inputFotoBiometrico.accept = "image/*";
+    inputFotoBiometrico.capture = "environment";
+    inputFotoBiometrico.style.display = "none";
+    document.body.appendChild(inputFotoBiometrico);
+
+    const inputFotoSalida = document.createElement("input");
+    inputFotoSalida.type = "file";
+    inputFotoSalida.accept = "image/*";
+    inputFotoSalida.capture = "environment";
+    inputFotoSalida.style.display = "none";
+    document.body.appendChild(inputFotoSalida);
+
+    let contextoCaptura = null; // { tipo: "entrada" | "salida", nombre, horario, fecha, nota, marcarTrabajo }
+    let fotoEnRevision = null;  // { tipo: "entrada" | "salida", nombre, horario, fecha, nota, marcarTrabajo, imgData, horaStr }
+
+    const modalRevisionEl = document.getElementById("modalRevisionFoto");
+    const revisionTituloEl = document.getElementById("revisionTitulo");
+    const revisionSubtituloEl = document.getElementById("revisionSubtitulo");
+    const revisionImgEl = document.getElementById("revisionImg");
+    const btnAceptarFotoRevision = document.getElementById("btnAceptarFotoRevision");
+    const btnTomarOtraFotoRevision = document.getElementById("btnTomarOtraFotoRevision");
+
+    function abrirRevisionFoto(datos) {
+      fotoEnRevision = datos;
+      const etiqueta = datos.tipo === "entrada" ? "ENTRADA" : "SALIDA";
+      revisionTituloEl.textContent = `Revisar foto de ${etiqueta} — ${datos.nombre}`;
+      revisionSubtituloEl.innerHTML =
+        "Si se ve clara y bien la hora, pulsa <strong>Aceptar foto</strong> (una vez aceptada ya no se puede corregir). Si se ve borrosa o no se ve bien, pulsa <strong>Tomar otra</strong>.";
+      revisionImgEl.src = datos.imgData;
+      modalRevisionEl.classList.add("open");
+    }
+
+    function lanzarCamara(ctx) {
+      const registroDia = asegurarRegistroFecha(ctx.fecha);
+      if (horarioEstaCerradoAuto(ctx.fecha, ctx.horario)) {
+        alert(`El cierre automático aplica para todos los turnos y horarios a las ${HORA_CIERRE_GENERAL.etiqueta}. Entradas y salidas cerradas.`);
+        return;
+      }
+      const actual = registroDia[ctx.horario][ctx.nombre] || {};
+      if (ctx.tipo === "entrada" && actual.entradaAceptada) {
+        alert(`La foto de ENTRADA de ${ctx.nombre} ya fue aceptada y no se puede corregir.`);
+        return;
+      }
+      if (ctx.tipo === "salida" && actual.salidaAceptada) {
+        alert(`La foto de SALIDA de ${ctx.nombre} ya fue aceptada y no se puede corregir.`);
+        return;
+      }
+      contextoCaptura = ctx;
+      if (ctx.tipo === "entrada") {
+        inputFotoBiometrico.value = "";
+        inputFotoBiometrico.click();
+      } else {
+        inputFotoSalida.value = "";
+        inputFotoSalida.click();
+      }
+    }
+
+    btnAceptarFotoRevision.addEventListener("click", () => {
+      if (!fotoEnRevision) return;
+      const { tipo, nombre, horario, fecha, nota, marcarTrabajo, imgData, horaStr } = fotoEnRevision;
+      const registroDia = asegurarRegistroFecha(fecha);
+      const inputNotaActual = document.querySelector(`[data-pase-nota="${nombre}"]`);
+      const notaFinal = inputNotaActual ? inputNotaActual.value.trim() : nota;
+      const actual = registroDia[horario][nombre] || {
+        estado: "sin_marcar",
+        nota: "",
+        actualizado: "",
+        fotoBiometrico: "",
+        horaBiometrico: "",
+        entradaTomada: false,
+        entradaAceptada: false,
+        fotoSalida: "",
+        horaSalida: "",
+        salidaTomada: false,
+        salidaAceptada: false,
+        obsFoto: ""
+      };
+
+      if (tipo === "entrada") {
+        registroDia[horario][nombre] = {
+          ...actual,
+          estado: marcarTrabajo ? "trabajo" : (actual.estado === "sin_marcar" ? "trabajo" : actual.estado),
+          nota: notaFinal,
+          fotoBiometrico: imgData,
+          horaBiometrico: horaStr,
+          entradaTomada: true,
+          entradaAceptada: true,
+          actualizado: horaStr
+        };
+      } else {
+        registroDia[horario][nombre] = {
+          ...actual,
+          estado: actual.estado === "sin_marcar" ? "trabajo" : actual.estado,
+          nota: notaFinal,
+          fotoSalida: imgData,
+          horaSalida: horaStr,
+          salidaTomada: true,
+          salidaAceptada: true,
+          actualizado: horaStr
+        };
+      }
+
+      fotoEnRevision = null;
+      contextoCaptura = null;
+      modalRevisionEl.classList.remove("open");
+      guardarYRefrescar(true);
+      renderPaseLista();
+    });
+
+    btnTomarOtraFotoRevision.addEventListener("click", () => {
+      if (!fotoEnRevision) return;
+      const siguienteCtx = {
+        tipo: fotoEnRevision.tipo,
+        nombre: fotoEnRevision.nombre,
+        horario: fotoEnRevision.horario,
+        fecha: fotoEnRevision.fecha,
+        nota: fotoEnRevision.nota,
+        marcarTrabajo: fotoEnRevision.marcarTrabajo
+      };
+      fotoEnRevision = null;
+      modalRevisionEl.classList.remove("open");
+      lanzarCamara(siguienteCtx);
+    });
+
+    inputFotoBiometrico.addEventListener("change", async (e) => {
+      const file = e.target.files && e.target.files[0];
+      if (!file || !contextoCaptura) {
+        contextoCaptura = null;
+        return;
+      }
+      const comprimida = await comprimirImagenAsync(file, 850, 0.65);
+      const ahoraCorto = new Date().toLocaleString("es-MX", { dateStyle: "short", timeStyle: "short" });
+      const ctx = { ...contextoCaptura };
+      contextoCaptura = null;
+      abrirRevisionFoto({
+        ...ctx,
+        imgData: comprimida,
+        horaStr: ahoraCorto
+      });
+    });
+
+    inputFotoSalida.addEventListener("change", async (e) => {
+      const file = e.target.files && e.target.files[0];
+      if (!file || !contextoCaptura) {
+        contextoCaptura = null;
+        return;
+      }
+      const comprimida = await comprimirImagenAsync(file, 850, 0.65);
+      const ahoraCorto = new Date().toLocaleString("es-MX", { dateStyle: "short", timeStyle: "short" });
+      const ctx = { ...contextoCaptura };
+      contextoCaptura = null;
+      abrirRevisionFoto({
+        ...ctx,
+        imgData: comprimida,
+        horaStr: ahoraCorto
+      });
+    });
+
+    document.getElementById("gridPaseLista").addEventListener("click", (e) => {
+      const btnFoto = e.target.closest("[data-pase-foto]");
+      if (btnFoto) {
+        const nombre = btnFoto.getAttribute("data-pase-foto");
+        const inputNota = document.querySelector(`[data-pase-nota="${nombre}"]`);
+        lanzarCamara({
+          tipo: "entrada",
+          nombre,
+          horario: horarioSeleccionado,
+          fecha: fechaSeleccionada,
+          nota: inputNota ? inputNota.value.trim() : "",
+          marcarTrabajo: false
+        });
+        return;
+      }
+
+      const btnSalida = e.target.closest("[data-pase-salida]");
+      if (btnSalida) {
+        const nombre = btnSalida.getAttribute("data-pase-salida");
+        const inputNota = document.querySelector(`[data-pase-nota="${nombre}"]`);
+        lanzarCamara({
+          tipo: "salida",
+          nombre,
+          horario: horarioSeleccionado,
+          fecha: fechaSeleccionada,
+          nota: inputNota ? inputNota.value.trim() : "",
+          marcarTrabajo: false
+        });
+      }
+    });
+
+    let pendienteTrabajarConFoto = null;
+
     document.getElementById("gridPaseLista").addEventListener("click", (e) => {
       const btn = e.target.closest("[data-pase-nombre]");
       if (!btn) return;
@@ -953,11 +1215,37 @@
       const nuevoEstado = btn.getAttribute("data-pase-estado");
       const registroDia = asegurarRegistroFecha(fechaSeleccionada);
       const inputNota = document.querySelector(`[data-pase-nota="${nombre}"]`);
+      const previo = registroDia[horarioSeleccionado][nombre] || {};
+
+      if (horarioEstaCerradoAuto(fechaSeleccionada, horarioSeleccionado)) {
+        alert(`El horario de ${ETIQUETAS_HORARIO[horarioSeleccionado]} ya cerró automáticamente.`);
+        return;
+      }
+      if (nuevoEstado === "trabajo" && !previo.entradaAceptada) {
+        lanzarCamara({
+          tipo: "entrada",
+          nombre,
+          horario: horarioSeleccionado,
+          fecha: fechaSeleccionada,
+          nota: inputNota ? inputNota.value.trim() : "",
+          marcarTrabajo: true
+        });
+        return;
+      }
 
       registroDia[horarioSeleccionado][nombre] = {
         estado: nuevoEstado,
         nota: inputNota ? inputNota.value.trim() : "",
-        actualizado: new Date().toLocaleString("es-MX", { dateStyle: "short", timeStyle: "short" })
+        actualizado: new Date().toLocaleString("es-MX", { dateStyle: "short", timeStyle: "short" }),
+        fotoBiometrico: previo.fotoBiometrico || "",
+        horaBiometrico: previo.horaBiometrico || "",
+        entradaTomada: Boolean(previo.entradaTomada || previo.fotoBiometrico),
+        entradaAceptada: Boolean(previo.entradaAceptada),
+        fotoSalida: previo.fotoSalida || "",
+        horaSalida: previo.horaSalida || "",
+        salidaTomada: Boolean(previo.salidaTomada || previo.fotoSalida),
+        salidaAceptada: Boolean(previo.salidaAceptada),
+        obsFoto: previo.obsFoto || ""
       };
 
       guardarYRefrescar(true);
@@ -1199,7 +1487,7 @@
       guardarYRefrescar(true);
       cerrarModal();
       renderTablero(false);
-    };
+      };
 
     window.cambiarVista = function (vista) {
       document.querySelectorAll(".section-view").forEach(s => s.classList.remove("active"));
@@ -1207,6 +1495,8 @@
       document.getElementById(`view-${vista}`).classList.add("active");
       document.getElementById(`nav-${vista}`).classList.add("active");
     };
+
+
 
     // Configurar manifest y service worker para permitir instalación PWA en un solo archivo HTML
     (function setupPWA() {
@@ -1237,6 +1527,7 @@
         console.warn("PWA setup:", err);
       }
     })();
+
 
     function reiniciarPaseListaDiaSilencioso(fechaISO) {
       if (!db.paseLista || typeof db.paseLista !== "object") {
@@ -1284,15 +1575,78 @@
       return false;
     }
 
+
+    const HORA_CIERRE_GENERAL = { hora: 0, minuto: 0, etiqueta: "00:00 (0 horas)" };
+
+    function horarioEstaCerradoAuto(fechaISO, horario) {
+      const hoyISO = obtenerFechaHoyISO();
+      // Cualquier día anterior ya pasó de las 0 horas (00:00)
+      if (fechaISO < hoyISO) return true;
+      // En el día actual (hoyISO), el cierre automático general para todos los turnos y horarios es a las 0 horas (00:00)
+      // Si el reloj del dispositivo ya está en el día actual (después de las 00:00), o si es un día pasado, aplica cierre automático a las 0 horas
+      if (fechaISO === hoyISO) {
+        const ahora = new Date();
+        return (ahora.getHours() * 60 + ahora.getMinutes()) >= 0;
+      }
+      return false;
+    }
+
+    function aplicarCierreAutomaticoEntradasSalidas(forzarRender = true) {
+      const hoyISO = obtenerFechaHoyISO();
+      const registroHoy = asegurarRegistroFecha(hoyISO);
+      const ahoraStr = new Date().toLocaleString("es-MX", { dateStyle: "short", timeStyle: "short" });
+      let huboCambios = false;
+
+      HORARIOS.forEach((h) => {
+        if (!horarioEstaCerradoAuto(hoyISO, h)) return;
+        INTEGRANTES_INICIALES.forEach((nombre) => {
+          const item = registroHoy[h][nombre];
+          if (!item) return;
+
+          const noMarcoNada = item.estado === "sin_marcar";
+          const faltaCerrar = !item.cerradoAuto && (noMarcoNada || !item.entradaAceptada || !item.salidaAceptada);
+
+          if (faltaCerrar) {
+            registroHoy[h][nombre] = {
+              ...item,
+              estado: noMarcoNada ? "falta" : item.estado,
+              nota: noMarcoNada && !item.nota ? `Cierre automático a las ${HORA_CIERRE_GENERAL.etiqueta}` : item.nota,
+              entradaAceptada: Boolean(item.entradaAceptada),
+              salidaAceptada: Boolean(item.salidaAceptada),
+              cerradoAuto: true,
+              actualizado: item.actualizado || ahoraStr
+            };
+            huboCambios = true;
+          }
+        });
+      });
+
+      if (huboCambios) {
+        guardarYRefrescar(true);
+        if (forzarRender) {
+          renderPaseLista();
+        }
+      }
+      return huboCambios;
+    }
+
     // Revisar automáticamente al cargar, al volver a abrir/enfocar la app y cada 15 segundos
     verificarCambioDeDiaAutomatico(false);
+    aplicarCierreAutomaticoEntradasSalidas(false);
     document.addEventListener("visibilitychange", () => {
       if (!document.hidden) {
         verificarCambioDeDiaAutomatico(true);
+        aplicarCierreAutomaticoEntradasSalidas(true);
       }
     });
-    window.addEventListener("focus", () => verificarCambioDeDiaAutomatico(true));
-    setInterval(() => verificarCambioDeDiaAutomatico(true), 15000);
+    window.addEventListener("focus", () => {
+      verificarCambioDeDiaAutomatico(true);
+      aplicarCierreAutomaticoEntradasSalidas(true);
+    });
+    setInterval(() => {
+      verificarCambioDeDiaAutomatico(true);
+      aplicarCierreAutomaticoEntradasSalidas(true);
+    }, 15000);
 
     renderTablero(false);
     renderPaseLista();
