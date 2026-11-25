@@ -762,8 +762,19 @@
       const base = estadoInicial();
       if (!rawObj || typeof rawObj !== "object") return base;
 
-      const fichasNormalizadas = Array.isArray(rawObj.fichas) && rawObj.fichas.length === 6
-        ? rawObj.fichas.map((f, idx) => ({
+      const extraerFotos = (val, fotoUnica) => {
+        if (Array.isArray(val)) return val.filter(Boolean).slice(0, MAX_FOTOS);
+        if (val && typeof val === "object") return Object.values(val).filter(Boolean).slice(0, MAX_FOTOS);
+        if (fotoUnica) return [fotoUnica];
+        return [];
+      };
+
+      const origenFichas = Array.isArray(rawObj.fichas)
+        ? rawObj.fichas
+        : (rawObj.fichas && typeof rawObj.fichas === "object" ? Object.values(rawObj.fichas) : []);
+
+      const fichasNormalizadas = origenFichas.length === 6
+        ? origenFichas.map((f, idx) => ({
             id: typeof f.id === "number" ? f.id : idx,
             nombre: f.nombre || INTEGRANTES_INICIALES[idx],
             noParticipa: Boolean(f.noParticipa),
@@ -771,20 +782,27 @@
             turno: f.turno || (idx < 3 ? "Matutino" : "Vespertino"),
             area: f.area || AREAS[idx % AREAS.length],
             nota: f.nota || "",
-            fotos: Array.isArray(f.fotos) ? f.fotos.slice(0, MAX_FOTOS) : (f.foto ? [f.foto] : []),
+            fotos: extraerFotos(f.fotos, f.foto),
             horaSubida: f.horaSubida || "",
-            calificacionEncargados: typeof f.calificacionEncargada === "number" ? f.calificacionEncargada : (Number(f.calificacionEncargada) || 0),
-            comentarioEncargados: f.comentarioEncargada || "",
-            fechaCalificacionEncargados: f.fechaCalificacionEncargada || ""
+            calificacionEncargada: typeof f.calificacionEncargada === "number" ? f.calificacionEncargada : (Number(f.calificacionEncargada) || 0),
+            comentarioEncargada: f.comentarioEncargada || "",
+            fechaCalificacionEncargada: f.fechaCalificacionEncargada || ""
           }))
         : base.fichas;
 
-      const evidenciasNormalizadas = Array.isArray(rawObj.evidencias)
-        ? rawObj.evidencias.map(ev => ({
-            ...ev,
-            fotos: Array.isArray(ev.fotos) ? ev.fotos.slice(0, MAX_FOTOS) : (ev.foto ? [ev.foto] : [])
-          }))
-        : [];
+      const origenEvidencias = Array.isArray(rawObj.evidencias)
+        ? rawObj.evidencias
+        : (rawObj.evidencias && typeof rawObj.evidencias === "object" ? Object.values(rawObj.evidencias) : []);
+
+      const evidenciasNormalizadas = origenEvidencias.map(ev => ({
+        id: ev.id || Date.now(),
+        nombre: ev.nombre || "",
+        turno: ev.turno || "",
+        area: ev.area || "",
+        nota: ev.nota || "",
+        hora: ev.hora || "",
+        fotos: extraerFotos(ev.fotos, ev.foto)
+      }));
 
       const paseListaNormalizado = {};
       if (rawObj.paseLista && typeof rawObj.paseLista === "object") {
@@ -821,10 +839,7 @@
       return {
         fichas: fichasNormalizadas,
         evidencias: evidenciasNormalizadas,
-        paseLista: paseListaNormalizado,
-        cierresMedianoche: rawObj.cierresMedianoche && typeof rawObj.cierresMedianoche === "object"
-          ? rawObj.cierresMedianoche
-          : {}
+        paseLista: paseListaNormalizado
       };
     }
 
@@ -848,8 +863,7 @@
         evidencias: [],
         paseLista: {
           [hoyISO]: crearDiaPaseListaVacio()
-        },
-        cierresMedianoche: {}
+        }
       };
     }
 
@@ -882,16 +896,29 @@
       return db.paseLista[fechaISO];
     }
 
+    function sanitizarParaGuardar(obj) {
+      return JSON.parse(JSON.stringify(obj, (_k, v) => (v === undefined ? null : v)));
+    }
+
     function guardarYRefrescar(esCambioLocal = true) {
+      const limpio = sanitizarParaGuardar(db);
+      db = normalizarDatos(limpio);
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
       } catch (err) {
-        alert("El almacenamiento local está lleno por la cantidad de fotos. Limpia el historial anterior o reduce el número de fotos.");
+        console.warn("LocalStorage lleno, intentando limpiar evidencias antiguas...", err);
+        try {
+          db.evidencias = (db.evidencias || []).slice(0, 5);
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
+        } catch (err2) {
+          alert("El espacio del teléfono está lleno por tantas fotos. Borra fotos anteriores o sube menos fotos.");
+        }
       }
 
       if (esCambioLocal && rutaNube) {
-        set(rutaNube, db).catch((err) => {
+        set(rutaNube, sanitizarParaGuardar(db)).catch((err) => {
           console.error("Error sincronizando en nube:", err);
+          alert("No se pudo subir a la nube (posiblemente las fotos pesan mucho). Se guardó en este teléfono.");
         });
       }
     }
@@ -1095,6 +1122,7 @@
               `
               : `<div class="meta-small" style="color:#94a3b8;">Sin foto de salida aún</div>`
           }
+          
           ${item.actualizado ? `<div class="meta-small">Actualizado: ${item.actualizado}</div>` : ""}
 
           <div class="ficha-actions">
@@ -1164,6 +1192,10 @@
 
     function lanzarCamara(ctx) {
       const registroDia = asegurarRegistroFecha(ctx.fecha);
+      if (horarioEstaCerradoAuto(ctx.fecha, ctx.horario)) {
+        alert(`El cierre automático aplica para todos los turnos y horarios a las ${HORA_CIERRE_GENERAL.etiqueta}. Entradas y salidas cerradas.`);
+        return;
+      }
       const actual = registroDia[ctx.horario][ctx.nombre] || {};
       if (ctx.tipo === "entrada" && actual.entradaAceptada) {
         alert(`La foto de ENTRADA de ${ctx.nombre} ya fue aceptada y no se puede corregir.`);
@@ -1207,7 +1239,7 @@
       if (tipo === "entrada") {
         registroDia[horario][nombre] = {
           ...actual,
-          estado: "trabajo",
+          estado: marcarTrabajo ? "trabajo" : (actual.estado === "sin_marcar" ? "trabajo" : actual.estado),
           nota: notaFinal,
           fotoBiometrico: imgData,
           horaBiometrico: horaStr,
@@ -1295,7 +1327,7 @@
           horario: horarioSeleccionado,
           fecha: fechaSeleccionada,
           nota: inputNota ? inputNota.value.trim() : "",
-          marcarTrabajo: true
+          marcarTrabajo: false
         });
         return;
       }
@@ -1323,6 +1355,22 @@
       const registroDia = asegurarRegistroFecha(fechaSeleccionada);
       const inputNota = document.querySelector(`[data-pase-nota="${nombre}"]`);
       const previo = registroDia[horarioSeleccionado][nombre] || {};
+
+      if (horarioEstaCerradoAuto(fechaSeleccionada, horarioSeleccionado)) {
+        alert(`El horario de ${ETIQUETAS_HORARIO[horarioSeleccionado]} ya cerró automáticamente.`);
+        return;
+      }
+      if (nuevoEstado === "trabajo" && !previo.entradaAceptada) {
+        lanzarCamara({
+          tipo: "entrada",
+          nombre,
+          horario: horarioSeleccionado,
+          fecha: fechaSeleccionada,
+          nota: inputNota ? inputNota.value.trim() : "",
+          marcarTrabajo: true
+        });
+        return;
+      }
 
       registroDia[horarioSeleccionado][nombre] = {
         estado: nuevoEstado,
@@ -1559,17 +1607,19 @@
         timeStyle: "short"
       });
 
-      fichaActivaModal.fotos = fotosFinales;
-      fichaActivaModal.nota = nota;
-      fichaActivaModal.horaSubida = ahora;
-      fichaActivaModal.estado = "verde";
-      fichaActivaModal.noParticipa = false;
+      const targetFicha = db.fichas.find(x => x.id === fichaActivaModal.id) || fichaActivaModal;
+      targetFicha.fotos = fotosFinales;
+      targetFicha.nota = nota;
+      targetFicha.horaSubida = ahora;
+      targetFicha.estado = "verde";
+      targetFicha.noParticipa = false;
 
+      if (!Array.isArray(db.evidencias)) db.evidencias = [];
       db.evidencias.unshift({
         id: Date.now(),
-        nombre: fichaActivaModal.nombre,
-        turno: fichaActivaModal.turno,
-        area: fichaActivaModal.area,
+        nombre: targetFicha.nombre,
+        turno: targetFicha.turno,
+        area: targetFicha.area,
         nota,
         hora: ahora,
         fotos: fotosFinales
@@ -1583,10 +1633,8 @@
     window.cambiarVista = function (vista) {
       document.querySelectorAll(".section-view").forEach(s => s.classList.remove("active"));
       document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
-      const sec = document.getElementById(`view-${vista}`);
-      const btn = document.getElementById(`nav-${vista}`);
-      if (sec) sec.classList.add("active");
-      if (btn) btn.classList.add("active");
+      document.getElementById(`view-${vista}`).classList.add("active");
+      document.getElementById(`nav-${vista}`).classList.add("active");
     };
 
     (function setupPWA() {
@@ -1738,12 +1786,20 @@
     if (fechaControlEncargadaEl) fechaControlEncargadaEl.value = obtenerFechaHoyISO();
 
     function actualizarInterfazEncargada() {
+      const btnHeader = document.getElementById("btnModoEncargada");
       const badgeHeader = document.getElementById("badgeEncargadaActiva");
       const estadoPanel = document.getElementById("estadoEncargadaPanel");
       const btnEntrar = document.getElementById("btnPanelAccesoEncargada");
       const btnSalir = document.getElementById("btnPanelSalirEncargada");
 
       if (esEncargadaActiva) {
+        if (btnHeader) {
+          btnHeader.textContent = "Encargados activos (salir)";
+          btnHeader.className = "success";
+          btnHeader.style.padding = "5px 11px";
+          btnHeader.style.fontSize = "0.76rem";
+          btnHeader.style.borderRadius = "999px";
+        }
         if (badgeHeader) badgeHeader.style.display = "inline-block";
         if (estadoPanel) {
           estadoPanel.textContent = "ENCARGADOS AUTORIZADOS";
@@ -1752,6 +1808,13 @@
         if (btnEntrar) btnEntrar.style.display = "none";
         if (btnSalir) btnSalir.style.display = "inline-block";
       } else {
+        if (btnHeader) {
+          btnHeader.textContent = "Modo Encargados: Bloqueado (solo lectura)";
+          btnHeader.className = "ghost-toggle";
+          btnHeader.style.padding = "5px 11px";
+          btnHeader.style.fontSize = "0.76rem";
+          btnHeader.style.borderRadius = "999px";
+        }
         if (badgeHeader) badgeHeader.style.display = "none";
         if (estadoPanel) {
           estadoPanel.textContent = "SOLO LECTURA";
@@ -1789,7 +1852,6 @@
         sessionStorage.setItem(SESSION_ENCARGADA_KEY, "1");
         cerrarModalPinEncargada();
         actualizarInterfazEncargada();
-        window.cambiarVista("encargada");
       } else if (errEl) {
         errEl.textContent = "PIN incorrecto. Solo los encargados con el PIN autorizado pueden desbloquear esta función.";
       }
@@ -1799,7 +1861,6 @@
       esEncargadaActiva = false;
       sessionStorage.removeItem(SESSION_ENCARGADA_KEY);
       actualizarInterfazEncargada();
-      window.cambiarVista("tablero");
     };
 
     window.guardarEvaluacionEncargada = function (fichaId) {
@@ -1998,6 +2059,5 @@
       }, true);
     })();
   </script>
-
 </body>
 </html>
