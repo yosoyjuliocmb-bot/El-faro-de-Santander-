@@ -372,7 +372,7 @@
       background: #0b1220;
       border-top: 1px solid var(--border);
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(3, 1fr);
       z-index: 30;
     }
 
@@ -421,7 +421,7 @@
     <div class="brand-sub">Estación G500 · 6 cajeros · Limpieza Mié/Dom y Pase de Lista diario</div>
     <div style="display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin-top:8px;">
       <span id="syncStatus" class="sync-pill" style="margin-top:0;">Nube y respaldo local activos</span>
-      <button type="button" id="btnModoEncargada" class="ghost-toggle" style="padding:5px 11px; font-size:0.76rem; border-radius:999px;" onclick="toggleModoEncargada()">Modo Encargados: Bloqueado (solo lectura)</button>
+      
       <span id="badgeEncargadaActiva" style="display:none; background:rgba(22,163,74,0.22); border:1px solid #4ade80; color:#dcfce7; font-size:0.74rem; font-weight:800; padding:4px 10px; border-radius:999px;">ENCARGADOS ACTIVOS (control exclusivo)</span>
     </div>
   </header>
@@ -667,7 +667,6 @@
   <nav class="bottom-nav">
     <button id="nav-tablero" class="nav-btn active" onclick="cambiarVista('tablero')">Limpieza (6)</button>
     <button id="nav-asistencia" class="nav-btn" onclick="cambiarVista('asistencia')">Pase de Lista</button>
-    <button id="nav-encargada" class="nav-btn" onclick="cambiarVista('encargada')">Encargados</button>
     <button id="nav-ayuda" class="nav-btn" onclick="cambiarVista('ayuda')">Ayuda</button>
   </nav>
 
@@ -696,10 +695,6 @@
     const STORAGE_KEY = "faro_santander_limpieza_v28";
     const ULTIMA_FECHA_KEY = "faro_santander_ultima_fecha_v28";
 
-    // =========================================================================
-    // PEGA AQUÍ TU CONFIGURACIÓN DE FIREBASE (firebaseConfig)
-    // Cuando reemplaces "TU_API_KEY" y "TU_PROYECTO", se activa en tiempo real
-    // =========================================================================
     const firebaseConfig = {
       apiKey: "AIzaSyA5lNh2hQkKcIXRzCXSKLhYJxf1vpmYH1w",
       authDomain: "farosantader.firebaseapp.com",
@@ -744,7 +739,7 @@
         dia[h] = {};
         INTEGRANTES_INICIALES.forEach((nombre) => {
           dia[h][nombre] = {
-            estado: "sin_marcar", // "trabajo" | "descanso" | "falta" | "sin_marcar"
+            estado: "sin_marcar",
             nota: "",
             actualizado: "",
             fotoBiometrico: "",
@@ -1100,19 +1095,17 @@
           ${item.actualizado ? `<div class="meta-small">Actualizado: ${item.actualizado}</div>` : ""}
 
           <div class="ficha-actions">
-            <button class="success" data-pase-nombre="${nombre}" data-pase-estado="trabajo">Trabajó</button>
-            ${
-              item.salidaAceptada
-                ? `<span class="badge badge-verde">SALIDA ACEPTADA</span>`
-                : `<button class="ghost-toggle" data-pase-salida="${nombre}">Salida (foto)</button>`
-            }
-            <button class="secondary" data-pase-nombre="${nombre}" data-pase-estado="descanso">Descanso</button>
-            <button class="danger" data-pase-nombre="${nombre}" data-pase-estado="falta">Falta</button>
             ${
               item.entradaAceptada
                 ? `<span class="badge badge-verde">ENTRADA ACEPTADA</span>`
-                : `<button class="ghost-toggle" data-pase-foto="${nombre}">Entrada (foto)</button>`
+                : `<button class="success" data-pase-foto="${nombre}">Entrada</button>`
             }
+            ${
+              item.salidaAceptada
+                ? `<span class="badge badge-verde">SALIDA ACEPTADA</span>`
+                : `<button class="danger" data-pase-salida="${nombre}">Salida</button>`
+            }
+            <button class="secondary" data-pase-nombre="${nombre}" data-pase-estado="descanso">Descanso</button>
           </div>
         `;
 
@@ -1303,7 +1296,7 @@
           horario: horarioSeleccionado,
           fecha: fechaSeleccionada,
           nota: inputNota ? inputNota.value.trim() : "",
-          marcarTrabajo: false
+          marcarTrabajo: true
         });
         return;
       }
@@ -1334,17 +1327,6 @@
 
       if (horarioEstaCerradoAuto(fechaSeleccionada, horarioSeleccionado)) {
         alert(`El horario de ${ETIQUETAS_HORARIO[horarioSeleccionado]} ya cerró automáticamente.`);
-        return;
-      }
-      if (nuevoEstado === "trabajo" && !previo.entradaAceptada) {
-        lanzarCamara({
-          tipo: "entrada",
-          nombre,
-          horario: horarioSeleccionado,
-          fecha: fechaSeleccionada,
-          nota: inputNota ? inputNota.value.trim() : "",
-          marcarTrabajo: true
-        });
         return;
       }
 
@@ -1607,8 +1589,10 @@
     window.cambiarVista = function (vista) {
       document.querySelectorAll(".section-view").forEach(s => s.classList.remove("active"));
       document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
-      document.getElementById(`view-${vista}`).classList.add("active");
-      document.getElementById(`nav-${vista}`).classList.add("active");
+      const sec = document.getElementById(`view-${vista}`);
+      const btn = document.getElementById(`nav-${vista}`);
+      if (sec) sec.classList.add("active");
+      if (btn) btn.classList.add("active");
     };
 
     (function setupPWA() {
@@ -1746,20 +1730,12 @@
     if (fechaControlEncargadaEl) fechaControlEncargadaEl.value = obtenerFechaHoyISO();
 
     function actualizarInterfazEncargada() {
-      const btnHeader = document.getElementById("btnModoEncargada");
       const badgeHeader = document.getElementById("badgeEncargadaActiva");
       const estadoPanel = document.getElementById("estadoEncargadaPanel");
       const btnEntrar = document.getElementById("btnPanelAccesoEncargada");
       const btnSalir = document.getElementById("btnPanelSalirEncargada");
 
       if (esEncargadaActiva) {
-        if (btnHeader) {
-          btnHeader.textContent = "Encargados activos (salir)";
-          btnHeader.className = "success";
-          btnHeader.style.padding = "5px 11px";
-          btnHeader.style.fontSize = "0.76rem";
-          btnHeader.style.borderRadius = "999px";
-        }
         if (badgeHeader) badgeHeader.style.display = "inline-block";
         if (estadoPanel) {
           estadoPanel.textContent = "ENCARGADOS AUTORIZADOS";
@@ -1768,13 +1744,6 @@
         if (btnEntrar) btnEntrar.style.display = "none";
         if (btnSalir) btnSalir.style.display = "inline-block";
       } else {
-        if (btnHeader) {
-          btnHeader.textContent = "Modo Encargados: Bloqueado (solo lectura)";
-          btnHeader.className = "ghost-toggle";
-          btnHeader.style.padding = "5px 11px";
-          btnHeader.style.fontSize = "0.76rem";
-          btnHeader.style.borderRadius = "999px";
-        }
         if (badgeHeader) badgeHeader.style.display = "none";
         if (estadoPanel) {
           estadoPanel.textContent = "SOLO LECTURA";
@@ -1812,6 +1781,7 @@
         sessionStorage.setItem(SESSION_ENCARGADA_KEY, "1");
         cerrarModalPinEncargada();
         actualizarInterfazEncargada();
+        window.cambiarVista("encargada");
       } else if (errEl) {
         errEl.textContent = "PIN incorrecto. Solo los encargados con el PIN autorizado pueden desbloquear esta función.";
       }
@@ -1821,6 +1791,7 @@
       esEncargadaActiva = false;
       sessionStorage.removeItem(SESSION_ENCARGADA_KEY);
       actualizarInterfazEncargada();
+      window.cambiarVista("tablero");
     };
 
     window.guardarEvaluacionEncargada = function (fichaId) {
@@ -1932,7 +1903,7 @@
                       </select>
                     </label>
                     <label style="font-size:0.78rem; color:#cbd5e1;">
-                      Comentario exclusivo de los Encargados:
+                      Comentario exclusivo de la Encargados:
                       <input type="text" id="com-encargada-${f.id}" value="${(f.comentarioEncargada || "").replace(/"/g, "&quot;")}" placeholder="Escribe tu observación o comentario..." style="margin-top:4px;" />
                     </label>
                   </div>
@@ -1976,5 +1947,36 @@
     renderPaseLista();
     actualizarInterfazEncargada();
   </script>
+
+  <script>
+    (function () {
+      let toquesRapidos = 0;
+      let timerToques = null;
+      const META_TOQUES = 7;
+      const VENTANA_MS = 1400;
+
+      document.addEventListener("click", (e) => {
+        if (e.target.closest("button, a, input, textarea, select, .modal-backdrop")) {
+          toquesRapidos = 0;
+          return;
+        }
+        toquesRapidos += 1;
+        clearTimeout(timerToques);
+        if (toquesRapidos >= META_TOQUES) {
+          toquesRapidos = 0;
+          if (typeof toggleModoEncargada === "function") {
+            toggleModoEncargada();
+          } else if (typeof cambiarVista === "function") {
+            cambiarVista("encargada");
+          }
+          return;
+        }
+        timerToques = setTimeout(() => {
+          toquesRapidos = 0;
+        }, VENTANA_MS);
+      }, true);
+    })();
+  </script>
+
 </body>
 </html>
