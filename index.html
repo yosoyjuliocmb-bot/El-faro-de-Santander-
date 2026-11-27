@@ -150,6 +150,12 @@
       background: var(--accent);
     }
 
+    button.btn-sm {
+      padding: 6px 10px;
+      font-size: 0.76rem;
+      border-radius: 8px;
+    }
+
     button:disabled { opacity: 0.45; cursor: not-allowed; }
     button.secondary { background: #334155; }
     button.danger { background: var(--red); }
@@ -158,7 +164,7 @@
 
     .grid-6 {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(265px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(275px, 1fr));
       gap: 12px;
     }
 
@@ -200,6 +206,40 @@
       font-weight: 600;
     }
 
+    .puntos-lista {
+      margin-top: 10px;
+      display: grid;
+      gap: 6px;
+    }
+
+    .punto-item {
+      background: var(--card-2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 8px 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .punto-item.listo {
+      border-color: rgba(22, 163, 74, 0.65);
+      background: rgba(22, 163, 74, 0.12);
+    }
+
+    .punto-nombre {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #f8fafc;
+    }
+
+    .punto-sub {
+      font-size: 0.7rem;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
     .campos { margin-top: 10px; display: grid; gap: 8px; }
 
     select, input[type="text"], input[type="password"], input[type="date"], input[type="month"], input[type="number"], textarea {
@@ -213,7 +253,7 @@
     }
 
     .meta-small { font-size: 0.76rem; color: var(--muted); margin-top: 6px; }
-    .status-note { font-size: 0.78rem; color: #7dd3fc; margin-top: 6px; font-weight: 600; }
+    .status-note { font-size: 0.78rem; color: #7dd3fc; margin-top: 8px; font-weight: 600; }
 
     .section-view { display: none; }
     .section-view.active { display: block; }
@@ -276,6 +316,21 @@
     }
 
     .top-1 .puesto-pill { background: #eab308; color: #0f172a; }
+
+    .bar-wrap {
+      width: 100%;
+      height: 8px;
+      background: #1e293b;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-top: 6px;
+    }
+
+    .bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #0ea5e9, #facc15);
+      border-radius: 999px;
+    }
 
     .venta-row {
       background: var(--card-2);
@@ -341,7 +396,7 @@
   </header>
 
   <main>
-    <!-- 1. LIMPIEZA (MIÉRCOLES Y DOMINGOS · 4 PARTICIPAN) -->
+    <!-- 1. LIMPIEZA (MIÉRCOLES Y DOMINGOS · 4 PARTICIPAN · TODAS LAS EVIDENCIAS POR PUNTO) -->
     <section id="view-limpieza" class="section-view">
       <div id="limpiezaDiaAviso" class="banner-info" style="display:none;"></div>
 
@@ -358,9 +413,9 @@
           <div class="stat"><strong id="limpFuera" style="color:#cbd5e1;">0</strong><span>No les toca hoy</span></div>
         </div>
 
-        <div class="toolbar">
-          <button id="btnRotarLimpieza" type="button" class="secondary">Rotar áreas (4 activos)</button>
-          <button id="btnCerrarLimpiezaRojo" type="button" class="danger">Marcar sin evidencia en rojo</button>
+        <div id="toolbarLimpiezaAdmin" class="toolbar" style="display:none;">
+          <button id="btnRotarLimpieza" type="button" class="secondary">Rotar paquetes (4 activos)</button>
+          <button id="btnCerrarLimpiezaRojo" type="button" class="danger">Marcar incompletos en rojo</button>
           <button id="btnReiniciarLimpieza" type="button" class="ghost">Reiniciar día</button>
         </div>
       </div>
@@ -391,9 +446,9 @@
           <div class="stat"><strong id="cntListaNoche" style="color:#c084fc;">0</strong><span>Trabajaron Noche</span></div>
         </div>
 
-        <div class="toolbar">
+        <div id="toolbarListaAdmin" class="toolbar" style="display:none;">
           <button type="button" id="btnCorteMedianoche" class="secondary">Ejecutar corte / iniciar ciclo</button>
-          <button type="button" id="btnCerrarHorarioAdmin" class="danger" style="display:none;">Cerrar horario</button>
+          <button type="button" id="btnCerrarHorarioAdmin" class="danger">Cerrar horario</button>
         </div>
       </div>
 
@@ -404,14 +459,14 @@
     <section id="view-ventas" class="section-view">
       <div class="summary-box">
         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
-          <strong>Ventas de Aceites — Cortes Mensuales desde el Día 1</strong>
+          <strong>Gráfica de Aceites — Cortes Mensuales desde el Día 1</strong>
           <input id="mesVentas" type="month" style="width:auto;" />
         </div>
         <div id="rangoBloqueTexto" class="meta-small">Corte mensual activo</div>
 
         <div class="tabs-2">
           <button type="button" id="subtabVentasBloque" class="tab-btn active">Corte por Días (Mes)</button>
-          <button type="button" id="subtabVentasRanking" class="tab-btn">Acumulado y Faltante del Mes</button>
+          <button type="button" id="subtabVentasRanking" class="tab-btn">Gráfica y Acumulado del Mes</button>
         </div>
 
         <div class="stats-row-3">
@@ -437,18 +492,18 @@
       </div>
 
       <div id="bloqueVentasRanking" class="summary-box" style="display:none;">
-        <strong>Acumulado del Mes por Cajero (Ventas vs. Meta)</strong>
+        <strong>Gráfica de Aceites del Mes por Cajero</strong>
         <div class="meta-small">Positivo = sobran / cumplen · Negativo = faltan</div>
         <div id="listaRankingMes" style="margin-top:10px;"></div>
       </div>
 
-      <div class="summary-box" style="border-color:#0ea5e9;">
+      <div id="panelCapturaVentasAdmin" class="summary-box" style="border-color:#0ea5e9; display:none;">
         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
           <strong>Captura por Fecha (Administrador)</strong>
           <input id="fechaCapturaVentas" type="date" style="width:auto;" />
         </div>
         <div class="meta-small">
-          Registra o edita la cantidad vendida y la meta variable (<code>Por vender</code>) de ese día para cada cajero (por ejemplo, 6 si va con chalán o 3 si va solo).
+          Registra o edita la cantidad vendida y la meta variable (<code>Por vender</code>) de ese día para cada cajero.
         </div>
         <div id="listaCapturaVentas" style="margin-top:10px;"></div>
         <div class="ficha-actions">
@@ -478,7 +533,7 @@
           </select>
           <input id="quejaArea" type="text" placeholder="Área o lugar (ej. Isla A, Bocatomas diésel...)" />
           <textarea id="quejaDesc" rows="3" placeholder="Describe qué ocurrió..."></textarea>
-          <input id="quejaFotosInput" type="file" accept="image/*" multiple />
+          <input id="quejaFotosInput" type="file" accept="image/*" capture="environment" multiple />
           <div id="quejaPreview" class="thumbs-grid"></div>
           <button id="btnPublicarQueja" type="button" class="danger">Publicar reporte</button>
         </div>
@@ -495,9 +550,9 @@
       <div class="summary-box">
         <strong>Guía rápida de uso</strong>
         <div class="meta-small" style="line-height:1.5; margin-top:8px;">
-          • <strong>Limpieza:</strong> Se muestra en automático miércoles y domingos para los 4 cajeros de Mañana (2) y Tarde (2). Noche y Descanso no participan ni cuentan en rojo.<br/>
-          • <strong>Pase de lista:</strong> Al tocar <em>Entrada</em> con foto, detecta automáticamente el turno con ±1 hora de tolerancia. Al iniciar el nuevo ciclo de medianoche, el turno de Noche queda cubierto como asistencia.<br/>
-          • <strong>Ventas:</strong> Los bloques inician el día 1 de cada mes y avanzan cada 7 días dentro del mismo mes. Calcula automáticamente <em>Ventas Global</em> y <em>Faltan o sobran</em> según la meta capturada.
+          • <strong>Limpieza:</strong> Se muestra en automático miércoles y domingos para los 4 cajeros de Mañana (2) y Tarde (2). Noche y Descanso no participan ni cuentan en rojo. Cada punto (bocatoma 1, bocatoma 2, diésel, bomba, isla, etc.) requiere su propia foto de evidencia.<br/>
+          • <strong>Pase de lista:</strong> Al tocar <em>Entrada</em>, abre la cámara del teléfono para tomar foto al biométrico/hora y detecta automáticamente el turno con ±1 hora de tolerancia. Al iniciar el nuevo ciclo de medianoche, el turno de Noche queda cubierto como asistencia.<br/>
+          • <strong>Ventas:</strong> Los bloques inician el día 1 de cada mes y avanzan cada 7 días dentro del mismo mes. Calcula automáticamente <em>Ventas Global</em> y <em>Faltan o sobran</em>.
         </div>
       </div>
     </section>
@@ -511,13 +566,13 @@
     <button id="nav-ayuda" type="button" class="nav-btn">Ayuda</button>
   </nav>
 
-  <!-- MODAL SUBIR FOTO LIMPIEZA / PASE DE LISTA -->
+  <!-- MODAL CÁMARA / EVIDENCIA LIMPIEZA Y PASE DE LISTA -->
   <div id="modalFoto" class="modal-backdrop">
     <div class="modal-box">
-      <h3 id="modalFotoTitulo" style="margin-top:0;">Subir evidencia</h3>
-      <div id="modalFotoSub" class="meta-small">Selecciona una foto desde tu teléfono. Se estampará la fecha y hora actual.</div>
+      <h3 id="modalFotoTitulo" style="margin-top:0;">Tomar foto evidencia</h3>
+      <div id="modalFotoSub" class="meta-small">Se abrirá la cámara del teléfono para tomar la foto con fecha y hora.</div>
       <div class="campos">
-        <input id="inputFotoArchivo" type="file" accept="image/*" />
+        <input id="inputFotoArchivo" type="file" accept="image/*" capture="environment" />
         <img id="previewFotoModal" src="" alt="" style="display:none; width:100%; max-height:220px; object-fit:contain; border-radius:10px; border:1px solid var(--border); background:#0b1220;" />
         <input id="inputNotaModal" type="text" placeholder="Nota opcional..." />
       </div>
@@ -548,13 +603,25 @@
     const FIREBASE_DB_URL = "";
 
     const CAJEROS = ["Ana", "Julio", "Alma", "Fátima", "Xochitl", "Karla"];
-    const AREAS_LIMPIEZA = [
-      "Isla A y bocatomas rojas",
-      "Isla B y bocatomas verdes",
-      "Bocatomas de diésel",
-      "Cuarto eléctrico",
-      "Pozos de registro y cuarto de la compresora",
-      "Cuarto de basura"
+
+    // Paquetes completos con todos los puntos de evidencia (bocatoma 1, bocatoma 2, diésel, bomba, isla, etc.)
+    const PAQUETES_LIMPIEZA = [
+      {
+        titulo: "Isla A · Bocatomas y Bomba",
+        puntos: ["Isla A", "Bocatoma 1", "Bocatoma 2", "Bomba Isla A"]
+      },
+      {
+        titulo: "Isla B · Bocatomas y Bomba",
+        puntos: ["Isla B", "Bocatoma 1", "Bocatoma 2", "Bomba Isla B"]
+      },
+      {
+        titulo: "Zona Diésel · Bocatomas y Bomba",
+        puntos: ["Isla Diésel", "Bocatoma Diésel", "Bomba Diésel", "Área de carga"]
+      },
+      {
+        titulo: "Cuartos, Pozos y Basura",
+        puntos: ["Cuarto eléctrico", "Pozos de registro", "Cuarto compresora", "Cuarto de basura"]
+      }
     ];
 
     const STORAGE_KEY = "faro_santander_app_v2";
@@ -585,6 +652,14 @@
       return null;
     }
 
+    function crearPuntosDesdePaquete(paqueteObj) {
+      return paqueteObj.puntos.map(nombrePunto => ({
+        nombre: nombrePunto,
+        fotos: [],
+        nota: ""
+      }));
+    }
+
     function estadoInicial() {
       const fecha = hoyISO();
       return {
@@ -598,14 +673,15 @@
           fichas: CAJEROS.map((nombre, idx) => {
             const turno = idx < 2 ? "Manana" : idx < 4 ? "Tarde" : idx === 4 ? "Noche" : "Descanso";
             const participa = turno === "Manana" || turno === "Tarde";
+            const paq = PAQUETES_LIMPIEZA[idx % PAQUETES_LIMPIEZA.length];
             return {
               id: idx,
               nombre,
               turno,
               participa,
-              area: AREAS_LIMPIEZA[idx % AREAS_LIMPIEZA.length],
+              paqueteTitulo: paq.titulo,
+              puntos: crearPuntosDesdePaquete(paq),
               estado: participa ? "rojo" : "descanso",
-              fotos: [],
               nota: ""
             };
           })
@@ -619,11 +695,36 @@
 
     let state = loadState();
 
+    function normalizarLimpieza(limp) {
+      if (!limp || !Array.isArray(limp.fichas)) return estadoInicial().limpieza;
+      limp.fichas.forEach((f, idx) => {
+        const paqDefault = PAQUETES_LIMPIEZA[idx % PAQUETES_LIMPIEZA.length];
+        if (!f.paqueteTitulo) f.paqueteTitulo = paqDefault.titulo;
+        if (!Array.isArray(f.puntos) || f.puntos.length === 0) {
+          f.puntos = crearPuntosDesdePaquete(paqDefault);
+        }
+        f.participa = f.turno === "Manana" || f.turno === "Tarde";
+        if (!f.participa) {
+          f.estado = "descanso";
+        } else {
+          const todosConFoto = f.puntos.every(p => Array.isArray(p.fotos) && p.fotos.length > 0);
+          const algunoConFoto = f.puntos.some(p => Array.isArray(p.fotos) && p.fotos.length > 0);
+          if (todosConFoto) f.estado = "verde";
+          else if (algunoConFoto) f.estado = "pendiente";
+          else f.estado = "rojo";
+        }
+      });
+      return limp;
+    }
+
     function loadState() {
       try {
         const raw = localStorage.getItem(STORAGE_KEY);
         if (!raw) return estadoInicial();
-        return { ...estadoInicial(), ...JSON.parse(raw) };
+        const base = estadoInicial();
+        const parsed = { ...base, ...JSON.parse(raw) };
+        parsed.limpieza = normalizarLimpieza(parsed.limpieza);
+        return parsed;
       } catch {
         return estadoInicial();
       }
@@ -678,16 +779,17 @@
       }
     }
 
-    function recalcularParticipacionLimpieza(ficha) {
-      if (ficha.turno === "Noche" || ficha.turno === "Descanso") {
-        ficha.participa = false;
+    function actualizarEstadoFichaLimpieza(ficha) {
+      ficha.participa = ficha.turno === "Manana" || ficha.turno === "Tarde";
+      if (!ficha.participa) {
         ficha.estado = "descanso";
-      } else {
-        ficha.participa = true;
-        if (ficha.estado === "descanso") {
-          ficha.estado = ficha.fotos.length > 0 ? "verde" : "rojo";
-        }
+        return;
       }
+      const todosConFoto = ficha.puntos.every(p => p.fotos && p.fotos.length > 0);
+      const algunoConFoto = ficha.puntos.some(p => p.fotos && p.fotos.length > 0);
+      if (todosConFoto) ficha.estado = "verde";
+      else if (algunoConFoto) ficha.estado = "pendiente";
+      else ficha.estado = "rojo";
     }
 
     function renderLimpieza() {
@@ -702,10 +804,13 @@
         aviso.style.display = "none";
       }
 
+      document.getElementById("toolbarLimpiezaAdmin").style.display = state.isAdmin ? "flex" : "none";
+
       const fichas = state.limpieza.fichas;
       let activos = 0, verde = 0, rojo = 0, pendiente = 0, fuera = 0;
 
       fichas.forEach(f => {
+        actualizarEstadoFichaLimpieza(f);
         if (!f.participa || f.turno === "Noche" || f.turno === "Descanso") {
           fuera++;
         } else {
@@ -732,11 +837,12 @@
 
         const badgeTexto = !f.participa
           ? (f.turno === "Noche" ? "NO LIMPIA (NOCHE)" : "DESCANSO · NO TOCA")
-          : f.estado === "verde" ? "LISTO · VERDE"
-          : f.estado === "pendiente" ? "PENDIENTE"
+          : f.estado === "verde" ? "COMPLETO · VERDE"
+          : f.estado === "pendiente" ? "FALTAN FOTOS"
           : "SIN EVIDENCIA · ROJO";
 
         const badgeClase = !f.participa ? "badge-descanso" : `badge-${f.estado}`;
+        const puntosListos = f.puntos.filter(p => p.fotos && p.fotos.length > 0).length;
 
         card.innerHTML = `
           <div class="ficha-top">
@@ -751,17 +857,26 @@
               <option value="Descanso" ${f.turno === "Descanso" ? "selected" : ""}>Descanso (No limpia)</option>
             </select>
             ${f.participa ? `
-              <select data-limp-area="${f.id}">
-                ${AREAS_LIMPIEZA.map(a => `<option value="${a}" ${f.area === a ? "selected" : ""}>${a}</option>`).join("")}
+              <select data-limp-paquete="${f.id}">
+                ${PAQUETES_LIMPIEZA.map(pq => `<option value="${pq.titulo}" ${f.paqueteTitulo === pq.titulo ? "selected" : ""}>${pq.titulo}</option>`).join("")}
               </select>
+              <div class="status-note">Evidencias completas: ${puntosListos} / ${f.puntos.length} puntos</div>
+              <div class="puntos-lista">
+                ${f.puntos.map((pt, pIdx) => {
+                  const ok = pt.fotos && pt.fotos.length > 0;
+                  return `
+                    <div class="punto-item ${ok ? "listo" : ""}">
+                      <div>
+                        <div class="punto-nombre">${pt.nombre}</div>
+                        <div class="punto-sub">${ok ? `Fotos: ${pt.fotos.length} · ${pt.fotos[pt.fotos.length - 1].hora}` : "Pendiente de foto"}${pt.nota ? " · " + pt.nota : ""}</div>
+                      </div>
+                      <button type="button" class="btn-sm ${ok ? "secondary" : "success"}" data-subir-punto="${f.id}|${pIdx}">${ok ? "+ Foto" : "Foto"}</button>
+                    </div>
+                  `;
+                }).join("")}
+              </div>
             ` : `<div class="no-participa-msg">No participa en limpieza hoy (${f.turno}). No cuenta en rojo.</div>`}
           </div>
-          ${f.participa ? `
-            <div class="status-note">Fotos subidas: ${f.fotos.length} ${f.nota ? "· " + f.nota : ""}</div>
-            <div class="ficha-actions">
-              <button type="button" class="success" data-subir-limp="${f.id}">Subir foto evidencia</button>
-            </div>
-          ` : ""}
         `;
         grid.appendChild(card);
       });
@@ -771,24 +886,29 @@
           const id = Number(e.target.dataset.limpTurno);
           const ficha = state.limpieza.fichas[id];
           ficha.turno = e.target.value;
-          recalcularParticipacionLimpieza(ficha);
+          actualizarEstadoFichaLimpieza(ficha);
           await saveState();
           renderLimpieza();
         });
       });
 
-      grid.querySelectorAll("[data-limp-area]").forEach(sel => {
+      grid.querySelectorAll("[data-limp-paquete]").forEach(sel => {
         sel.addEventListener("change", async e => {
-          const id = Number(e.target.dataset.limpArea);
-          state.limpieza.fichas[id].area = e.target.value;
+          const id = Number(e.target.dataset.limpPaquete);
+          const ficha = state.limpieza.fichas[id];
+          const elegido = PAQUETES_LIMPIEZA.find(pq => pq.titulo === e.target.value) || PAQUETES_LIMPIEZA[0];
+          ficha.paqueteTitulo = elegido.titulo;
+          ficha.puntos = crearPuntosDesdePaquete(elegido);
+          actualizarEstadoFichaLimpieza(ficha);
           await saveState();
+          renderLimpieza();
         });
       });
 
-      grid.querySelectorAll("[data-subir-limp]").forEach(btn => {
+      grid.querySelectorAll("[data-subir-punto]").forEach(btn => {
         btn.addEventListener("click", () => {
-          const id = Number(btn.dataset.subirLimp);
-          abrirModalFoto({ tipo: "limpieza", id });
+          const [fId, pId] = btn.dataset.subirPunto.split("|").map(Number);
+          abrirModalFoto({ tipo: "limpieza_punto", fichaId: fId, puntoId: pId });
         });
       });
     }
@@ -796,9 +916,16 @@
     document.getElementById("btnRotarLimpieza").addEventListener("click", async () => {
       const activos = state.limpieza.fichas.filter(f => f.participa);
       if (activos.length > 1) {
-        const areas = activos.map(f => f.area);
-        areas.unshift(areas.pop());
-        activos.forEach((f, i) => { f.area = areas[i]; });
+        const paquetes = activos.map(f => ({
+          paqueteTitulo: f.paqueteTitulo,
+          puntos: f.puntos
+        }));
+        paquetes.unshift(paquetes.pop());
+        activos.forEach((f, i) => {
+          f.paqueteTitulo = paquetes[i].paqueteTitulo;
+          f.puntos = paquetes[i].puntos;
+          actualizarEstadoFichaLimpieza(f);
+        });
         await saveState();
         renderLimpieza();
       }
@@ -806,18 +933,21 @@
 
     document.getElementById("btnCerrarLimpiezaRojo").addEventListener("click", async () => {
       state.limpieza.fichas.forEach(f => {
-        if (f.participa && f.fotos.length === 0) f.estado = "rojo";
+        if (f.participa) {
+          const todosConFoto = f.puntos.every(p => p.fotos && p.fotos.length > 0);
+          f.estado = todosConFoto ? "verde" : "rojo";
+        }
       });
       await saveState();
       renderLimpieza();
     });
 
     document.getElementById("btnReiniciarLimpieza").addEventListener("click", async () => {
-      state.limpieza.fichas.forEach(f => {
+      state.limpieza.fichas.forEach((f, idx) => {
         if (f.participa) {
+          const paq = PAQUETES_LIMPIEZA.find(pq => pq.titulo === f.paqueteTitulo) || PAQUETES_LIMPIEZA[idx % PAQUETES_LIMPIEZA.length];
+          f.puntos = crearPuntosDesdePaquete(paq);
           f.estado = "rojo";
-          f.fotos = [];
-          f.nota = "";
         }
       });
       await saveState();
@@ -862,9 +992,7 @@
       document.getElementById("cntListaTarde").textContent = countTurno("Tarde");
       document.getElementById("cntListaNoche").textContent = countTurno("Noche");
 
-      const btnCerrar = document.getElementById("btnCerrarHorarioAdmin");
-      btnCerrar.style.display = state.isAdmin ? "inline-block" : "none";
-      btnCerrar.disabled = !state.isAdmin;
+      document.getElementById("toolbarListaAdmin").style.display = state.isAdmin ? "flex" : "none";
 
       const turnoActual = state.horarioLista;
       const grid = document.getElementById("gridLista");
@@ -1024,6 +1152,8 @@
       if (!capFechaInp.value) capFechaInp.value = hoyISO();
       const fechaCap = capFechaInp.value;
 
+      document.getElementById("panelCapturaVentasAdmin").style.display = state.isAdmin ? "block" : "none";
+
       const bloques = obtenerBloquesDelMes(ym);
       const selBloque = document.getElementById("selectBloqueMes");
       const valorPrevio = selBloque.value;
@@ -1095,17 +1225,21 @@
 
       const rankList = document.getElementById("listaRankingMes");
       const ordenados = [...CAJEROS].sort((a, b) => acumPorCajero[b].vendido - acumPorCajero[a].vendido);
+      const maxVenta = Math.max(1, ...ordenados.map(n => acumPorCajero[n].vendido));
+
       rankList.innerHTML = ordenados.map((n, idx) => {
         const v = acumPorCajero[n].vendido;
         const mt = acumPorCajero[n].meta;
         const dif = v - mt;
+        const pct = Math.min(100, Math.round((v / maxVenta) * 100));
         return `
           <div class="ranking-card ${idx === 0 ? "top-1" : ""}">
-            <div style="display:flex; align-items:center; gap:10px;">
+            <div style="display:flex; align-items:center; gap:10px; flex:1;">
               <span class="puesto-pill">${idx + 1}°</span>
-              <div>
+              <div style="flex:1;">
                 <strong>${n}</strong>
-                <div class="meta-small">Meta acumulada: ${mt} · Diferencia: <span style="color:${dif >= 0 ? "#4ade80" : "#f87171"}; font-weight:700;">${dif > 0 ? "+" + dif : dif}</span></div>
+                <div class="meta-small">Meta: ${mt} · Diferencia: <span style="color:${dif >= 0 ? "#4ade80" : "#f87171"}; font-weight:700;">${dif > 0 ? "+" + dif : dif}</span></div>
+                <div class="bar-wrap"><div class="bar-fill" style="width:${pct}%;"></div></div>
               </div>
             </div>
             <div style="text-align:right;">
@@ -1163,6 +1297,7 @@
     });
 
     document.getElementById("btnGuardarVentasDia").addEventListener("click", async () => {
+      if (!state.isAdmin) return;
       const fechaCap = document.getElementById("fechaCapturaVentas").value || hoyISO();
       if (!state.ventas[fechaCap]) state.ventas[fechaCap] = {};
       CAJEROS.forEach(n => {
@@ -1238,14 +1373,27 @@
     function abrirModalFoto(ctx) {
       contextoFoto = ctx;
       fotoDataActual = "";
-      document.getElementById("inputFotoArchivo").value = "";
+      const inputCam = document.getElementById("inputFotoArchivo");
+      inputCam.value = "";
       document.getElementById("inputNotaModal").value = "";
       const img = document.getElementById("previewFotoModal");
       img.src = "";
       img.style.display = "none";
-      document.getElementById("modalFotoTitulo").textContent =
-        ctx.tipo === "entrada" ? `Entrada de ${ctx.nombre}` : `Evidencia de limpieza`;
+
+      if (ctx.tipo === "entrada") {
+        document.getElementById("modalFotoTitulo").textContent = `Entrada de ${ctx.nombre} (Foto biométrico)`;
+      } else if (ctx.tipo === "limpieza_punto") {
+        const ficha = state.limpieza.fichas[ctx.fichaId];
+        const punto = ficha.puntos[ctx.puntoId];
+        document.getElementById("modalFotoTitulo").textContent = `${ficha.nombre} — ${punto.nombre}`;
+      } else {
+        document.getElementById("modalFotoTitulo").textContent = "Subir evidencia";
+      }
+
       document.getElementById("modalFoto").classList.add("open");
+      setTimeout(() => {
+        if (inputCam) inputCam.click();
+      }, 120);
     }
 
     document.getElementById("inputFotoArchivo").addEventListener("change", e => {
@@ -1283,11 +1431,16 @@
         state.horarioLista = detectado;
         await saveState();
         renderLista();
-      } else if (contextoFoto.tipo === "limpieza") {
-        const ficha = state.limpieza.fichas[contextoFoto.id];
-        if (fotoDataActual) ficha.fotos.push({ data: fotoDataActual, hora: ahoraLegible() });
-        if (nota) ficha.nota = nota;
-        ficha.estado = "verde";
+      } else if (contextoFoto.tipo === "limpieza_punto") {
+        const ficha = state.limpieza.fichas[contextoFoto.fichaId];
+        const punto = ficha.puntos[contextoFoto.puntoId];
+        if (!fotoDataActual) {
+          alert("Toma o selecciona una foto de evidencia para este punto.");
+          return;
+        }
+        punto.fotos.push({ data: fotoDataActual, hora: ahoraLegible() });
+        if (nota) punto.nota = nota;
+        actualizarEstadoFichaLimpieza(ficha);
         await saveState();
         renderLimpieza();
       }
