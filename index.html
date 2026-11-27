@@ -396,7 +396,7 @@
   </header>
 
   <main>
-    <!-- 1. LIMPIEZA (MIÉRCOLES Y DOMINGOS · 4 PARTICIPAN · TODAS LAS EVIDENCIAS POR PUNTO) -->
+    <!-- 1. LIMPIEZA (MIÉRCOLES Y DOMINGOS · 4 PARTICIPAN · EVIDENCIAS POR PUNTO) -->
     <section id="view-limpieza" class="section-view">
       <div id="limpiezaDiaAviso" class="banner-info" style="display:none;"></div>
 
@@ -550,7 +550,7 @@
       <div class="summary-box">
         <strong>Guía rápida de uso</strong>
         <div class="meta-small" style="line-height:1.5; margin-top:8px;">
-          • <strong>Limpieza:</strong> Se muestra en automático miércoles y domingos para los 4 cajeros de Mañana (2) y Tarde (2). Noche y Descanso no participan ni cuentan en rojo. Cada punto (bocatoma 1, bocatoma 2, diésel, bomba, isla, etc.) requiere su propia foto de evidencia.<br/>
+          • <strong>Limpieza:</strong> Se muestra en automático miércoles y domingos para los 4 cajeros de Mañana (2) y Tarde (2). Noche y Descanso no participan ni cuentan en rojo. Cada punto requiere su propia foto de evidencia.<br/>
           • <strong>Pase de lista:</strong> Al tocar <em>Entrada</em>, abre la cámara del teléfono para tomar foto al biométrico/hora y detecta automáticamente el turno con ±1 hora de tolerancia. Al iniciar el nuevo ciclo de medianoche, el turno de Noche queda cubierto como asistencia.<br/>
           • <strong>Ventas:</strong> Los bloques inician el día 1 de cada mes y avanzan cada 7 días dentro del mismo mes. Calcula automáticamente <em>Ventas Global</em> y <em>Faltan o sobran</em>.
         </div>
@@ -604,23 +604,68 @@
 
     const CAJEROS = ["Ana", "Julio", "Alma", "Fátima", "Xochitl", "Karla"];
 
-    // Paquetes completos con todos los puntos de evidencia (bocatoma 1, bocatoma 2, diésel, bomba, isla, etc.)
     const PAQUETES_LIMPIEZA = [
       {
-        titulo: "Isla A · Bocatomas y Bomba",
-        puntos: ["Isla A", "Bocatoma 1", "Bocatoma 2", "Bomba Isla A"]
+        titulo: "Turno matutino isla A",
+        puntos: [
+          "Bocatoma 1",
+          "Bocatoma 2",
+          "Bocatoma 3",
+          "Bocatoma descarga",
+          "Motobomba abierta",
+          "Moto bomba cerrada",
+          "Pozo 1",
+          "Pozo 2",
+          "Pozo 3",
+          "Cuarto de basura",
+          "Aceitera",
+          "Dispensador"
+        ]
       },
       {
-        titulo: "Isla B · Bocatomas y Bomba",
-        puntos: ["Isla B", "Bocatoma 1", "Bocatoma 2", "Bomba Isla B"]
+        titulo: "Turno matutino isla B",
+        puntos: [
+          "Bocatoma 1",
+          "Bocatoma 2",
+          "Bocatoma 3",
+          "Bocatoma 4",
+          "Bocatoma descarga",
+          "Motobomba abierta",
+          "Moto bomba cerrada",
+          "Pozo 1",
+          "Pozo 2",
+          "Pozo 3",
+          "Aceitera",
+          "Dispensador"
+        ]
       },
       {
-        titulo: "Zona Diésel · Bocatomas y Bomba",
-        puntos: ["Isla Diésel", "Bocatoma Diésel", "Bomba Diésel", "Área de carga"]
+        titulo: "Turno vespertino isla A",
+        puntos: [
+          "Bocatoma 1",
+          "Bocatoma 2",
+          "Bocatoma 3",
+          "Bocatoma 4",
+          "Bocatoma descarga",
+          "Motobomba abierta",
+          "Moto bomba cerrada",
+          "Cuarto eléctrico",
+          "Aceitera",
+          "Dispensador"
+        ]
       },
       {
-        titulo: "Cuartos, Pozos y Basura",
-        puntos: ["Cuarto eléctrico", "Pozos de registro", "Cuarto compresora", "Cuarto de basura"]
+        titulo: "Turno vespertino isla B",
+        puntos: [
+          "Pozo 1",
+          "Pozo 2",
+          "Pozo 3",
+          "Pozo 4",
+          "Pozo 5",
+          "Cuarto compresora",
+          "Aceitera",
+          "Dispensador"
+        ]
       }
     ];
 
