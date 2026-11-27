@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#0c4a6e" />
-  <title>Clave 0307-17 A&C-el faro de Santander</title>
+  <title>Clave 0307-17 A&amp;C-el faro de Santander</title>
   <style>
     :root {
       --bg: #0f172a;
@@ -43,7 +43,7 @@
       z-index: 20;
     }
 
-    .brand-title { font-size: 1.12rem; font-weight: 800; margin: 0; }
+    .brand-title { font-size: 1.12rem; font-weight: 800; margin: 0; user-select: none; }
     .brand-sub { font-size: 0.8rem; color: #bae6fd; margin-top: 2px; }
 
     .header-badges {
@@ -62,16 +62,18 @@
       background: rgba(15, 23, 42, 0.65);
       border: 1px solid #38bdf8;
       color: #e0f2fe;
+      user-select: none;
     }
 
-    .admin-pill {
-      font-size: 0.74rem;
+    .admin-active-tag {
+      font-size: 0.72rem;
       font-weight: 800;
       padding: 4px 10px;
       border-radius: 999px;
       background: rgba(22, 163, 74, 0.22);
       border: 1px solid #4ade80;
       color: #dcfce7;
+      display: none;
       cursor: pointer;
     }
 
@@ -330,11 +332,11 @@
 </head>
 <body>
   <header>
-    <h1 class="brand-title">Faro Santander — Limpieza y Mantenimiento</h1>
+    <h1 id="tituloApp" class="brand-title">Clave 0307-17 A&amp;C-el faro de Santander</h1>
     <div class="brand-sub">Estación G500 · 6 cajeros · Limpieza, Pase de Lista y Ventas de Aceites</div>
     <div class="header-badges">
       <span id="syncStatus" class="sync-pill">Respaldo local activo</span>
-      <button id="adminToggleBtn" type="button" class="admin-pill">Modo Visitante (Entrar Admin)</button>
+      <span id="adminActiveTag" class="admin-active-tag">Admin activo (Salir)</span>
     </div>
   </header>
 
@@ -391,7 +393,7 @@
 
         <div class="toolbar">
           <button type="button" id="btnCorteMedianoche" class="secondary">Ejecutar corte / iniciar ciclo</button>
-          <button type="button" id="btnCerrarHorarioAdmin" class="danger">Cerrar horario (solo Admin)</button>
+          <button type="button" id="btnCerrarHorarioAdmin" class="danger" style="display:none;">Cerrar horario</button>
         </div>
       </div>
 
@@ -494,7 +496,7 @@
         <strong>Guía rápida de uso</strong>
         <div class="meta-small" style="line-height:1.5; margin-top:8px;">
           • <strong>Limpieza:</strong> Se muestra en automático miércoles y domingos para los 4 cajeros de Mañana (2) y Tarde (2). Noche y Descanso no participan ni cuentan en rojo.<br/>
-          • <strong>Pase de lista:</strong> Al tocar <em>Entrada</em> con foto, detecta automáticamente el turno con ±1 hora de tolerancia. Al iniciar el nuevo ciclo de medianoche, el turno de Noche queda cubierto como asistencia. <em>Cerrar horario</em> es exclusivo del Administrador.<br/>
+          • <strong>Pase de lista:</strong> Al tocar <em>Entrada</em> con foto, detecta automáticamente el turno con ±1 hora de tolerancia. Al iniciar el nuevo ciclo de medianoche, el turno de Noche queda cubierto como asistencia.<br/>
           • <strong>Ventas:</strong> Los bloques inician el día 1 de cada mes y avanzan cada 7 días dentro del mismo mes. Calcula automáticamente <em>Ventas Global</em> y <em>Faltan o sobran</em> según la meta capturada.
         </div>
       </div>
@@ -543,8 +545,6 @@
   </div>
 
   <script>
-    // Configura aquí tu URL de Firebase Realtime Database si deseas sincronización en la nube, ej.:
-    // const FIREBASE_DB_URL = "https://tu-proyecto-default-rtdb.firebaseio.com/faro_santander";
     const FIREBASE_DB_URL = "";
 
     const CAJEROS = ["Ana", "Julio", "Alma", "Fátima", "Xochitl", "Karla"];
@@ -573,14 +573,10 @@
 
     function esDiaLimpieza(isoDate) {
       const [y, m, d] = isoDate.split("-").map(Number);
-      const day = new Date(y, m - 1, d).getDay(); // 0 = Domingo, 3 = Miércoles
+      const day = new Date(y, m - 1, d).getDay();
       return day === 0 || day === 3;
     }
 
-    // Detecta turno por hora actual con margen de +-1 hora:
-    // Mañana: 06:00 - 08:00 (entrada 07:00)
-    // Tarde:  13:00 - 15:00 (entrada 14:00)
-    // Noche:  19:00 - 21:00 (entrada 20:00)
     function detectarTurnoPorHora(dateObj = new Date()) {
       const mins = dateObj.getHours() * 60 + dateObj.getMinutes();
       if (mins >= 360 && mins <= 480) return "Manana";
@@ -614,9 +610,7 @@
             };
           })
         },
-        // asistencia[fecha][turno][nombre] = { estado: "trabajando"|"descanso"|"falta"|"pendiente", entradaHora, salidaHora, fotoEntrada, fotoSalida, nota, updatedAt }
         asistencia: {},
-        // ventas[fecha][nombre] = { vendido: number, meta: number, descanso: boolean }
         ventas: {},
         quejas: [],
         updatedAt: Date.now()
@@ -654,7 +648,6 @@
       }
     }
 
-    // NAVEGACIÓN
     const vistas = ["limpieza", "lista", "ventas", "quejas", "ayuda"];
     function mostrarVista(nombreVista) {
       const tocabaLimpieza = nombreVista === "limpieza";
@@ -685,7 +678,6 @@
       }
     }
 
-    // LIMPIEZA (4 PARTICIPAN: 2 MAÑANA, 2 TARDE; NOCHE Y DESCANSO NO PARTICIPAN)
     function recalcularParticipacionLimpieza(ficha) {
       if (ficha.turno === "Noche" || ficha.turno === "Descanso") {
         ficha.participa = false;
@@ -832,7 +824,6 @@
       renderLimpieza();
     });
 
-    // PASE DE LISTA
     function asegurarDiaLista(fecha) {
       if (!state.asistencia[fecha]) {
         state.asistencia[fecha] = { Manana: {}, Tarde: {}, Noche: {} };
@@ -870,7 +861,10 @@
       document.getElementById("cntListaManana").textContent = countTurno("Manana");
       document.getElementById("cntListaTarde").textContent = countTurno("Tarde");
       document.getElementById("cntListaNoche").textContent = countTurno("Noche");
-      document.getElementById("btnCerrarHorarioAdmin").disabled = !state.isAdmin;
+
+      const btnCerrar = document.getElementById("btnCerrarHorarioAdmin");
+      btnCerrar.style.display = state.isAdmin ? "inline-block" : "none";
+      btnCerrar.disabled = !state.isAdmin;
 
       const turnoActual = state.horarioLista;
       const grid = document.getElementById("gridLista");
@@ -957,7 +951,6 @@
 
     document.getElementById("fechaLista").addEventListener("change", renderLista);
 
-    // Al hacer corte / iniciar nuevo ciclo, el turno de Noche se registra en automático como asistencia
     document.getElementById("btnCorteMedianoche").addEventListener("click", async () => {
       const fecha = document.getElementById("fechaLista").value || hoyISO();
       asegurarDiaLista(fecha);
@@ -975,10 +968,7 @@
     });
 
     document.getElementById("btnCerrarHorarioAdmin").addEventListener("click", async () => {
-      if (!state.isAdmin) {
-        alert("Solo el Administrador puede cerrar horario.");
-        return;
-      }
+      if (!state.isAdmin) return;
       const fecha = document.getElementById("fechaLista").value || hoyISO();
       const turno = state.horarioLista;
       asegurarDiaLista(fecha);
@@ -993,7 +983,6 @@
       renderLista();
     });
 
-    // VENTAS DE ACEITES (CORTES MENSUALES DESDE EL DÍA 1)
     function obtenerBloquesDelMes(yearMonth) {
       const [y, m] = yearMonth.split("-").map(Number);
       const ultimoDia = new Date(y, m, 0).getDate();
@@ -1045,7 +1034,6 @@
       const bloqueActual = bloques.find(b => String(b.idx) === selBloque.value) || bloques[0];
       document.getElementById("rangoBloqueTexto").textContent = `Mes ${ym} · ${bloqueActual.label}`;
 
-      // Totales del mes
       let totalMes = 0, metaMes = 0;
       const acumPorCajero = {};
       CAJEROS.forEach(n => { acumPorCajero[n] = { vendido: 0, meta: 0 }; });
@@ -1072,7 +1060,6 @@
       difEl.textContent = difMes > 0 ? `+${difMes}` : difMes;
       difEl.style.color = difMes >= 0 ? "#4ade80" : "#f87171";
 
-      // Tabla del bloque (días 1..7, etc.)
       const thead = document.getElementById("theadBloqueVentas");
       thead.innerHTML = `
         <th>Cajero</th>
@@ -1106,7 +1093,6 @@
         tbody.appendChild(tr);
       });
 
-      // Ranking acumulado del mes
       const rankList = document.getElementById("listaRankingMes");
       const ordenados = [...CAJEROS].sort((a, b) => acumPorCajero[b].vendido - acumPorCajero[a].vendido);
       rankList.innerHTML = ordenados.map((n, idx) => {
@@ -1130,7 +1116,6 @@
         `;
       }).join("");
 
-      // Captura por fecha
       const capBox = document.getElementById("listaCapturaVentas");
       capBox.innerHTML = CAJEROS.map(n => {
         const it = getVentaDia(fechaCap, n);
@@ -1178,10 +1163,6 @@
     });
 
     document.getElementById("btnGuardarVentasDia").addEventListener("click", async () => {
-      if (!state.isAdmin) {
-        alert("Activa el Modo Administrador para guardar o editar ventas.");
-        return;
-      }
       const fechaCap = document.getElementById("fechaCapturaVentas").value || hoyISO();
       if (!state.ventas[fechaCap]) state.ventas[fechaCap] = {};
       CAJEROS.forEach(n => {
@@ -1195,7 +1176,6 @@
       alert(`Ventas guardadas para ${fechaCap}.`);
     });
 
-    // QUEJAS
     let fotosQuejaTemp = [];
     document.getElementById("quejaFotosInput").addEventListener("change", e => {
       fotosQuejaTemp = [];
@@ -1252,7 +1232,6 @@
       `).join("");
     }
 
-    // MODAL FOTO (LIMPIEZA Y ENTRADA CON DETECCIÓN DE TURNO +-1H)
     let contextoFoto = null;
     let fotoDataActual = "";
 
@@ -1317,22 +1296,44 @@
       contextoFoto = null;
     });
 
-    // MODO ADMINISTRADOR
-    const adminBtn = document.getElementById("adminToggleBtn");
-    adminBtn.addEventListener("click", async () => {
-      if (state.isAdmin) {
-        state.isAdmin = false;
-        adminBtn.textContent = "Modo Visitante (Entrar Admin)";
-        await saveState();
-        autoAbrirLimpiezaEnDiaCorrespondiente();
-        renderLimpieza();
-        renderLista();
-        renderVentas();
-      } else {
-        document.getElementById("inputClaveAdmin").value = "";
-        document.getElementById("errorClaveAdmin").textContent = "";
-        document.getElementById("modalAdmin").classList.add("open");
-      }
+    const adminTag = document.getElementById("adminActiveTag");
+    function actualizarUIAdmin() {
+      adminTag.style.display = state.isAdmin ? "inline-block" : "none";
+      renderLimpieza();
+      renderLista();
+      renderVentas();
+    }
+
+    function solicitarAccesoAdmin() {
+      if (state.isAdmin) return;
+      document.getElementById("inputClaveAdmin").value = "";
+      document.getElementById("errorClaveAdmin").textContent = "";
+      document.getElementById("modalAdmin").classList.add("open");
+    }
+
+    function bindLongPress(el, cb) {
+      let timer = null;
+      const start = () => {
+        clearTimeout(timer);
+        timer = setTimeout(cb, 750);
+      };
+      const cancel = () => clearTimeout(timer);
+      el.addEventListener("touchstart", start, { passive: true });
+      el.addEventListener("touchend", cancel);
+      el.addEventListener("touchcancel", cancel);
+      el.addEventListener("mousedown", start);
+      el.addEventListener("mouseup", cancel);
+      el.addEventListener("mouseleave", cancel);
+    }
+
+    bindLongPress(document.getElementById("tituloApp"), solicitarAccesoAdmin);
+    bindLongPress(document.getElementById("syncStatus"), solicitarAccesoAdmin);
+
+    adminTag.addEventListener("click", async () => {
+      state.isAdmin = false;
+      await saveState();
+      autoAbrirLimpiezaEnDiaCorrespondiente();
+      actualizarUIAdmin();
     });
 
     document.getElementById("btnCerrarModalAdmin").addEventListener("click", () => {
@@ -1343,28 +1344,24 @@
       const val = document.getElementById("inputClaveAdmin").value;
       if (val === state.adminPass) {
         state.isAdmin = true;
-        adminBtn.textContent = "MODO ADMINISTRADOR ACTIVO (Salir)";
         document.getElementById("modalAdmin").classList.remove("open");
         await saveState();
-        renderLimpieza();
-        renderLista();
-        renderVentas();
+        actualizarUIAdmin();
       } else {
         document.getElementById("errorClaveAdmin").textContent = "Contraseña incorrecta.";
       }
     });
 
-    // NAV EVENTOS
     vistas.forEach(v => {
       document.getElementById(`nav-${v}`).addEventListener("click", () => mostrarVista(v));
     });
 
-    // INICIALIZACIÓN
     renderLimpieza();
     renderLista();
     renderVentas();
     renderQuejas();
     autoAbrirLimpiezaEnDiaCorrespondiente();
+    actualizarUIAdmin();
   </script>
 </body>
 </html>
