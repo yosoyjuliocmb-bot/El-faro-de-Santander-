@@ -347,6 +347,28 @@
     .venta-inputs { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
     .venta-inputs input[type="number"] { width: 78px; text-align: center; font-weight: 800; }
 
+    .claves-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .clave-item {
+      background: var(--card-2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 8px 10px;
+    }
+
+    .clave-item label {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+      color: #e2e8f0;
+    }
+
     .modal-backdrop {
       position: fixed;
       inset: 0;
@@ -470,6 +492,16 @@
           <button id="btnRotarLimpieza" type="button" class="secondary">Rotar paquetes (4 activos)</button>
           <button id="btnCerrarLimpiezaRojo" type="button" class="danger">Marcar incompletos en rojo</button>
           <button id="btnReiniciarLimpieza" type="button" class="ghost">Reiniciar día</button>
+        </div>
+      </div>
+
+      <!-- APARTADO DE ADMINISTRADOR PARA PONER / CAMBIAR CONTRASEÑAS DE LAS TARJETAS -->
+      <div id="panelClavesAdmin" class="summary-box" style="border-color:#0ea5e9; display:none;">
+        <strong>Configurar contraseñas de tarjetas (Solo Administrador)</strong>
+        <div class="meta-small">Asigna o cambia la clave de cada tarjeta para proteger sus evidencias de limpieza.</div>
+        <div id="listaClavesAdmin" class="claves-grid"></div>
+        <div class="ficha-actions">
+          <button id="btnGuardarClavesTarjetas" type="button" class="success">Guardar contraseñas</button>
         </div>
       </div>
 
@@ -828,6 +860,7 @@
         forzarLimpiezaVisible: false,
         fechaLista: fecha,
         horarioLista: "Manana",
+        clavesTarjetas: { ...CLAVES_TARJETAS },
         limpieza: {
           fecha,
           inicioJornadaMs: Date.now(),
@@ -866,7 +899,7 @@
 
     let state = loadState();
 
-    function normalizarLimpieza(limp) {
+    function normalizarLimpieza(limp, clavesMap) {
       const baseLimp = estadoInicial().limpieza;
       if (!limp || !Array.isArray(limp.fichas)) return baseLimp;
       if (!limp.inicioJornadaMs) limp.inicioJornadaMs = Date.now();
@@ -875,7 +908,8 @@
 
       limp.fichas.forEach((f, idx) => {
         const paqDefault = PAQUETES_LIMPIEZA[idx % PAQUETES_LIMPIEZA.length];
-        if (!f.clave) f.clave = CLAVES_TARJETAS[f.nombre] || "1234";
+        const claveGuardada = (clavesMap && clavesMap[f.nombre]) || f.clave || CLAVES_TARJETAS[f.nombre] || "1234";
+        f.clave = claveGuardada;
         if (!f.paqueteTitulo) f.paqueteTitulo = paqDefault.titulo;
         if (!Array.isArray(f.puntos) || f.puntos.length === 0) {
           f.puntos = crearPuntosDesdePaquete(paqDefault);
@@ -900,7 +934,8 @@
         if (!raw) return estadoInicial();
         const base = estadoInicial();
         const parsed = { ...base, ...JSON.parse(raw) };
-        parsed.limpieza = normalizarLimpieza(parsed.limpieza);
+        parsed.clavesTarjetas = { ...CLAVES_TARJETAS, ...(parsed.clavesTarjetas || {}) };
+        parsed.limpieza = normalizarLimpieza(parsed.limpieza, parsed.clavesTarjetas);
         return parsed;
       } catch {
         return estadoInicial();
@@ -973,6 +1008,40 @@
       return Boolean(state.isAdmin || state.limpieza.desbloqueadas[ficha.nombre]);
     }
 
+    function renderPanelClavesAdmin() {
+      const panel = document.getElementById("panelClavesAdmin");
+      panel.style.display = state.isAdmin ? "block" : "none";
+      if (!state.isAdmin) return;
+
+      const cont = document.getElementById("listaClavesAdmin");
+      cont.innerHTML = CAJEROS.map(nombre => {
+        const ficha = state.limpieza.fichas.find(f => f.nombre === nombre);
+        const claveActual = (ficha && ficha.clave) || state.clavesTarjetas[nombre] || "1234";
+        return `
+          <div class="clave-item">
+            <label for="clave-input-${nombre}">${nombre}</label>
+            <input type="text" id="clave-input-${nombre}" data-clave-cajero="${nombre}" value="${claveActual}" maxlength="12" placeholder="Nueva clave" />
+          </div>
+        `;
+      }).join("");
+    }
+
+    document.getElementById("btnGuardarClavesTarjetas").addEventListener("click", async () => {
+      if (!state.isAdmin) return;
+      document.querySelectorAll("[data-clave-cajero]").forEach(inp => {
+        const nombre = inp.dataset.claveCajero;
+        const nuevaClave = inp.value.trim();
+        if (nuevaClave) {
+          state.clavesTarjetas[nombre] = nuevaClave;
+          const ficha = state.limpieza.fichas.find(f => f.nombre === nombre);
+          if (ficha) ficha.clave = nuevaClave;
+        }
+      });
+      await saveState();
+      renderLimpieza();
+      alert("Contraseñas de tarjetas guardadas.");
+    });
+
     function renderChatLimpieza() {
       const box = document.getElementById("chatLimpiezaLista");
       const msgs = state.limpieza.mensajes || [];
@@ -1016,6 +1085,7 @@
       }
 
       document.getElementById("toolbarLimpiezaAdmin").style.display = state.isAdmin ? "flex" : "none";
+      renderPanelClavesAdmin();
 
       const fichas = state.limpieza.fichas;
       let activos = 0, verde = 0, rojo = 0, pendiente = 0, fuera = 0;
@@ -1650,7 +1720,8 @@
     document.getElementById("btnConfirmarClaveTarjeta").addEventListener("click", async () => {
       if (!fichaPendienteClave) return;
       const val = document.getElementById("inputClaveTarjeta").value.trim();
-      if (val === fichaPendienteClave.clave || val === state.adminPass) {
+      const claveTarjeta = fichaPendienteClave.clave || state.clavesTarjetas[fichaPendienteClave.nombre] || "1234";
+      if (val === claveTarjeta || val === state.adminPass) {
         state.limpieza.desbloqueadas[fichaPendienteClave.nombre] = true;
         document.getElementById("modalClaveTarjeta").classList.remove("open");
         fichaPendienteClave = null;
