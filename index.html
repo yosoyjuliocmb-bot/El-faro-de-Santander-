@@ -4,10 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#0c4a6e" />
-  <meta name="mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-title" content="Faro Santander" />
-  <link id="pwaManifestLink" rel="manifest" />
   <title>Faro Santander — Limpieza y Mantenimiento</title>
   <style>
     :root {
@@ -32,7 +28,7 @@
 
     body {
       margin: 0;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
       background: var(--bg);
       color: var(--text);
       padding-bottom: 84px;
@@ -41,28 +37,25 @@
     header {
       background: linear-gradient(135deg, #0c4a6e, #0f172a);
       border-bottom: 1px solid var(--border);
-      padding: 16px;
+      padding: 14px 16px;
       position: sticky;
       top: 0;
       z-index: 20;
     }
 
-    .brand-title {
-      font-size: 1.15rem;
-      font-weight: 800;
-      margin: 0;
-    }
+    .brand-title { font-size: 1.12rem; font-weight: 800; margin: 0; }
+    .brand-sub { font-size: 0.8rem; color: #bae6fd; margin-top: 2px; }
 
-    .brand-sub {
-      font-size: 0.82rem;
-      color: #bae6fd;
-      margin-top: 2px;
+    .header-badges {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      margin-top: 8px;
     }
 
     .sync-pill {
-      display: inline-block;
-      margin-top: 8px;
-      font-size: 0.75rem;
+      font-size: 0.74rem;
       font-weight: 700;
       padding: 4px 10px;
       border-radius: 999px;
@@ -71,11 +64,18 @@
       color: #e0f2fe;
     }
 
-    main {
-      padding: 14px;
-      max-width: 900px;
-      margin: 0 auto;
+    .admin-pill {
+      font-size: 0.74rem;
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(22, 163, 74, 0.22);
+      border: 1px solid #4ade80;
+      color: #dcfce7;
+      cursor: pointer;
     }
+
+    main { padding: 14px; max-width: 920px; margin: 0 auto; }
 
     .summary-box {
       background: var(--card);
@@ -93,10 +93,8 @@
       text-align: center;
     }
 
-    @media (min-width: 520px) {
-      .stats-row {
-        grid-template-columns: repeat(4, 1fr);
-      }
+    @media (min-width: 560px) {
+      .stats-row { grid-template-columns: repeat(4, 1fr); }
     }
 
     .stats-row-3 {
@@ -114,91 +112,51 @@
       border: 1px solid var(--border);
     }
 
-    .stat strong {
-      display: block;
-      font-size: 1.1rem;
-    }
+    .stat strong { display: block; font-size: 1.08rem; }
+    .stat span { font-size: 0.72rem; color: var(--muted); }
 
-    .stat span {
-      font-size: 0.72rem;
-      color: var(--muted);
-    }
+    .toolbar, .ficha-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
 
-    .toolbar {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 12px;
-    }
+    .tabs-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 12px; }
+    .tabs-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 12px; }
 
-    .horario-tabs {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-      margin-top: 12px;
-    }
-
-    .horario-tabs-2 {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 8px;
-      margin-top: 12px;
-    }
-
-    .horario-btn {
+    .tab-btn {
       background: var(--card-2);
       border: 1px solid var(--border);
       color: var(--muted);
-      padding: 10px 8px;
+      padding: 9px 8px;
       border-radius: 10px;
-      font-size: 0.84rem;
+      font-size: 0.82rem;
       font-weight: 800;
+      cursor: pointer;
     }
 
-    .horario-btn.active {
+    .tab-btn.active {
       background: rgba(14, 165, 233, 0.22);
       border-color: #38bdf8;
-      color: #f8fafc;
+      color: var(--text);
     }
 
     button {
       border: none;
       border-radius: 10px;
       padding: 9px 12px;
-      font-size: 0.85rem;
+      font-size: 0.83rem;
       font-weight: 700;
       cursor: pointer;
       color: #fff;
       background: var(--accent);
     }
 
-    button:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-
-    button.secondary {
-      background: #334155;
-      color: #f8fafc;
-    }
-
-    button.danger {
-      background: var(--red);
-    }
-
-    button.success {
-      background: var(--green);
-    }
-
-    button.ghost-toggle {
-      background: #1e293b;
-      border: 1px solid #475569;
-      color: #e2e8f0;
-    }
+    button:disabled { opacity: 0.45; cursor: not-allowed; }
+    button.secondary { background: #334155; }
+    button.danger { background: var(--red); }
+    button.success { background: var(--green); }
+    button.ghost { background: #1e293b; border: 1px solid #475569; color: #e2e8f0; }
 
     .grid-6 {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(265px, 1fr));
       gap: 12px;
     }
 
@@ -207,48 +165,17 @@
       border: 2px solid var(--border);
       border-radius: 16px;
       padding: 14px;
-      transition: transform 0.12s ease, border-color 0.15s ease;
     }
 
-    .ficha.estado-verde {
-      border-color: var(--green);
-      background: linear-gradient(180deg, var(--green-bg), var(--card));
-    }
+    .ficha.estado-verde { border-color: var(--green); background: linear-gradient(180deg, var(--green-bg), var(--card)); }
+    .ficha.estado-rojo { border-color: var(--red); background: linear-gradient(180deg, var(--red-bg), var(--card)); }
+    .ficha.estado-pendiente { border-color: var(--amber); background: linear-gradient(180deg, var(--amber-bg), var(--card)); }
+    .ficha.estado-descanso { border-color: var(--off); background: linear-gradient(180deg, var(--off-bg), var(--card)); opacity: 0.92; }
 
-    .ficha.estado-rojo {
-      border-color: var(--red);
-      background: linear-gradient(180deg, var(--red-bg), var(--card));
-    }
-
-    .ficha.estado-pendiente {
-      border-color: var(--amber);
-      background: linear-gradient(180deg, var(--amber-bg), var(--card));
-    }
-
-    .ficha.estado-descanso {
-      border-color: var(--off);
-      background: linear-gradient(180deg, var(--off-bg), var(--card));
-      opacity: 0.9;
-    }
-
-    .ficha-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .nombre-btn {
-      background: none;
-      padding: 0;
-      font-size: 1.12rem;
-      font-weight: 800;
-      color: var(--text);
-      text-align: left;
-    }
+    .ficha-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
 
     .badge {
-      font-size: 0.74rem;
+      font-size: 0.72rem;
       font-weight: 800;
       padding: 4px 9px;
       border-radius: 999px;
@@ -267,17 +194,13 @@
       background: rgba(15, 23, 42, 0.55);
       border: 1px dashed #64748b;
       color: #cbd5e1;
-      font-size: 0.85rem;
+      font-size: 0.84rem;
       font-weight: 600;
     }
 
-    .campos {
-      margin-top: 10px;
-      display: grid;
-      gap: 8px;
-    }
+    .campos { margin-top: 10px; display: grid; gap: 8px; }
 
-    select, input[type="text"], input[type="password"], input[type="date"], input[type="number"], textarea {
+    select, input[type="text"], input[type="password"], input[type="date"], input[type="month"], input[type="number"], textarea {
       width: 100%;
       background: var(--card-2);
       color: var(--text);
@@ -287,60 +210,11 @@
       font-size: 0.84rem;
     }
 
-    .ficha-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 12px;
-    }
-
-    .thumbs-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 6px;
-      margin-top: 10px;
-    }
-
-    .thumbs-grid img {
-      width: 100%;
-      height: 62px;
-      object-fit: cover;
-      border-radius: 8px;
-      border: 1px solid var(--border);
-    }
-
-    .meta-small {
-      font-size: 0.76rem;
-      color: var(--muted);
-      margin-top: 6px;
-    }
-
-    .status-note {
-      font-size: 0.78rem;
-      color: #7dd3fc;
-      margin-top: 6px;
-      font-weight: 600;
-    }
+    .meta-small { font-size: 0.76rem; color: var(--muted); margin-top: 6px; }
+    .status-note { font-size: 0.78rem; color: #7dd3fc; margin-top: 6px; font-weight: 600; }
 
     .section-view { display: none; }
     .section-view.active { display: block; }
-
-    .galeria-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 12px;
-      margin-bottom: 12px;
-    }
-
-    .rol-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 14px;
-      margin-bottom: 12px;
-      line-height: 1.45;
-    }
 
     .bottom-nav {
       position: fixed;
@@ -361,229 +235,14 @@
       color: var(--muted);
       font-size: 0.72rem;
       font-weight: 700;
-      line-height: 1.2;
-    }
-
-    .nav-btn.active {
-      color: #38bdf8;
-      background: rgba(14, 165, 233, 0.1);
-    }
-
-    .modal-backdrop {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.72);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 16px;
-      z-index: 50;
-    }
-
-    .modal-backdrop.open { display: flex; }
-
-    .modal-box {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 16px;
-      width: 100%;
-      max-width: 460px;
-      max-height: 90vh;
-      overflow-y: auto;
-    }
-
-    .checklist-box {
-      background: var(--card-2);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 10px;
-      margin-top: 8px;
-      display: grid;
-      gap: 8px;
-    }
-    .check-item {
-      background: rgba(30, 41, 59, 0.75);
-      border: 1px solid #334155;
-      border-radius: 10px;
-      padding: 8px 10px;
-    }
-    .check-item-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-    .check-label {
-      font-size: 0.84rem;
-      font-weight: 700;
-      color: #f8fafc;
-    }
-    .check-meta {
-      font-size: 0.73rem;
-      color: #7dd3fc;
-      font-weight: 600;
-    }
-    .foto-card-item {
-      position: relative;
-      border-radius: 8px;
-      overflow: hidden;
-      border: 1px solid var(--border);
-      background: #0b1220;
-    }
-    .foto-card-item img {
-      width: 100%;
-      height: 76px;
-      object-fit: cover;
-      display: block;
-    }
-    .foto-del-btn {
-      position: absolute;
-      top: 4px;
-      right: 4px;
-      background: rgba(220, 38, 38, 0.92);
-      color: #fff;
-      border: none;
-      border-radius: 6px;
-      padding: 2px 6px;
-      font-size: 0.7rem;
-      font-weight: 800;
       cursor: pointer;
     }
-    .foto-stamp-caption {
-      font-size: 0.66rem;
-      color: #cbd5e1;
-      padding: 3px 5px;
-      background: rgba(11, 18, 32, 0.9);
-      line-height: 1.25;
-    }
-    .queja-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-left: 4px solid #f59e0b;
-      border-radius: 14px;
-      padding: 12px;
-      margin-bottom: 12px;
-    }
-    .queja-card.tipo-limpieza { border-left-color: #f97316; }
-    .queja-card.tipo-dano { border-left-color: #ef4444; }
-    .queja-card.tipo-estado { border-left-color: #38bdf8; }
 
-    .filtro-quejas-bar {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-top: 8px;
-      margin-bottom: 10px;
-    }
-    .filtro-queja-btn {
-      background: var(--card-2);
-      border: 1px solid var(--border);
-      color: var(--muted);
-      padding: 6px 10px;
-      border-radius: 999px;
-      font-size: 0.76rem;
-      font-weight: 700;
-    }
-    .filtro-queja-btn.active {
-      background: rgba(14, 165, 233, 0.22);
-      border-color: #38bdf8;
-      color: #f8fafc;
-    }
+    .nav-btn.active { color: #38bdf8; background: rgba(14, 165, 233, 0.12); }
 
-    .admin-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.78rem;
-      margin-top: 8px;
-    }
-    .admin-table th, .admin-table td {
-      border: 1px solid var(--border);
-      padding: 7px 6px;
-      text-align: left;
-      vertical-align: top;
-    }
-    .admin-table th {
-      background: var(--card-2);
-      color: #bae6fd;
-      font-weight: 800;
-    }
-    .lock-pill {
-      display: inline-block;
-      margin-top: 6px;
-      font-size: 0.72rem;
-      font-weight: 700;
-      padding: 3px 8px;
-      border-radius: 8px;
-      background: rgba(14, 165, 233, 0.14);
-      border: 1px solid #0284c7;
-      color: #bae6fd;
-    }
-
-    @keyframes flashLuzVerde {
-      0% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.95); background-color: rgba(22, 163, 74, 0.42); }
-      50% { box-shadow: 0 0 24px 8px rgba(74, 222, 128, 0.65); background-color: rgba(22, 163, 74, 0.24); }
-      100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); }
-    }
-
-    .ficha.alerta-luz-completa {
-      animation: flashLuzVerde 1.6s ease-in-out 3;
-      border-color: #4ade80 !important;
-    }
-
-    .meta-progreso-bar {
-      width: 100%;
-      height: 7px;
-      background: rgba(15, 23, 42, 0.85);
-      border-radius: 999px;
-      overflow: hidden;
-      border: 1px solid #334155;
-      margin-top: 5px;
-    }
-
-    .meta-progreso-fill {
-      height: 100%;
-      background: linear-gradient(90deg, #0ea5e9, #4ade80);
-      transition: width 0.25s ease;
-    }
-
-    .notif-toast-banner {
-      position: fixed;
-      top: 76px;
-      left: 12px;
-      right: 12px;
-      max-width: 860px;
-      margin: 0 auto;
-      background: linear-gradient(135deg, #064e3b, #0f172a);
-      border: 2px solid #4ade80;
-      box-shadow: 0 0 24px rgba(74, 222, 128, 0.55);
-      color: #f0fdf4;
-      border-radius: 14px;
-      padding: 12px 14px;
-      z-index: 65;
-      display: none;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-    }
-
-    .notif-toast-banner.visible {
-      display: flex;
-      animation: flashLuzVerde 1.2s ease-in-out 2;
-    }
-
-    .notif-toast-title {
-      font-size: 0.9rem;
-      font-weight: 800;
-      color: #86efac;
-    }
-
-    .notif-toast-sub {
-      font-size: 0.8rem;
-      color: #e2e8f0;
-      margin-top: 2px;
-    }
+    .data-table { width: 100%; border-collapse: collapse; font-size: 0.78rem; margin-top: 8px; }
+    .data-table th, .data-table td { border: 1px solid var(--border); padding: 7px 6px; text-align: left; }
+    .data-table th { background: var(--card-2); color: #bae6fd; font-weight: 800; }
 
     .ranking-card {
       background: var(--card-2);
@@ -603,34 +262,69 @@
     }
 
     .puesto-pill {
-      min-width: 34px;
-      height: 34px;
+      min-width: 32px;
+      height: 32px;
       border-radius: 999px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       font-weight: 900;
-      font-size: 0.88rem;
+      font-size: 0.85rem;
       background: #334155;
-      color: #f8fafc;
     }
 
-    .top-1 .puesto-pill {
-      background: #eab308;
-      color: #0f172a;
-    }
+    .top-1 .puesto-pill { background: #eab308; color: #0f172a; }
 
-    .aceite-captura-row {
+    .venta-row {
       background: var(--card-2);
       border: 1px solid var(--border);
       border-radius: 12px;
       padding: 10px 12px;
       margin-bottom: 8px;
-      display: flex;
-      justify-content: space-between;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
       align-items: center;
-      gap: 10px;
-      flex-wrap: wrap;
+    }
+
+    .venta-inputs { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .venta-inputs input[type="number"] { width: 78px; text-align: center; font-weight: 800; }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 50;
+    }
+
+    .modal-backdrop.open { display: flex; }
+
+    .modal-box {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px;
+      width: 100%;
+      max-width: 450px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .thumbs-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 8px; }
+    .thumbs-grid img { width: 100%; height: 72px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border); }
+
+    .banner-info {
+      background: rgba(14, 165, 233, 0.14);
+      border: 1px solid #38bdf8;
+      color: #e0f2fe;
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-size: 0.82rem;
+      margin-bottom: 12px;
     }
   </style>
 </head>
@@ -638,1631 +332,825 @@
   <header>
     <h1 class="brand-title">Faro Santander — Limpieza y Mantenimiento</h1>
     <div class="brand-sub">Estación G500 · 6 cajeros · Limpieza, Pase de Lista y Ventas de Aceites</div>
-    <div style="display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin-top:8px;">
-      <span id="syncStatus" class="sync-pill" style="margin-top:0;">Nube y respaldo local activos</span>
-      <span id="badgeEncargadaActiva" style="display:none; background:rgba(22,163,74,0.22); border:1px solid #4ade80; color:#dcfce7; font-size:0.74rem; font-weight:800; padding:4px 10px; border-radius:999px;">MODO ADMINISTRADOR ACTIVO</span>
+    <div class="header-badges">
+      <span id="syncStatus" class="sync-pill">Respaldo local activo</span>
+      <button id="adminToggleBtn" type="button" class="admin-pill">Modo Visitante (Entrar Admin)</button>
     </div>
   </header>
 
-  <div id="notifBannerAlerta" class="notif-toast-banner" role="status" aria-live="polite">
-    <div>
-      <div id="notifBannerTitulo" class="notif-toast-title">🔔 ¡Meta de evidencias completada!</div>
-      <div id="notifBannerSub" class="notif-toast-sub">Un compañero completó su entrega.</div>
-    </div>
-    <button type="button" class="secondary" style="padding:6px 10px; font-size:0.76rem;" onclick="cerrarBannerNotificacion()">OK</button>
-  </div>
-
   <main>
-    <!-- VISTA 1: TABLERO DE LIMPIEZA (MIÉRCOLES Y DOMINGOS) -->
-    <section id="view-tablero" class="section-view active">
+    <!-- 1. LIMPIEZA (MIÉRCOLES Y DOMINGOS · 4 PARTICIPAN) -->
+    <section id="view-limpieza" class="section-view">
+      <div id="limpiezaDiaAviso" class="banner-info" style="display:none;"></div>
+
       <div class="summary-box">
         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
-          <strong>Avance de la jornada (4 participan · 2 descansan)</strong>
-          <span id="resumenTexto" style="font-size:0.88rem; font-weight:700; color:#38bdf8;">0 / 4 listos</span>
+          <strong>Limpieza (Miércoles y Domingos · 2 Mañana + 2 Tarde = 4)</strong>
+          <span id="limpiezaResumenTexto" class="status-note" style="margin:0;">0 / 4 listos</span>
         </div>
 
         <div class="stats-row">
-          <div class="stat">
-            <strong id="countVerde" style="color:#4ade80;">0</strong>
-            <span>En verde</span>
-          </div>
-          <div class="stat">
-            <strong id="countRojo" style="color:#f87171;">0</strong>
-            <span>En rojo</span>
-          </div>
-          <div class="stat">
-            <strong id="countPendiente" style="color:#fbbf24;">0</strong>
-            <span>Pendientes</span>
-          </div>
-          <div class="stat">
-            <strong id="countDescanso" style="color:#cbd5e1;">2</strong>
-            <span>No les toca hoy</span>
-          </div>
+          <div class="stat"><strong id="limpVerde" style="color:#4ade80;">0</strong><span>En verde</span></div>
+          <div class="stat"><strong id="limpRojo" style="color:#f87171;">0</strong><span>En rojo</span></div>
+          <div class="stat"><strong id="limpPendiente" style="color:#fbbf24;">0</strong><span>Pendientes</span></div>
+          <div class="stat"><strong id="limpFuera" style="color:#cbd5e1;">0</strong><span>No les toca hoy</span></div>
         </div>
 
         <div class="toolbar">
-          <button class="danger" onclick="marcarPendientesEnRojo()">Cerrar día / Marcar sin evidencia en rojo</button>
-          <button class="secondary" onclick="rotarSugerencia()">Rotar áreas y turnos</button>
-          <button class="ghost-toggle" onclick="nuevaJornada()">Reiniciar jornada</button>
+          <button id="btnRotarLimpieza" type="button" class="secondary">Rotar áreas (4 activos)</button>
+          <button id="btnCerrarLimpiezaRojo" type="button" class="danger">Marcar sin evidencia en rojo</button>
+          <button id="btnReiniciarLimpieza" type="button" class="ghost">Reiniciar día</button>
         </div>
       </div>
 
-      <div id="gridFichas" class="grid-6"></div>
+      <div id="gridLimpieza" class="grid-6"></div>
     </section>
 
-    <!-- VISTA 2: PASE DE LISTA DIARIO (MAÑANA, TARDE Y NOCHE) -->
-    <section id="view-asistencia" class="section-view">
+    <!-- 2. PASE DE LISTA -->
+    <section id="view-lista" class="section-view active">
       <div class="summary-box">
         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
-          <strong>Pase de lista diario (quién trabajó)</strong>
-          <input type="date" id="fechaPaseLista" style="width:auto;" />
+          <strong>Pase de Lista Diario</strong>
+          <input id="fechaLista" type="date" style="width:auto;" />
+        </div>
+        <div class="meta-small">
+          Detección automática al marcar <strong>Entrada</strong> (±1 hora): Mañana <code>06:00–08:00</code> · Tarde <code>13:00–15:00</code> · Noche <code>19:00–21:00</code>. Al iniciar el nuevo ciclo de medianoche, el turno de Noche se registra en automático como asistencia.
         </div>
 
-        <div class="horario-tabs">
-          <button type="button" id="tab-Manana" class="horario-btn active" onclick="seleccionarHorario('Manana')">Mañana</button>
-          <button type="button" id="tab-Tarde" class="horario-btn" onclick="seleccionarHorario('Tarde')">Tarde</button>
-          <button type="button" id="tab-Noche" class="horario-btn" onclick="seleccionarHorario('Noche')">Noche</button>
+        <div class="tabs-3">
+          <button type="button" id="tabLista-Manana" class="tab-btn active">Mañana</button>
+          <button type="button" id="tabLista-Tarde" class="tab-btn">Tarde</button>
+          <button type="button" id="tabLista-Noche" class="tab-btn">Noche</button>
         </div>
 
         <div class="stats-row-3">
-          <div class="stat">
-            <strong id="countHorarioManana" style="color:#4ade80;">0</strong>
-            <span>Trabajaron Mañana</span>
-          </div>
-          <div class="stat">
-            <strong id="countHorarioTarde" style="color:#38bdf8;">0</strong>
-            <span>Trabajaron Tarde</span>
-          </div>
-          <div class="stat">
-            <strong id="countHorarioNoche" style="color:#c084fc;">0</strong>
-            <span>Trabajaron Noche</span>
-          </div>
+          <div class="stat"><strong id="cntListaManana" style="color:#4ade80;">0</strong><span>Trabajaron Mañana</span></div>
+          <div class="stat"><strong id="cntListaTarde" style="color:#38bdf8;">0</strong><span>Trabajaron Tarde</span></div>
+          <div class="stat"><strong id="cntListaNoche" style="color:#c084fc;">0</strong><span>Trabajaron Noche</span></div>
         </div>
 
         <div class="toolbar">
-          <button class="danger" onclick="cerrarHorarioSinMarcar()">Cerrar horario (marcar falta sin registro)</button>
-          <button class="ghost-toggle" onclick="limpiarHorarioActual()">Limpiar horario actual</button>
+          <button type="button" id="btnCorteMedianoche" class="secondary">Ejecutar corte / iniciar ciclo</button>
+          <button type="button" id="btnCerrarHorarioAdmin" class="danger">Cerrar horario (solo Admin)</button>
         </div>
       </div>
 
-      <div id="gridPaseLista" class="grid-6"></div>
+      <div id="gridLista" class="grid-6"></div>
     </section>
 
-    <!-- VISTA VENTAS / ACEITES (MENSUAL RANKING Y SEMANAL) -->
+    <!-- 3. VENTAS DE ACEITES (CORTES MENSUALES DESDE EL DÍA 1) -->
     <section id="view-ventas" class="section-view">
       <div class="summary-box">
         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
-          <strong>Venta de Aceites — Mensual y Semanal</strong>
-          <span class="badge badge-verde">META VARIABLE · DESCANSO</span>
+          <strong>Ventas de Aceites — Cortes Mensuales desde el Día 1</strong>
+          <input id="mesVentas" type="month" style="width:auto;" />
         </div>
-        <p class="meta-small" style="margin-top:6px;">
-          Consulta el acumulado del <strong>mes</strong> (ordenado por lugar para motivar) y el avance de la <strong>semana</strong>. Solo el administrador puede publicar o modificar cantidades y descansos, en cualquier fecha.
-        </p>
+        <div id="rangoBloqueTexto" class="meta-small">Corte mensual activo</div>
 
-        <div class="horario-tabs-2">
-          <button type="button" id="subtab-ventas-mes" class="horario-btn active" onclick="seleccionarSubtabVentas('mes')">Tabla Mensual (Lugares)</button>
-          <button type="button" id="subtab-ventas-semana" class="horario-btn" onclick="seleccionarSubtabVentas('semana')">Tabla Semanal</button>
+        <div class="tabs-2">
+          <button type="button" id="subtabVentasBloque" class="tab-btn active">Corte por Días (Mes)</button>
+          <button type="button" id="subtabVentasRanking" class="tab-btn">Acumulado y Faltante del Mes</button>
         </div>
 
         <div class="stats-row-3">
-          <div class="stat">
-            <strong id="totalAceitesMesGeneral" style="color:#facc15;">0</strong>
-            <span>Total Aceites (Mes)</span>
-          </div>
-          <div class="stat">
-            <strong id="totalAceitesSemanaGeneral" style="color:#38bdf8;">0</strong>
-            <span>Total Aceites (Semana)</span>
-          </div>
-          <div class="stat">
-            <strong id="liderMesNombre" style="color:#4ade80;">—</strong>
-            <span>1.er Lugar del Mes</span>
-          </div>
+          <div class="stat"><strong id="totalVentasMes" style="color:#facc15;">0</strong><span>Ventas Global (Mes)</span></div>
+          <div class="stat"><strong id="totalMetaMes" style="color:#38bdf8;">0</strong><span>Meta / Por vender (Mes)</span></div>
+          <div class="stat"><strong id="totalDifMes" style="color:#4ade80;">0</strong><span>Faltan o sobran (Mes)</span></div>
         </div>
       </div>
 
-      <div id="bloqueVentasMes" class="summary-box">
+      <div id="bloqueVentasDias" class="summary-box">
         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
-          <strong>Ranking Mensual de Aceites</strong>
-          <input type="month" id="mesConsultaVentas" style="width:auto; background:var(--card-2); color:var(--text); border:1px solid var(--border); border-radius:9px; padding:6px 10px; font-size:0.84rem;" />
+          <strong>Bloques de 7 días desde el día 1 del mes</strong>
+          <select id="selectBloqueMes" style="width:auto;"></select>
         </div>
-        <div class="meta-small">Ordenado de mayor a menor acumulado en el mes para ver quién va punteando y quién va alcanzando.</div>
-        <div id="listaRankingMensual" style="margin-top:10px;"></div>
-      </div>
-
-      <div id="bloqueVentasSemana" class="summary-box" style="display:none;">
-        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
-          <strong>Tabla Semanal de Aceites (Lun–Dom)</strong>
-          <input type="date" id="fechaSemanaVentas" style="width:auto;" />
-        </div>
-        <div id="rangoSemanaTexto" class="meta-small">Semana actual</div>
-        <div style="overflow-x:auto; margin-top:8px;">
-          <table class="admin-table">
+        <div style="overflow-x:auto;">
+          <table class="data-table">
             <thead>
-              <tr>
-                <th>Compañero</th>
-                <th>Lun</th>
-                <th>Mar</th>
-                <th>Mié</th>
-                <th>Jue</th>
-                <th>Vie</th>
-                <th>Sáb</th>
-                <th>Dom</th>
-                <th>Sem.</th>
-              </tr>
+              <tr id="theadBloqueVentas"></tr>
             </thead>
-            <tbody id="cuerpoTablaSemanalVentas"></tbody>
+            <tbody id="tbodyBloqueVentas"></tbody>
           </table>
         </div>
       </div>
 
+      <div id="bloqueVentasRanking" class="summary-box" style="display:none;">
+        <strong>Acumulado del Mes por Cajero (Ventas vs. Meta)</strong>
+        <div class="meta-small">Positivo = sobran / cumplen · Negativo = faltan</div>
+        <div id="listaRankingMes" style="margin-top:10px;"></div>
+      </div>
+
       <div class="summary-box" style="border-color:#0ea5e9;">
         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
-          <strong>Captura del Administrador (Publicar / Editar por Fecha)</strong>
-          <span id="estadoPermisoVentasAdmin" class="badge badge-pendiente">SOLO ADMINISTRADOR</span>
+          <strong>Captura por Fecha (Administrador)</strong>
+          <input id="fechaCapturaVentas" type="date" style="width:auto;" />
         </div>
-        <p class="meta-small" style="margin-top:6px;">
-          Elige cualquier fecha (hoy o un día pasado que se haya quedado pendiente). Al cambiar la fecha se cargan de inmediato los datos guardados de ese día para poder editarlos sin prisas.
-        </p>
-
-        <div class="campos" style="margin-top:10px;">
-          <label style="font-size:0.82rem; color:#cbd5e1;">
-            Fecha a registrar o editar:
-            <input type="date" id="fechaCapturaVentasAdmin" style="margin-top:4px;" />
-          </label>
-          <label style="font-size:0.82rem; color:#cbd5e1;">
-            Meta variable sugerida del día (ej. 6, o la que toque según el turno):
-            <input type="number" id="metaDiaVentasAdmin" min="0" max="200" value="6" style="margin-top:4px;" />
-          </label>
+        <div class="meta-small">
+          Registra o edita la cantidad vendida y la meta variable (<code>Por vender</code>) de ese día para cada cajero (por ejemplo, 6 si va con chalán o 3 si va solo).
         </div>
-
-        <div id="listaCapturaAceitesAdmin" style="margin-top:10px;"></div>
-
-        <div class="ficha-actions" style="margin-top:12px;">
-          <button type="button" class="success" onclick="guardarCapturaVentasAdmin()">Publicar / Guardar registro del día</button>
-          <button type="button" class="secondary" onclick="abrirAccesoAdminParaVentas()">Desbloquear modo Administrador</button>
+        <div id="listaCapturaVentas" style="margin-top:10px;"></div>
+        <div class="ficha-actions">
+          <button id="btnGuardarVentasDia" type="button" class="success">Guardar registro del día</button>
         </div>
       </div>
     </section>
 
-    <!-- VISTA OCULTA ADMINISTRADOR -->
-    <section id="view-encargada" class="section-view">
-      <div class="summary-box" style="border-color:#38bdf8;">
-        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
-          <strong>Panel Oculto de Administrador — Vista General</strong>
-          <span id="estadoEncargadaPanel" class="badge badge-verde">ADMINISTRADOR ACTIVO</span>
-        </div>
-        <p class="meta-small" style="margin-top:6px;">
-          Vista unificada: revisa en esta misma pantalla quiénes asistieron, quiénes hicieron limpieza, qué fotos subió cada compañero y califica o administra todo.
-        </p>
-        <div class="toolbar">
-          <button type="button" class="secondary" onclick="cambiarVista('tablero')">Volver al Tablero</button>
-          <button type="button" class="danger" onclick="cerrarSesionEncargada()">Salir y ocultar panel Admin</button>
-        </div>
-      </div>
-
-      <div class="summary-box">
-        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
-          <strong>1. Resumen Completo del Día (Asistencias + Limpieza)</strong>
-          <div style="display:flex; gap:6px; flex-wrap:wrap;">
-            <input type="date" id="fechaControlEncargada" style="width:auto;" />
-            <select id="turnoControlEncargada" style="width:auto;">
-              <option value="TODOS">Todos los turnos</option>
-              <option value="Manana">Mañana</option>
-              <option value="Tarde">Tarde</option>
-              <option value="Noche">Noche</option>
-            </select>
-          </div>
-        </div>
-        <div style="overflow-x:auto; margin-top:8px;">
-          <table class="admin-table">
-            <thead>
-              <tr>
-                <th>Compañero</th>
-                <th>Asistencia (Turnos)</th>
-                <th>Limpieza Hoy</th>
-                <th>Fotos</th>
-                <th>Calificación</th>
-              </tr>
-            </thead>
-            <tbody id="tablaResumenTotalAdmin"></tbody>
-          </table>
-        </div>
-        <div id="resumenQuienesTrabajaron" style="margin-top:12px;"></div>
-      </div>
-
-      <div class="summary-box">
-        <strong>2. Evidencias de Limpieza, Calificación y Control de Fotos</strong>
-        <div class="meta-small">Como administrador puedes calificar del 1 al 5, dejar comentarios, quitar fotos mal tomadas o reiniciar una tarjeta si hace falta.</div>
-        <div id="listaCalificacionEncargada" style="margin-top:12px;"></div>
-      </div>
-
-      <div class="summary-box" style="border-color:#0ea5e9;">
-        <strong>3. Contraseña de Administrador y Claves de Tarjetas</strong>
-        <p class="meta-small" style="margin-top:4px;">
-          El administrador controla su propia contraseña y las claves de cada participante para que nadie suba ni borre fotos en tarjetas ajenas.
-        </p>
-
-        <div class="galeria-card" style="margin-top:10px;">
-          <strong style="font-size:0.9rem;">Cambiar contraseña maestra del Administrador</strong>
-          <div class="meta-small">Si aún no la has cambiado, la inicial es <strong>1985</strong>. Cámbiala aquí para que solo tú la tengas.</div>
-          <div class="campos" style="margin-top:8px;">
-            <input type="password" id="nuevoPinAdminInput" maxlength="16" placeholder="Nueva contraseña de Administrador (mín. 4 caracteres)" />
-            <input type="password" id="confirmarPinAdminInput" maxlength="16" placeholder="Confirmar nueva contraseña de Administrador" />
-            <button type="button" class="success" onclick="cambiarContrasenaAdmin()">Guardar nueva contraseña de Administrador</button>
-          </div>
-        </div>
-
-        <div class="galeria-card" style="margin-top:10px;">
-          <strong style="font-size:0.9rem;">Claves individuales de las 6 tarjetas (Protección de fotos)</strong>
-          <div class="meta-small">
-            Cada participante usa su clave para subir o quitar fotos <strong>solo en su propia tarjeta</strong>.
-          </div>
-          <div id="listaClavesParticipantesAdmin" class="campos" style="margin-top:10px;"></div>
-          <div class="ficha-actions">
-            <button type="button" class="success" onclick="guardarClavesParticipantesAdmin()">Guardar claves de participantes</button>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- VISTA QUEJAS Y REPORTES -->
+    <!-- 4. QUEJAS Y REPORTES -->
     <section id="view-quejas" class="section-view">
       <div class="summary-box">
-        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
-          <strong>Quejas y Reportes — Limpieza, Equipo Dañado o Estado de la Estación</strong>
-          <span class="badge badge-pendiente">SUBIR ARCHIVOS + HORA</span>
-        </div>
-        <p class="meta-small" style="margin-top:6px;">
-          Reporta a quien no haya hecho su limpieza, alguna cosa dañada o mal estado en la estación. Al subir los archivos se estampa la fecha y hora de subida y se detectan fotos repetidas.
-        </p>
-
-        <div class="campos" style="margin-top:10px;">
-          <label style="font-size:0.82rem; color:#cbd5e1;">
-            Tipo de reporte:
-            <select id="quejaTipo" style="margin-top:4px;">
-              <option value="limpieza">Falta de limpieza / No hizo su limpieza</option>
-              <option value="dano">Cosa dañada / Falla de equipo</option>
-              <option value="estado">Mal estado general de la estación</option>
-            </select>
-          </label>
-
-          <label style="font-size:0.82rem; color:#cbd5e1;">
-            Compañero involucrado (si aplica):
-            <select id="quejaPersona" style="margin-top:4px;">
-              <option value="No aplica / General">No aplica / General</option>
-              <option value="Ana">Ana</option>
-              <option value="Julio">Julio</option>
-              <option value="Alma">Alma</option>
-              <option value="Fátima">Fátima</option>
-              <option value="Xochitl">Xochitl</option>
-              <option value="Karla">Karla</option>
-            </select>
-          </label>
-
-          <label style="font-size:0.82rem; color:#cbd5e1;">
-            Área o lugar:
-            <input type="text" id="quejaArea" placeholder="Ej. Isla A, Bocatoma diésel, Cuarto eléctrico, Baños..." style="margin-top:4px;" />
-          </label>
-
-          <label style="font-size:0.82rem; color:#cbd5e1;">
-            Descripción del reporte / queja:
-            <textarea id="quejaDescripcion" rows="3" placeholder="Explica qué pasó, qué está dañado o quién no cumplió con su limpieza..." style="margin-top:4px;"></textarea>
-          </label>
-
-          <div class="ficha-actions">
-            <button type="button" class="secondary" onclick="subirArchivoQueja()">Subir archivos de foto (con fecha y hora)</button>
-            <button type="button" class="ghost-toggle" onclick="limpiarFotosQuejaTemp()">Quitar fotos</button>
-          </div>
-          <div id="contadorFotosQueja" class="status-note">Fotos de queja subidas: 0 / 10</div>
-          <div id="previewFotosQueja" class="thumbs-grid"></div>
-
-          <div class="ficha-actions" style="margin-top:10px;">
-            <button type="button" class="danger" onclick="publicarQuejaReporte()">Publicar queja / reporte</button>
-          </div>
+        <strong>Quejas y Reportes</strong>
+        <div class="campos">
+          <select id="quejaTipo">
+            <option value="limpieza">Falta de limpieza</option>
+            <option value="dano">Cosa dañada / Falla de equipo</option>
+            <option value="estado">Mal estado general</option>
+          </select>
+          <select id="quejaPersona">
+            <option value="General">General / No aplica</option>
+            <option value="Ana">Ana</option>
+            <option value="Julio">Julio</option>
+            <option value="Alma">Alma</option>
+            <option value="Fátima">Fátima</option>
+            <option value="Xochitl">Xochitl</option>
+            <option value="Karla">Karla</option>
+          </select>
+          <input id="quejaArea" type="text" placeholder="Área o lugar (ej. Isla A, Bocatomas diésel...)" />
+          <textarea id="quejaDesc" rows="3" placeholder="Describe qué ocurrió..."></textarea>
+          <input id="quejaFotosInput" type="file" accept="image/*" multiple />
+          <div id="quejaPreview" class="thumbs-grid"></div>
+          <button id="btnPublicarQueja" type="button" class="danger">Publicar reporte</button>
         </div>
       </div>
 
       <div class="summary-box">
-        <strong>Historial de quejas y reportes registrados</strong>
-        <div class="filtro-quejas-bar">
-          <button type="button" id="filtro-queja-todas" class="filtro-queja-btn active" onclick="seleccionarFiltroQueja('todas')">Todas</button>
-          <button type="button" id="filtro-queja-limpieza" class="filtro-queja-btn" onclick="seleccionarFiltroQueja('limpieza')">Falta de limpieza</button>
-          <button type="button" id="filtro-queja-dano" class="filtro-queja-btn" onclick="seleccionarFiltroQueja('dano')">Cosa dañada / Falla</button>
-          <button type="button" id="filtro-queja-estado" class="filtro-queja-btn" onclick="seleccionarFiltroQueja('estado')">Mal estado</button>
-        </div>
-        <div id="listaQuejasReportes" style="margin-top:10px;"></div>
+        <strong>Historial de reportes</strong>
+        <div id="listaQuejas" style="margin-top:8px;"></div>
       </div>
     </section>
 
-    <!-- VISTA AYUDA -->
+    <!-- 5. AYUDA -->
     <section id="view-ayuda" class="section-view">
       <div class="summary-box">
-        <strong>Centro de Ayuda — Cómo usar la aplicación paso a paso</strong>
-        <p class="meta-small" style="margin-top:6px;">
-          Guía rápida para usar el pase de lista, subir archivos de limpieza, consultar ventas de aceites y revisar las reglas desde el teléfono.
-        </p>
-      </div>
-
-      <div class="rol-card">
-        <h3>1. Abrir o instalar la app en tu teléfono</h3>
-        <p style="margin:6px 0; color:#cbd5e1;">
-          • Abre el enlace que te compartieron en el navegador de tu teléfono.<br/>
-          • Para tenerla como ícono en tu pantalla: apachurra los <strong>tres puntitos</strong> del navegador y toca <strong>Agregar a pantalla principal</strong> o <strong>Instalar aplicación</strong>.
-        </p>
-      </div>
-
-      <div class="rol-card">
-        <h3>2. Pase de Lista diario (Mañana, Tarde y Noche)</h3>
-        <p style="margin:6px 0; color:#cbd5e1;">
-          • Abajo en la barra, apachurra <strong>Pase de Lista</strong>.<br/>
-          • Arriba elige la <strong>fecha</strong> y apachurra tu horario: <strong>Mañana</strong>, <strong>Tarde</strong> o <strong>Noche</strong>.<br/>
-          • Busca tu ficha y apachurra <strong>Entrada</strong> para subir tu archivo con fecha y hora de subida.<br/>
-          • Al terminar tu turno, apachurra <strong>Salida</strong> para registrar tu salida.<br/>
-          • Si hoy descansaste, apachurra <strong>Descanso</strong>.
-        </p>
-      </div>
-
-      <div class="rol-card">
-        <h3>3. Limpieza y Mantenimiento (Miércoles y Domingos)</h3>
-        <p style="margin:6px 0; color:#cbd5e1;">
-          • Abajo en la barra, apachurra <strong>Limpieza (6)</strong>.<br/>
-          • Cada tarjeta está protegida con clave para que <strong>nadie pueda subir o borrar fotos de otra persona</strong>.<br/>
-          • Si <strong>sí</strong> te toca: elige tu turno e isla, apachurra <strong>Subir / Editar fotos</strong>, escribe tu clave y sube tus archivos (se estampa fecha/hora y se avisa si repites fotos).
-        </p>
-      </div>
-
-      <div class="rol-card">
-        <h3>4. Ventas (Aceites) y Regla General</h3>
-        <p style="margin:6px 0; color:#cbd5e1;">
-          • En <strong>Ventas</strong> puedes ver el ranking mensual por lugares y la tabla semanal con descansos.<br/>
-          • <strong>Regla general:</strong> cada turno debe entregar su área limpia y ordenada al terminar labores (islas, bombas, pasillos, jardineras y áreas perimetrales).
-        </p>
+        <strong>Guía rápida de uso</strong>
+        <div class="meta-small" style="line-height:1.5; margin-top:8px;">
+          • <strong>Limpieza:</strong> Se muestra en automático miércoles y domingos para los 4 cajeros de Mañana (2) y Tarde (2). Noche y Descanso no participan ni cuentan en rojo.<br/>
+          • <strong>Pase de lista:</strong> Al tocar <em>Entrada</em> con foto, detecta automáticamente el turno con ±1 hora de tolerancia. Al iniciar el nuevo ciclo de medianoche, el turno de Noche queda cubierto como asistencia. <em>Cerrar horario</em> es exclusivo del Administrador.<br/>
+          • <strong>Ventas:</strong> Los bloques inician el día 1 de cada mes y avanzan cada 7 días dentro del mismo mes. Calcula automáticamente <em>Ventas Global</em> y <em>Faltan o sobran</em> según la meta capturada.
+        </div>
       </div>
     </section>
   </main>
 
-  <!-- MODAL REVISIÓN INMEDIATA DE FOTO (ENTRADA / SALIDA) -->
-  <div id="modalRevisionFoto" class="modal-backdrop">
-    <div class="modal-box">
-      <h3 id="revisionTitulo" style="margin-top:0;">Revisar archivo subido</h3>
-      <p id="revisionSubtitulo" style="font-size:0.84rem; color:#cbd5e1; margin-top:4px;">
-        Si se ve clara y bien la fecha/hora estampada, pulsa <strong>Aceptar foto</strong> (una vez aceptada ya no se puede corregir). Si no, pulsa <strong>Elegir otro archivo</strong>.
-      </p>
-      <div id="revisionAvisoRepetida" class="meta-small" style="color:#fbbf24; font-weight:700;"></div>
-      <div style="margin-top:10px;">
-        <img id="revisionImg" src="" alt="Vista previa de archivo" style="width:100%; max-height:260px; object-fit:contain; border-radius:12px; border:1px solid var(--border); background:#0b1220;" />
-      </div>
-      <div class="ficha-actions" style="margin-top:14px;">
-        <button type="button" class="success" id="btnAceptarFotoRevision">Aceptar foto</button>
-        <button type="button" class="danger" id="btnTomarOtraFotoRevision">Elegir otro archivo</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- MODAL ACCESO OCULTO ADMINISTRADOR -->
-  <div id="modalPinEncargada" class="modal-backdrop">
-    <div class="modal-box">
-      <h3 style="margin-top:0;">Acceso Oculto — Administrador</h3>
-      <p style="font-size:0.84rem; color:#cbd5e1; margin-top:4px;">
-        Ingresa la contraseña del Administrador para entrar al panel escondido o publicar registros de ventas.
-      </p>
-      <div class="campos">
-        <label style="font-size:0.82rem; color:#cbd5e1;">
-          Contraseña de Administrador:
-          <input type="password" id="inputPinEncargada" maxlength="16" placeholder="Escribe la contraseña" style="margin-top:6px;" />
-        </label>
-        <div id="errorPinEncargada" class="meta-small" style="color:#f87171;"></div>
-      </div>
-      <div class="ficha-actions" style="margin-top:14px;">
-        <button type="button" class="success" onclick="validarPinEncargada()">Entrar como Administrador</button>
-        <button type="button" class="secondary" onclick="cerrarModalPinEncargada()">Cancelar</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- MODAL CLAVE DE TARJETA DE PARTICIPANTE -->
-  <div id="modalClaveTarjeta" class="modal-backdrop">
-    <div class="modal-box">
-      <h3 id="tituloClaveTarjeta" style="margin-top:0;">Tarjeta protegida</h3>
-      <p id="subtituloClaveTarjeta" style="font-size:0.84rem; color:#cbd5e1; margin-top:4px;">
-        Ingresa la clave de esta tarjeta (o la contraseña de Administrador) para subir o quitar fotos.
-      </p>
-      <div class="campos">
-        <label style="font-size:0.82rem; color:#cbd5e1;">
-          Clave de acceso:
-          <input type="password" id="inputClaveTarjeta" maxlength="16" placeholder="Escribe tu clave" style="margin-top:6px;" />
-        </label>
-        <div id="errorClaveTarjeta" class="meta-small" style="color:#f87171;"></div>
-      </div>
-      <div class="ficha-actions" style="margin-top:14px;">
-        <button type="button" class="success" onclick="validarClaveTarjeta()">Desbloquear tarjeta</button>
-        <button type="button" class="secondary" onclick="cerrarModalClaveTarjeta()">Cancelar</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- MODAL SUBIR EVIDENCIA -->
-  <div id="modalEvidencia" class="modal-backdrop">
-    <div class="modal-box">
-      <h3 id="modalTitulo" style="margin-top:0;">Subir evidencia</h3>
-      <div class="campos">
-        <label style="font-size:0.82rem; color:#cbd5e1;">
-          Turno e Isla:
-          <select id="selectTurnoIslaModal" style="margin-top:4px;" onchange="cambiarTurnoIslaModal()">
-            <option value="matutino_a">Turno matutino isla A</option>
-            <option value="matutino_b">Turno matutino isla B</option>
-            <option value="vespertino_a">Turno vespertino isla A</option>
-            <option value="vespertino_b">Turno vespertino isla B</option>
-          </select>
-        </label>
-
-        <div class="meta-small" style="color:#bae6fd;">
-          Selecciona uno o varios archivos de foto desde tu teléfono. Cada foto se estampa con la <strong>fecha y hora de subida</strong> y se revisa para no repetir fotos ya usadas.
-        </div>
-
-        <div id="checklistPuntosModal" class="checklist-box"></div>
-
-        <div id="contadorFotosModal" class="status-note">Fotos subidas: 0</div>
-        <div id="avisoLimiteModal" class="meta-small" style="color:#fbbf24;"></div>
-        <div id="previewGridModal" class="thumbs-grid"></div>
-
-        <div class="ficha-actions" style="margin-top:6px;">
-          <button type="button" class="secondary" style="padding:6px 10px; font-size:0.78rem;" onclick="limpiarFotosModal()">Quitar todas las fotos de esta tarjeta</button>
-        </div>
-        <label style="font-size:0.82rem; color:#cbd5e1;">
-          Comentario rápido (opcional):
-          <input type="text" id="inputNota" placeholder="Ej. Área limpia y sin residuos" style="margin-top:6px;" />
-        </label>
-      </div>
-      <div class="ficha-actions" style="margin-top:14px;">
-        <button class="success" onclick="guardarEvidencia()">Guardar y poner en verde</button>
-        <button class="secondary" onclick="cerrarModal()">Cancelar</button>
-      </div>
-    </div>
-  </div>
-
   <nav class="bottom-nav">
-    <button id="nav-tablero" class="nav-btn active" onclick="cambiarVista('tablero')">Limpieza</button>
-    <button id="nav-asistencia" class="nav-btn" onclick="cambiarVista('asistencia')">Lista</button>
-    <button id="nav-ventas" class="nav-btn" onclick="cambiarVista('ventas')">Ventas</button>
-    <button id="nav-quejas" class="nav-btn" onclick="cambiarVista('quejas')">Quejas</button>
-    <button id="nav-ayuda" class="nav-btn" onclick="cambiarVista('ayuda')">Ayuda</button>
+    <button id="nav-limpieza" type="button" class="nav-btn">Limpieza</button>
+    <button id="nav-lista" type="button" class="nav-btn active">Lista</button>
+    <button id="nav-ventas" type="button" class="nav-btn">Ventas</button>
+    <button id="nav-quejas" type="button" class="nav-btn">Quejas</button>
+    <button id="nav-ayuda" type="button" class="nav-btn">Ayuda</button>
   </nav>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+  <!-- MODAL SUBIR FOTO LIMPIEZA / PASE DE LISTA -->
+  <div id="modalFoto" class="modal-backdrop">
+    <div class="modal-box">
+      <h3 id="modalFotoTitulo" style="margin-top:0;">Subir evidencia</h3>
+      <div id="modalFotoSub" class="meta-small">Selecciona una foto desde tu teléfono. Se estampará la fecha y hora actual.</div>
+      <div class="campos">
+        <input id="inputFotoArchivo" type="file" accept="image/*" />
+        <img id="previewFotoModal" src="" alt="" style="display:none; width:100%; max-height:220px; object-fit:contain; border-radius:10px; border:1px solid var(--border); background:#0b1220;" />
+        <input id="inputNotaModal" type="text" placeholder="Nota opcional..." />
+      </div>
+      <div class="ficha-actions" style="margin-top:14px;">
+        <button id="btnConfirmarFoto" type="button" class="success">Aceptar y guardar</button>
+        <button id="btnCancelarFoto" type="button" class="secondary">Cancelar</button>
+      </div>
+    </div>
+  </div>
 
-    const CHECKLIST_POR_TURNO_ISLA = {
-      matutino_a: {
-        titulo: "Turno matutino isla A",
-        items: [
-          { id: "boc_1", nombre: "Bocatoma 1", maxFotos: 3 },
-          { id: "boc_2", nombre: "Bocatoma 2", maxFotos: 3 },
-          { id: "boc_3", nombre: "Bocatoma 3", maxFotos: 3 },
-          { id: "boc_desc", nombre: "Bocatoma descarga", maxFotos: 3 },
-          { id: "moto_ab", nombre: "Motobomba abierta", maxFotos: 3 },
-          { id: "moto_cer", nombre: "Moto bomba cerrada", maxFotos: 3 },
-          { id: "pozo_1", nombre: "Pozo 1", maxFotos: 3 },
-          { id: "pozo_2", nombre: "Pozo 2", maxFotos: 3 },
-          { id: "pozo_3", nombre: "Pozo 3", maxFotos: 3 },
-          { id: "cuarto_basura", nombre: "Cuarto de basura", maxFotos: 5 },
-          { id: "aceitera_disp", nombre: "Aceitera , dispensador, y más", maxFotos: 10 }
-        ]
-      },
-      matutino_b: {
-        titulo: "Turno matutino isla B",
-        items: [
-          { id: "boc_1", nombre: "Bocatoma 1", maxFotos: 3 },
-          { id: "boc_2", nombre: "Bocatoma 2", maxFotos: 3 },
-          { id: "boc_3", nombre: "Bocatoma 3", maxFotos: 3 },
-          { id: "boc_4", nombre: "Bocatoma 4", maxFotos: 3 },
-          { id: "boc_desc", nombre: "Bocatoma descarga", maxFotos: 3 },
-          { id: "moto_ab", nombre: "Motobomba abierta", maxFotos: 3 },
-          { id: "moto_cer", nombre: "Moto bomba cerrada", maxFotos: 3 },
-          { id: "pozo_1", nombre: "Pozo 1", maxFotos: 3 },
-          { id: "pozo_2", nombre: "Pozo 2", maxFotos: 3 },
-          { id: "pozo_3", nombre: "Pozo 3", maxFotos: 3 },
-          { id: "aceitera_disp", nombre: "Aceitera , dispensador, y más", maxFotos: 10 }
-        ]
-      },
-      vespertino_a: {
-        titulo: "Turno vespertino isla A",
-        items: [
-          { id: "boc_1", nombre: "Bocatoma 1", maxFotos: 3 },
-          { id: "boc_2", nombre: "Bocatoma 2", maxFotos: 3 },
-          { id: "boc_3", nombre: "Bocatoma 3", maxFotos: 3 },
-          { id: "boc_4", nombre: "Bocatoma 4", maxFotos: 3 },
-          { id: "boc_desc", nombre: "Bocatoma descarga", maxFotos: 3 },
-          { id: "moto_ab", nombre: "Motobomba abierta", maxFotos: 3 },
-          { id: "moto_cer", nombre: "Moto bomba cerrada", maxFotos: 3 },
-          { id: "cuarto_elec", nombre: "Cuarto eléctrico", maxFotos: 5 },
-          { id: "aceitera_disp", nombre: "Aceitera , dispensador, y más", maxFotos: 10 }
-        ]
-      },
-      vespertino_b: {
-        titulo: "Turno vespertino isla B",
-        items: [
-          { id: "pozo_1", nombre: "Pozo 1", maxFotos: 3 },
-          { id: "pozo_2", nombre: "Pozo 2", maxFotos: 3 },
-          { id: "pozo_3", nombre: "Pozo 3", maxFotos: 3 },
-          { id: "pozo_4", nombre: "Pozo 4", maxFotos: 3 },
-          { id: "pozo_5", nombre: "Pozo 5", maxFotos: 3 },
-          { id: "pozo_6", nombre: "Pozo 6", maxFotos: 3 },
-          { id: "cuarto_comp", nombre: "Cuarto compresora", maxFotos: 5 },
-          { id: "aceitera_disp", nombre: "Aceitera , dispensador, y más", maxFotos: 10 }
-        ]
-      }
-    };
+  <!-- MODAL ADMIN -->
+  <div id="modalAdmin" class="modal-backdrop">
+    <div class="modal-box">
+      <h3 style="margin-top:0;">Acceso Administrador</h3>
+      <div class="meta-small">Ingresa la clave de administrador para habilitar acciones administrativas.</div>
+      <div class="campos">
+        <input id="inputClaveAdmin" type="password" placeholder="Contraseña de administrador" />
+        <div id="errorClaveAdmin" class="meta-small" style="color:#f87171;"></div>
+      </div>
+      <div class="ficha-actions" style="margin-top:14px;">
+        <button id="btnEntrarAdmin" type="button" class="success">Entrar</button>
+        <button id="btnCerrarModalAdmin" type="button" class="secondary">Cancelar</button>
+      </div>
+    </div>
+  </div>
 
-    const PUNTO_CAPTURA_TEMP_KEY = "faro_santander_punto_captura_temp";
-    const REVISION_PENDIENTE_KEY = "faro_santander_revision_pendiente_v1";
-    let puntoCapturaEvidencia = null;
-    let fotosQuejaTemporales = [];
-    let inputActivoArchivo = null;
+  <script>
+    // Configura aquí tu URL de Firebase Realtime Database si deseas sincronización en la nube, ej.:
+    // const FIREBASE_DB_URL = "https://tu-proyecto-default-rtdb.firebaseio.com/faro_santander";
+    const FIREBASE_DB_URL = "";
 
-    function guardarPuntoCapturaRespaldo(obj) {
-      puntoCapturaEvidencia = obj;
-      window.__puntoCapturaFaro = obj;
-      try {
-        if (obj) sessionStorage.setItem(PUNTO_CAPTURA_TEMP_KEY, JSON.stringify(obj));
-        else sessionStorage.removeItem(PUNTO_CAPTURA_TEMP_KEY);
-      } catch {}
-    }
-
-    function obtenerPuntoCapturaRespaldo() {
-      if (puntoCapturaEvidencia) return puntoCapturaEvidencia;
-      if (window.__puntoCapturaFaro) return window.__puntoCapturaFaro;
-      try {
-        const raw = sessionStorage.getItem(PUNTO_CAPTURA_TEMP_KEY);
-        if (raw) {
-          puntoCapturaEvidencia = JSON.parse(raw);
-          return puntoCapturaEvidencia;
-        }
-      } catch {}
-      return null;
-    }
-
-    function guardarRevisionPendiente(datos) {
-      try {
-        if (datos) {
-          sessionStorage.setItem(REVISION_PENDIENTE_KEY, JSON.stringify(datos));
-        } else {
-          sessionStorage.removeItem(REVISION_PENDIENTE_KEY);
-        }
-      } catch {}
-    }
-
-    function obtenerRevisionPendiente() {
-      try {
-        const raw = sessionStorage.getItem(REVISION_PENDIENTE_KEY);
-        return raw ? JSON.parse(raw) : null;
-      } catch {
-        return null;
-      }
-    }
-
-    function obtenerFechaHoraEstampada() {
-      return "Subida: " + new Date().toLocaleString("es-MX", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit"
-      });
-    }
-
-    async function calcularHuellaArchivo(file) {
-      try {
-        const buffer = await file.arrayBuffer();
-        const bytes = new Uint8Array(buffer);
-        let h1 = 0x811c9dc5;
-        let h2 = 0x01000193;
-        const step = Math.max(1, Math.floor(bytes.length / 4096));
-        for (let i = 0; i < bytes.length; i += step) {
-          h1 ^= bytes[i];
-          h1 = Math.imul(h1, 0x01000193);
-          h2 = (Math.imul(h2, 31) + bytes[i]) >>> 0;
-        }
-        return `${bytes.length}_${h1.toString(16)}_${h2.toString(16)}`;
-      } catch {
-        return `${file.name || "img"}_${file.size || 0}_${file.lastModified || 0}`;
-      }
-    }
-
-    function esHuellaRepetida(huella, excluyendoHuellasActuales = new Set()) {
-      if (!huella) return false;
-      if (excluyendoHuellasActuales.has(huella)) return true;
-      const usadas = Array.isArray(db.fotosUsadasHashes) ? db.fotosUsadasHashes : [];
-      return usadas.includes(huella);
-    }
-
-    function registrarHuellasUsadas(huellasArr) {
-      if (!Array.isArray(huellasArr) || !huellasArr.length) return;
-      if (!Array.isArray(db.fotosUsadasHashes)) db.fotosUsadasHashes = [];
-      huellasArr.forEach((h) => {
-        if (h && !db.fotosUsadasHashes.includes(h)) {
-          db.fotosUsadasHashes.push(h);
-        }
-      });
-      if (db.fotosUsadasHashes.length > 1500) {
-        db.fotosUsadasHashes = db.fotosUsadasHashes.slice(-1500);
-      }
-    }
-
-    async function cargarOrigenImagen(file) {
-      const mimeType = file.type || "image/jpeg";
-      let blobUrl = "";
-      try {
-        const buffer = await file.arrayBuffer();
-        const blob = new Blob([buffer], { type: mimeType });
-        blobUrl = URL.createObjectURL(blob);
-      } catch {
-        blobUrl = URL.createObjectURL(file);
-      }
-
-      if (typeof createImageBitmap === "function") {
-        try {
-          const resp = await fetch(blobUrl);
-          const freshBlob = await resp.blob();
-          const bitmap = await createImageBitmap(freshBlob);
-          return {
-            source: bitmap,
-            width: bitmap.width,
-            height: bitmap.height,
-            cleanup: () => {
-              try { bitmap.close(); } catch {}
-              try { URL.revokeObjectURL(blobUrl); } catch {}
-            }
-          };
-        } catch {}
-      }
-
-      return new Promise((resolve, reject) => {
-        const img = new Image();
-        img.onload = function () {
-          resolve({
-            source: img,
-            width: img.naturalWidth || img.width,
-            height: img.naturalHeight || img.height,
-            cleanup: () => {
-              try { URL.revokeObjectURL(blobUrl); } catch {}
-            }
-          });
-        };
-        img.onerror = function (err) {
-          try { URL.revokeObjectURL(blobUrl); } catch {}
-          reject(err);
-        };
-        img.src = blobUrl;
-      });
-    }
-
-    async function capturarYEstamparFotoAsync(file, etiquetaArriba, fechaHoraStr, maxWidth = 560, quality = 0.48) {
-      try {
-        const { source, width, height, cleanup } = await cargarOrigenImagen(file);
-        const renderConTamano = (wMax, q) => {
-          const scale = Math.min(1, wMax / Math.max(1, width));
-          const canvas = document.createElement("canvas");
-          canvas.width = Math.max(1, Math.round(width * scale));
-          canvas.height = Math.max(1, Math.round(height * scale));
-          const ctx = canvas.getContext("2d");
-          ctx.drawImage(source, 0, 0, canvas.width, canvas.height);
-
-          const barHeight = Math.max(36, Math.round(canvas.height * 0.085));
-          ctx.fillStyle = "rgba(11, 18, 32, 0.82)";
-          ctx.fillRect(0, canvas.height - barHeight, canvas.width, barHeight);
-
-          const fontSize = Math.max(11, Math.round(barHeight * 0.34));
-          ctx.font = `bold ${fontSize}px system-ui, -apple-system, sans-serif`;
-          ctx.fillStyle = "#f8fafc";
-          ctx.textBaseline = "middle";
-
-          const textoLinea1 = `${fechaHoraStr}`;
-          const textoLinea2 = etiquetaArriba ? `${etiquetaArriba}` : "Faro Santander";
-
-          if (barHeight >= 48) {
-            ctx.fillText(textoLinea2, 10, canvas.height - barHeight * 0.68);
-            ctx.fillStyle = "#7dd3fc";
-            ctx.fillText(textoLinea1, 10, canvas.height - barHeight * 0.28);
-          } else {
-            ctx.fillText(`${textoLinea2} · ${textoLinea1}`, 8, canvas.height - barHeight * 0.5);
-          }
-
-          return canvas.toDataURL("image/jpeg", q);
-        };
-
-        let out = renderConTamano(maxWidth, quality);
-        if (out.length > 75000) {
-          out = renderConTamano(420, 0.38);
-        }
-        cleanup();
-        return out;
-      } catch (err) {
-        console.error("Error procesando imagen:", err);
-        return "";
-      }
-    }
-
-    function dispararSelectorArchivos(onArchivosListos, onCancelar, multiple = true) {
-      try {
-        if (inputActivoArchivo && inputActivoArchivo.parentNode) {
-          inputActivoArchivo.parentNode.removeChild(inputActivoArchivo);
-        }
-      } catch {}
-
-      const freshInput = document.createElement("input");
-      freshInput.type = "file";
-      freshInput.accept = "image/*";
-      if (multiple) {
-        freshInput.multiple = true;
-      }
-      freshInput.style.position = "fixed";
-      freshInput.style.left = "-9999px";
-      freshInput.style.opacity = "0";
-      document.body.appendChild(freshInput);
-      inputActivoArchivo = freshInput;
-
-      let resuelto = false;
-
-      const limpiar = () => {
-        try {
-          if (freshInput && freshInput.parentNode) {
-            freshInput.parentNode.removeChild(freshInput);
-          }
-        } catch {}
-        if (inputActivoArchivo === freshInput) {
-          inputActivoArchivo = null;
-        }
-      };
-
-      const manejarSeleccion = async () => {
-        if (resuelto) return;
-        const files = freshInput.files ? Array.from(freshInput.files) : [];
-        if (!files.length) return;
-        resuelto = true;
-        limpiar();
-        if (typeof onArchivosListos === "function") {
-          await onArchivosListos(files);
-        }
-      };
-
-      freshInput.addEventListener("change", manejarSeleccion, { once: true });
-      freshInput.addEventListener("input", manejarSeleccion, { once: true });
-
-      const onFocusRegreso = () => {
-        setTimeout(async () => {
-          if (resuelto) return;
-          const files = freshInput.files ? Array.from(freshInput.files) : [];
-          if (files.length) {
-            await manejarSeleccion();
-          } else {
-            resuelto = true;
-            limpiar();
-            if (typeof onCancelar === "function") onCancelar();
-          }
-        }, 450);
-      };
-      window.addEventListener("focus", onFocusRegreso, { once: true });
-
-      freshInput.click();
-    }
-
-    const MAX_FOTOS = 15;
-    const HORARIOS = ["Manana", "Tarde", "Noche"];
-    const ETIQUETAS_HORARIO = {
-      Manana: "Mañana",
-      Tarde: "Tarde",
-      Noche: "Noche"
-    };
-
-    const AREAS = [
+    const CAJEROS = ["Ana", "Julio", "Alma", "Fátima", "Xochitl", "Karla"];
+    const AREAS_LIMPIEZA = [
       "Isla A y bocatomas rojas",
-      "Cuarto de basura",
       "Isla B y bocatomas verdes",
       "Bocatomas de diésel",
       "Cuarto eléctrico",
-      "Pozos de registro y cuarto de la compresora"
+      "Pozos de registro y cuarto de la compresora",
+      "Cuarto de basura"
     ];
 
-    const INTEGRANTES_INICIALES = ["Ana", "Julio", "Alma", "Fátima", "Xochitl", "Karla"];
-    const CLAVES_DEFAULT_PARTICIPANTES = {
-      "Ana": "1111",
-      "Julio": "2222",
-      "Alma": "3333",
-      "Fátima": "4444",
-      "Xochitl": "5555",
-      "Karla": "6666"
-    };
-    const PIN_ADMIN_DEFAULT = "1985";
-    const STORAGE_KEY = "faro_santander_limpieza_v31";
-    const ULTIMA_FECHA_KEY = "faro_santander_ultima_fecha_v31";
+    const STORAGE_KEY = "faro_santander_app_v2";
+    const ADMIN_PASS_DEFAULT = "1985";
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyA5lNh2hQkKcIXRzCXSKLhYJxf1vpmYH1w",
-      authDomain: "farosantader.firebaseapp.com",
-      databaseURL: "https://farosantader-default-rtdb.firebaseio.com",
-      projectId: "farosantader",
-      storageBucket: "farosantader.firebasestorage.app",
-      messagingSenderId: "221387101764",
-      appId: "1:221387101764:web:2ae6a090085333a3fd0e11",
-      measurementId: "G-6P7XT3GMHR"
-    };
-
-    const firebaseConfigurado =
-      Boolean(firebaseConfig.apiKey) &&
-      !firebaseConfig.apiKey.startsWith("TU_") &&
-      Boolean(firebaseConfig.databaseURL) &&
-      !firebaseConfig.databaseURL.includes("TU_PROYECTO");
-
-    let rutaNube = null;
-    const syncStatusEl = document.getElementById("syncStatus");
-
-    if (firebaseConfigurado) {
-      try {
-        const app = initializeApp(firebaseConfig);
-        const dbCloud = getDatabase(app);
-        rutaNube = ref(dbCloud, "faroSantander/limpiezaJornada");
-        syncStatusEl.textContent = "Nube y respaldo local activos";
-      } catch (err) {
-        console.error("Error iniciando Firebase:", err);
-        syncStatusEl.textContent = "Respaldo guardado en el teléfono";
-      }
+    function hoyISO() {
+      const d = new Date();
+      const off = d.getTimezoneOffset();
+      const local = new Date(d.getTime() - off * 60000);
+      return local.toISOString().slice(0, 10);
     }
 
-    function obtenerFechaHoyISO() {
-      const now = new Date();
-      const offsetMs = now.getTimezoneOffset() * 60000;
-      return new Date(now.getTime() - offsetMs).toISOString().slice(0, 10);
+    function ahoraLegible() {
+      return new Date().toLocaleString("es-MX", { hour12: true });
     }
 
-    function crearDiaPaseListaVacio() {
-      const dia = {};
-      HORARIOS.forEach((h) => {
-        dia[h] = {};
-        INTEGRANTES_INICIALES.forEach((nombre) => {
-          dia[h][nombre] = {
-            estado: "sin_marcar",
-            nota: "",
-            actualizado: "",
-            fotoBiometrico: "",
-            horaBiometrico: "",
-            huellaEntrada: "",
-            entradaTomada: false,
-            entradaAceptada: false,
-            fotoSalida: "",
-            horaSalida: "",
-            huellaSalida: "",
-            salidaTomada: false,
-            salidaAceptada: false,
-            cerradoAuto: false,
-            obsFoto: ""
-          };
-        });
-      });
-      return dia;
+    function esDiaLimpieza(isoDate) {
+      const [y, m, d] = isoDate.split("-").map(Number);
+      const day = new Date(y, m - 1, d).getDay(); // 0 = Domingo, 3 = Miércoles
+      return day === 0 || day === 3;
     }
 
-    function crearDiaVentasVacio(metaDia = 6) {
-      const personas = {};
-      INTEGRANTES_INICIALES.forEach((nombre) => {
-        personas[nombre] = {
-          cantidad: 0,
-          descanso: false
-        };
-      });
-      return {
-        metaDia: Number.isFinite(Number(metaDia)) ? Number(metaDia) : 6,
-        personas,
-        actualizado: ""
-      };
-    }
-
-    function normalizarDatos(rawObj) {
-      const base = estadoInicial();
-      if (!rawObj || typeof rawObj !== "object") return base;
-
-      const extraerFotos = (val, fotoUnica) => {
-        if (Array.isArray(val)) return val.filter(Boolean).slice(0, MAX_FOTOS);
-        if (val && typeof val === "object") return Object.values(val).filter(Boolean).slice(0, MAX_FOTOS);
-        if (fotoUnica) return [fotoUnica];
-        return [];
-      };
-
-      const origenFichas = Array.isArray(rawObj.fichas)
-        ? rawObj.fichas
-        : (rawObj.fichas && typeof rawObj.fichas === "object" ? Object.values(rawObj.fichas) : []);
-
-      const fichasNormalizadas = origenFichas.length === 6
-        ? origenFichas.map((f, idx) => ({
-            id: typeof f.id === "number" ? f.id : idx,
-            nombre: f.nombre || INTEGRANTES_INICIALES[idx],
-            noParticipa: Boolean(f.noParticipa),
-            estado: f.estado || (f.noParticipa ? "descanso" : "pendiente"),
-            turno: f.turno || (idx < 3 ? "Matutino" : "Vespertino"),
-            turnoIslaKey: f.turnoIslaKey || (f.turno === "Vespertino" ? "vespertino_a" : "matutino_a"),
-            area: f.area || AREAS[idx % AREAS.length],
-            nota: f.nota || "",
-            fotos: extraerFotos(f.fotos, f.foto),
-            fotosDetalle: Array.isArray(f.fotosDetalle) ? f.fotosDetalle : [],
-            horaSubida: f.horaSubida || "",
-            calificacionEncargada: typeof f.calificacionEncargada === "number" ? f.calificacionEncargada : (Number(f.calificacionEncargada) || 0),
-            comentarioEncargada: f.comentarioEncargada || "",
-            fechaCalificacionEncargada: f.fechaCalificacionEncargada || ""
-          }))
-        : base.fichas;
-
-      const origenEvidencias = Array.isArray(rawObj.evidencias)
-        ? rawObj.evidencias
-        : (rawObj.evidencias && typeof rawObj.evidencias === "object" ? Object.values(rawObj.evidencias) : []);
-
-      const evidenciasNormalizadas = origenEvidencias.map(ev => ({
-        id: ev.id || Date.now(),
-        nombre: ev.nombre || "",
-        turno: ev.turno || "",
-        area: ev.area || "",
-        nota: ev.nota || "",
-        hora: ev.hora || "",
-        fotos: extraerFotos(ev.fotos, ev.foto)
-      }));
-
-      const paseListaNormalizado = {};
-      if (rawObj.paseLista && typeof rawObj.paseLista === "object") {
-        Object.keys(rawObj.paseLista).forEach((fechaKey) => {
-          const limpio = crearDiaPaseListaVacio();
-          const origenFecha = rawObj.paseLista[fechaKey] || {};
-          HORARIOS.forEach((h) => {
-            const origenHorario = origenFecha[h] || {};
-            INTEGRANTES_INICIALES.forEach((nombre) => {
-              const item = origenHorario[nombre];
-              if (item && typeof item === "object") {
-                limpio[h][nombre] = {
-                  estado: item.estado || "sin_marcar",
-                  nota: item.nota || "",
-                  actualizado: item.actualizado || "",
-                  fotoBiometrico: item.fotoBiometrico || "",
-                  horaBiometrico: item.horaBiometrico || "",
-                  huellaEntrada: item.huellaEntrada || "",
-                  entradaTomada: Boolean(item.entradaTomada || item.fotoBiometrico),
-                  entradaAceptada: Boolean(item.entradaAceptada),
-                  fotoSalida: item.fotoSalida || "",
-                  horaSalida: item.horaSalida || "",
-                  huellaSalida: item.huellaSalida || "",
-                  salidaTomada: Boolean(item.salidaTomada || item.fotoSalida),
-                  salidaAceptada: Boolean(item.salidaAceptada),
-                  cerradoAuto: Boolean(item.cerradoAuto),
-                  obsFoto: item.obsFoto || ""
-                };
-              }
-            });
-          });
-          paseListaNormalizado[fechaKey] = limpio;
-        });
-      }
-
-      const ventasAceitesNormalizado = {};
-      if (rawObj.ventasAceites && typeof rawObj.ventasAceites === "object") {
-        Object.keys(rawObj.ventasAceites).forEach((fechaKey) => {
-          const origenDia = rawObj.ventasAceites[fechaKey] || {};
-          const diaLimpio = crearDiaVentasVacio(origenDia.metaDia ?? 6);
-          diaLimpio.actualizado = origenDia.actualizado || "";
-          const origenPersonas = origenDia.personas || {};
-          INTEGRANTES_INICIALES.forEach((nombre) => {
-            const p = origenPersonas[nombre];
-            if (p && typeof p === "object") {
-              diaLimpio.personas[nombre] = {
-                cantidad: Math.max(0, Number(p.cantidad) || 0),
-                descanso: Boolean(p.descanso)
-              };
-            }
-          });
-          ventasAceitesNormalizado[fechaKey] = diaLimpio;
-        });
-      }
-
-      const origenQuejas = Array.isArray(rawObj.quejas)
-        ? rawObj.quejas
-        : (rawObj.quejas && typeof rawObj.quejas === "object" ? Object.values(rawObj.quejas) : []);
-
-      const quejasNormalizadas = origenQuejas.map(q => ({
-        id: q.id || Date.now(),
-        tipo: q.tipo || "limpieza",
-        persona: q.persona || "No aplica / General",
-        area: q.area || "",
-        descripcion: q.descripcion || "",
-        fechaHora: q.fechaHora || "",
-        fotos: extraerFotos(q.fotos, q.foto)
-      }));
-
-      const clavesGuardadas = (rawObj.clavesParticipantes && typeof rawObj.clavesParticipantes === "object")
-        ? rawObj.clavesParticipantes
-        : {};
-      const clavesParticipantes = {};
-      INTEGRANTES_INICIALES.forEach((nombre) => {
-        const val = String(clavesGuardadas[nombre] || "").trim();
-        clavesParticipantes[nombre] = val || CLAVES_DEFAULT_PARTICIPANTES[nombre];
-      });
-
-      const adminPassword = String(rawObj.adminPassword || "").trim() || PIN_ADMIN_DEFAULT;
-
-      const huellasRaw = Array.isArray(rawObj.fotosUsadasHashes)
-        ? rawObj.fotosUsadasHashes
-        : (rawObj.fotosUsadasHashes && typeof rawObj.fotosUsadasHashes === "object" ? Object.values(rawObj.fotosUsadasHashes) : []);
-
-      return {
-        fichas: fichasNormalizadas,
-        evidencias: evidenciasNormalizadas,
-        quejas: quejasNormalizadas,
-        paseLista: paseListaNormalizado,
-        ventasAceites: ventasAceitesNormalizado,
-        clavesParticipantes,
-        adminPassword,
-        fotosUsadasHashes: huellasRaw.filter(Boolean).slice(-1500),
-        cierresMedianoche: (rawObj.cierresMedianoche && typeof rawObj.cierresMedianoche === "object") ? rawObj.cierresMedianoche : {}
-      };
+    // Detecta turno por hora actual con margen de +-1 hora:
+    // Mañana: 06:00 - 08:00 (entrada 07:00)
+    // Tarde:  13:00 - 15:00 (entrada 14:00)
+    // Noche:  19:00 - 21:00 (entrada 20:00)
+    function detectarTurnoPorHora(dateObj = new Date()) {
+      const mins = dateObj.getHours() * 60 + dateObj.getMinutes();
+      if (mins >= 360 && mins <= 480) return "Manana";
+      if (mins >= 780 && mins <= 900) return "Tarde";
+      if (mins >= 1140 && mins <= 1260) return "Noche";
+      return null;
     }
 
     function estadoInicial() {
-      const hoyISO = obtenerFechaHoyISO();
+      const fecha = hoyISO();
       return {
-        fichas: INTEGRANTES_INICIALES.map((nombre, idx) => ({
-          id: idx,
-          nombre,
-          noParticipa: idx >= 4,
-          estado: idx >= 4 ? "descanso" : "pendiente",
-          turno: idx < 3 ? "Matutino" : "Vespertino",
-          turnoIslaKey: idx < 3 ? "matutino_a" : "vespertino_a",
-          area: AREAS[idx % AREAS.length],
-          nota: "",
-          fotos: [],
-          fotosDetalle: [],
-          horaSubida: "",
-          calificacionEncargada: 0,
-          comentarioEncargada: "",
-          fechaCalificacionEncargada: ""
-        })),
-        evidencias: [],
+        isAdmin: false,
+        adminPass: ADMIN_PASS_DEFAULT,
+        forzarLimpiezaVisible: false,
+        fechaLista: fecha,
+        horarioLista: "Manana",
+        limpieza: {
+          fecha,
+          fichas: CAJEROS.map((nombre, idx) => {
+            const turno = idx < 2 ? "Manana" : idx < 4 ? "Tarde" : idx === 4 ? "Noche" : "Descanso";
+            const participa = turno === "Manana" || turno === "Tarde";
+            return {
+              id: idx,
+              nombre,
+              turno,
+              participa,
+              area: AREAS_LIMPIEZA[idx % AREAS_LIMPIEZA.length],
+              estado: participa ? "rojo" : "descanso",
+              fotos: [],
+              nota: ""
+            };
+          })
+        },
+        // asistencia[fecha][turno][nombre] = { estado: "trabajando"|"descanso"|"falta"|"pendiente", entradaHora, salidaHora, fotoEntrada, fotoSalida, nota, updatedAt }
+        asistencia: {},
+        // ventas[fecha][nombre] = { vendido: number, meta: number, descanso: boolean }
+        ventas: {},
         quejas: [],
-        paseLista: {
-          [hoyISO]: crearDiaPaseListaVacio()
-        },
-        ventasAceites: {
-          [hoyISO]: crearDiaVentasVacio(6)
-        },
-        clavesParticipantes: { ...CLAVES_DEFAULT_PARTICIPANTES },
-        adminPassword: PIN_ADMIN_DEFAULT,
-        fotosUsadasHashes: [],
-        cierresMedianoche: {}
+        updatedAt: Date.now()
       };
     }
 
-    function cargarDBLocal() {
+    let state = loadState();
+
+    function loadState() {
       try {
-        const raw = localStorage.getItem(STORAGE_KEY) || localStorage.getItem("faro_santander_limpieza_v30");
+        const raw = localStorage.getItem(STORAGE_KEY);
         if (!raw) return estadoInicial();
-        return normalizarDatos(JSON.parse(raw));
+        return { ...estadoInicial(), ...JSON.parse(raw) };
       } catch {
         return estadoInicial();
       }
     }
 
-    let db = cargarDBLocal();
-    let fechaSeleccionada = obtenerFechaHoyISO();
-    let horarioSeleccionado = "Manana";
-    let fichaActivaModal = null;
-    let fotosTemporalesModal = [];
-
-    const inputFechaPase = document.getElementById("fechaPaseLista");
-    inputFechaPase.value = fechaSeleccionada;
-
-    function asegurarRegistroFecha(fechaISO) {
-      if (!db.paseLista || typeof db.paseLista !== "object") {
-        db.paseLista = {};
-      }
-      if (!db.paseLista[fechaISO]) {
-        db.paseLista[fechaISO] = crearDiaPaseListaVacio();
-      }
-      return db.paseLista[fechaISO];
-    }
-
-    function asegurarRegistroVentasFecha(fechaISO, metaDefecto = 6) {
-      if (!db.ventasAceites || typeof db.ventasAceites !== "object") {
-        db.ventasAceites = {};
-      }
-      if (!db.ventasAceites[fechaISO]) {
-        db.ventasAceites[fechaISO] = crearDiaVentasVacio(metaDefecto);
-      }
-      return db.ventasAceites[fechaISO];
-    }
-
-    function sanitizarParaGuardar(obj) {
-      return JSON.parse(JSON.stringify(obj, (_k, v) => (v === undefined ? null : v)));
-    }
-
-    function guardarYRefrescar(esCambioLocal = true) {
-      const limpio = sanitizarParaGuardar(db);
-      db = normalizarDatos(limpio);
-      try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
-      } catch (err) {
+    async function saveState() {
+      state.updatedAt = Date.now();
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      if (FIREBASE_DB_URL) {
         try {
-          db.evidencias = (db.evidencias || []).slice(0, 2);
-          db.quejas = (db.quejas || []).slice(0, 5);
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
-        } catch (err2) {
-          try {
-            db.evidencias = [];
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
-          } catch (err3) {
-            console.warn("Almacenamiento local al límite; sincronizando en nube.");
-          }
+          await fetch(`${FIREBASE_DB_URL}.json`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(state)
+          });
+          document.getElementById("syncStatus").textContent = "Nube y respaldo local activos";
+        } catch {
+          document.getElementById("syncStatus").textContent = "Respaldo local (sin red)";
         }
-      }
-
-      if (esCambioLocal && rutaNube) {
-        set(rutaNube, sanitizarParaGuardar(db)).catch((err) => {
-          console.error("Error sincronizando en nube:", err);
-        });
+      } else {
+        document.getElementById("syncStatus").textContent = "Respaldo local activo";
       }
     }
 
-    const fichasNotificadasEnJornada = new Set();
-    let ultimaFirmaRemotaNotificada = "";
+    // NAVEGACIÓN
+    const vistas = ["limpieza", "lista", "ventas", "quejas", "ayuda"];
+    function mostrarVista(nombreVista) {
+      const tocabaLimpieza = nombreVista === "limpieza";
+      const habilitadaHoy = esDiaLimpieza(hoyISO()) || state.forzarLimpiezaVisible || state.isAdmin;
 
-    function evaluarMetaChecklistFicha(ficha) {
-      const claveTI = ficha.turnoIslaKey || (ficha.turno === "Vespertino" ? "vespertino_a" : "matutino_a");
-      const cfg = CHECKLIST_POR_TURNO_ISLA[claveTI] || CHECKLIST_POR_TURNO_ISLA.matutino_a;
-      const items = Array.isArray(cfg.items) ? cfg.items : [];
-      const totalOpciones = items.length;
-      const detalle = Array.isArray(ficha.fotosDetalle) ? ficha.fotosDetalle : [];
-      const fotosArr = Array.isArray(ficha.fotos) ? ficha.fotos : [];
+      if (tocabaLimpieza && !habilitadaHoy) {
+        nombreVista = "lista";
+      }
 
-      const idsCubiertos = new Set();
-      detalle.forEach((d) => {
-        if (d && d.puntoId && d.puntoId !== "general" && (d.src || fotosArr.length > 0)) {
-          idsCubiertos.add(d.puntoId);
-        }
+      vistas.forEach(v => {
+        document.getElementById(`view-${v}`).classList.toggle("active", v === nombreVista);
+        const navBtn = document.getElementById(`nav-${v}`);
+        if (navBtn) navBtn.classList.toggle("active", v === nombreVista);
       });
 
-      const opcionesCubiertas = items.filter((it) => idsCubiertos.has(it.id)).length;
-      const metaCumplida = totalOpciones > 0 && opcionesCubiertas >= totalOpciones;
-      const pctMeta = totalOpciones > 0 ? Math.min(100, Math.round((opcionesCubiertas / totalOpciones) * 100)) : 0;
-
-      return {
-        claveTI,
-        tituloTurnoIsla: cfg.titulo,
-        totalOpciones,
-        opcionesCubiertas,
-        metaCumplida,
-        pctMeta,
-        totalFotos: fotosArr.length
-      };
+      const navLimp = document.getElementById("nav-limpieza");
+      navLimp.style.display = habilitadaHoy ? "block" : "none";
     }
 
-    function reproducirSonidoNotificacion() {
-      try {
-        const AudioCtx = window.AudioContext || window.webkitAudioContext;
-        if (!AudioCtx) return;
-        const ctx = new AudioCtx();
-        const notas = [587.33, 783.99, 1046.5];
-        notas.forEach((freq, idx) => {
-          const osc = ctx.createOscillator();
-          const gain = ctx.createGain();
-          osc.type = "triangle";
-          osc.frequency.setValueAtTime(freq, ctx.currentTime + idx * 0.11);
-          gain.gain.setValueAtTime(0.001, ctx.currentTime + idx * 0.11);
-          gain.gain.exponentialRampToValueAtTime(0.18, ctx.currentTime + idx * 0.11 + 0.02);
-          gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + idx * 0.11 + 0.24);
-          osc.connect(gain);
-          gain.connect(ctx.destination);
-          osc.start(ctx.currentTime + idx * 0.11);
-          osc.stop(ctx.currentTime + idx * 0.11 + 0.26);
-        });
-      } catch (e) {
-        console.warn("Audio no disponible:", e);
+    function autoAbrirLimpiezaEnDiaCorrespondiente() {
+      const hoy = hoyISO();
+      const habilitadaHoy = esDiaLimpieza(hoy) || state.forzarLimpiezaVisible;
+      document.getElementById("nav-limpieza").style.display = habilitadaHoy ? "block" : "none";
+      if (esDiaLimpieza(hoy)) {
+        mostrarVista("limpieza");
+      } else {
+        mostrarVista("lista");
       }
     }
 
-    function dispararAlertaVisualYSonora(titulo, detalle, fichaId = null) {
-      reproducirSonidoNotificacion();
-      if (navigator.vibrate) {
-        try { navigator.vibrate([180, 90, 220]); } catch {}
-      }
-
-      const banner = document.getElementById("notifBannerAlerta");
-      const titleEl = document.getElementById("notifBannerTitulo");
-      const subEl = document.getElementById("notifBannerSub");
-      if (banner && titleEl && subEl) {
-        titleEl.textContent = titulo;
-        subEl.textContent = detalle;
-        banner.classList.remove("visible");
-        void banner.offsetWidth;
-        banner.classList.add("visible");
-        clearTimeout(window._timerBannerNotif);
-        window._timerBannerNotif = setTimeout(() => {
-          banner.classList.remove("visible");
-        }, 7000);
-      }
-
-      if (fichaId !== null && fichaId !== undefined) {
-        const cardEl = document.querySelector(`.ficha[data-ficha-card="${fichaId}"]`);
-        if (cardEl) {
-          cardEl.classList.remove("alerta-luz-completa");
-          void cardEl.offsetWidth;
-          cardEl.classList.add("alerta-luz-completa");
+    // LIMPIEZA (4 PARTICIPAN: 2 MAÑANA, 2 TARDE; NOCHE Y DESCANSO NO PARTICIPAN)
+    function recalcularParticipacionLimpieza(ficha) {
+      if (ficha.turno === "Noche" || ficha.turno === "Descanso") {
+        ficha.participa = false;
+        ficha.estado = "descanso";
+      } else {
+        ficha.participa = true;
+        if (ficha.estado === "descanso") {
+          ficha.estado = ficha.fotos.length > 0 ? "verde" : "rojo";
         }
       }
+    }
 
-      if ("Notification" in window && Notification.permission === "granted") {
-        try {
-          new Notification(titulo, { body: detalle });
-        } catch {}
+    function renderLimpieza() {
+      const hoy = hoyISO();
+      const esHoyLimpieza = esDiaLimpieza(hoy);
+      const aviso = document.getElementById("limpiezaDiaAviso");
+
+      if (!esHoyLimpieza && state.isAdmin) {
+        aviso.style.display = "block";
+        aviso.textContent = "Hoy no es miércoles ni domingo, pero estás viendo Limpieza en modo Administrador.";
+      } else {
+        aviso.style.display = "none";
       }
-    }
 
-    window.cerrarBannerNotificacion = function () {
-      const banner = document.getElementById("notifBannerAlerta");
-      if (banner) banner.classList.remove("visible");
-    };
+      const fichas = state.limpieza.fichas;
+      let activos = 0, verde = 0, rojo = 0, pendiente = 0, fuera = 0;
 
-    function comprobarMetasCompletadasYNotificar(fichasLista) {
-      if (!Array.isArray(fichasLista)) return;
-      fichasLista.forEach((f) => {
-        if (f.noParticipa) return;
-        const ev = evaluarMetaChecklistFicha(f);
-        const claveMeta = `${f.id}_${ev.claveTI}_${ev.metaCumplida ? "META_OK" : "PARCIAL"}_${f.horaSubida || ""}`;
-        if (ev.metaCumplida && !fichasNotificadasEnJornada.has(claveMeta)) {
-          fichasNotificadasEnJornada.add(claveMeta);
-          dispararAlertaVisualYSonora(
-            `🔔 ¡${f.nombre} completó todas sus opciones (${ev.opcionesCubiertas}/${ev.totalOpciones})!`,
-            `${ev.tituloTurnoIsla} · Fotos: ${ev.totalFotos} · Hora: ${f.horaSubida || "ahora"}`,
-            f.id
-          );
-        }
-      });
-    }
-
-    if (rutaNube) {
-      onValue(rutaNube, (snapshot) => {
-        if (snapshot.exists()) {
-          const datosNube = normalizarDatos(snapshot.val());
-          const firmaActual = (datosNube.fichas || [])
-            .map(f => {
-              const evF = evaluarMetaChecklistFicha(f);
-              return `${f.nombre}:${evF.opcionesCubiertas}/${evF.totalOpciones}:${(f.fotos || []).length}:${f.horaSubida || ""}`;
-            })
-            .join("|");
-          const huboCambioExterno = ultimaFirmaRemotaNotificada && ultimaFirmaRemotaNotificada !== firmaActual;
-          ultimaFirmaRemotaNotificada = firmaActual;
-
-          db = datosNube;
-          try {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
-          } catch {}
-          renderTablero(false);
-          renderPaseLista();
-          renderVentasAceites();
-          renderPanelEncargada();
-          renderQuejas();
-          if (huboCambioExterno) {
-            comprobarMetasCompletadasYNotificar(db.fichas);
-          }
-        }
-      });
-    }
-
-    function renderTablero(sincronizar = true) {
-      const grid = document.getElementById("gridFichas");
-      grid.innerHTML = "";
-
-      let verdes = 0, rojos = 0, pendientes = 0, descansos = 0, activos = 0;
-      const esFinDeDia = new Date().getHours() >= 20;
-
-      db.fichas.forEach((f) => {
-        const tieneEvidencia = Array.isArray(f.fotos) && f.fotos.length > 0;
-        if (f.noParticipa) {
-          f.estado = "descanso";
-          descansos++;
+      fichas.forEach(f => {
+        if (!f.participa || f.turno === "Noche" || f.turno === "Descanso") {
+          fuera++;
         } else {
           activos++;
-          if (tieneEvidencia || f.estado === "verde") {
-            f.estado = "verde";
-            verdes++;
-          } else if (f.estado === "rojo" || esFinDeDia) {
-            f.estado = "rojo";
-            rojos++;
-          } else {
-            f.estado = "pendiente";
-            pendientes++;
-          }
+          if (f.estado === "verde") verde++;
+          else if (f.estado === "pendiente") pendiente++;
+          else rojo++;
         }
-
-        const badgeMap = {
-          verde: { cls: "badge-verde", label: "CUMPLIÓ · VERDE" },
-          rojo: { cls: "badge-rojo", label: "SIN EVIDENCIA · ROJO" },
-          pendiente: { cls: "badge-pendiente", label: "PENDIENTE" },
-          descanso: { cls: "badge-descanso", label: "HOY NO LE TOCA" }
-        };
-
-        const b = badgeMap[f.estado];
-        const totalFotos = Array.isArray(f.fotos) ? f.fotos.length : 0;
-
-        const card = document.createElement("div");
-        card.className = `ficha estado-${f.estado}`;
-        card.setAttribute("data-ficha-card", String(f.id));
-        const evMeta = evaluarMetaChecklistFicha(f);
-        const pctMeta = evMeta.pctMeta;
-        const metaCumplida = evMeta.metaCumplida;
-
-        card.innerHTML = `
-          <div class="ficha-top">
-            <button class="nombre-btn" data-action="toggle" data-id="${f.id}" title="Toca para alternar si hoy no participa">
-              ${f.nombre}
-            </button>
-            <span class="badge ${b.cls}">${b.label}</span>
-          </div>
-
-          <div class="lock-pill">🔒 Tarjeta protegida con clave para subir/quitar fotos</div>
-
-          <div class="ficha-actions" style="margin-top:8px;">
-            <button class="ghost-toggle" style="padding:6px 10px; font-size:0.78rem;" data-action="toggle" data-id="${f.id}">
-              ${f.noParticipa ? "Marcar que SÍ participa hoy" : "Hoy no participa en la limpieza"}
-            </button>
-          </div>
-
-          ${
-            f.noParticipa
-              ? `<div class="no-participa-msg">Hoy no le toca / Hoy no participa en la limpieza. No cuenta en rojo.</div>`
-              : `
-                <div class="campos">
-                  <select data-action="turno" data-id="${f.id}">
-                    <option value="Matutino" ${f.turno === "Matutino" ? "selected" : ""}>Turno Matutino</option>
-                    <option value="Vespertino" ${f.turno === "Vespertino" ? "selected" : ""}>Turno Vespertino</option>
-                  </select>
-
-                  <select data-action="area" data-id="${f.id}">
-                    ${AREAS.map(a => `<option value="${a}" ${f.area === a ? "selected" : ""}>${a}</option>`).join("")}
-                  </select>
-                </div>
-
-                <div class="status-note" style="color:${metaCumplida ? "#4ade80" : "#7dd3fc"};">
-                  ${metaCumplida
-                    ? `✅ Meta completada (${evMeta.opcionesCubiertas}/${evMeta.totalOpciones} opciones · ${totalFotos} fotos)`
-                    : `Opciones: ${evMeta.opcionesCubiertas}/${evMeta.totalOpciones} cubiertas (${totalFotos} fotos)`}
-                </div>
-                <div class="meta-progreso-bar">
-                  <div class="meta-progreso-fill" style="width:${pctMeta}%;"></div>
-                </div>
-
-                ${
-                  totalFotos > 0
-                    ? `
-                      <div class="thumbs-grid">
-                        ${f.fotos.slice(0, 4).map(src => `<img src="${src}" alt="Evidencia de ${f.nombre}" />`).join("")}
-                      </div>
-                    `
-                    : ""
-                }
-                ${f.horaSubida ? `<div class="meta-small">Última subida: ${f.horaSubida}${f.nota ? " · " + f.nota : ""}</div>` : ""}
-                ${
-                  (f.calificacionEncargada || f.comentarioEncargada)
-                    ? `<div class="status-note" style="color:#fde047; margin-top:8px; padding:8px; border-radius:8px; background:rgba(15,23,42,0.65); border:1px solid #475569;">
-                        Administrador: ${f.calificacionEncargada ? "★".repeat(f.calificacionEncargada) + "☆".repeat(5 - f.calificacionEncargada) + ` (${f.calificacionEncargada}/5)` : "Sin calificación"}
-                        ${f.comentarioEncargada ? `<div style="color:#f8fafc; font-weight:500; margin-top:4px;">"${f.comentarioEncargada}"</div>` : ""}
-                        ${f.fechaCalificacionEncargada ? `<div class="meta-small">Calificado: ${f.fechaCalificacionEncargada}</div>` : ""}
-                      </div>`
-                    : ""
-                }
-
-                <div class="ficha-actions">
-                  <button class="success" data-action="subir" data-id="${f.id}">${totalFotos > 0 ? "🔒 Editar / Quitar / Subir archivos" : "🔒 Subir archivos (con clave)"}</button>
-                </div>
-              `
-          }
-        `;
-
-        grid.appendChild(card);
       });
 
-      document.getElementById("countVerde").textContent = verdes;
-      document.getElementById("countRojo").textContent = rojos;
-      document.getElementById("countPendiente").textContent = pendientes;
-      document.getElementById("countDescanso").textContent = descansos;
-      document.getElementById("resumenTexto").textContent =
-        `${verdes} / ${activos} listos · ${descansos} descansan hoy`;
+      document.getElementById("limpiezaResumenTexto").textContent = `${verde} / ${activos} listos · ${fuera} no les toca hoy`;
+      document.getElementById("limpVerde").textContent = verde;
+      document.getElementById("limpRojo").textContent = rojo;
+      document.getElementById("limpPendiente").textContent = pendiente;
+      document.getElementById("limpFuera").textContent = fuera;
 
-      if (sincronizar) {
-        guardarYRefrescar(true);
-      }
-    }
-
-    function renderPaseLista() {
-      const registroDia = asegurarRegistroFecha(fechaSeleccionada);
-
-      HORARIOS.forEach((h) => {
-        const btn = document.getElementById(`tab-${h}`);
-        if (btn) btn.classList.toggle("active", h === horarioSeleccionado);
-        const totalTrabajaron = INTEGRANTES_INICIALES.filter(
-          (nombre) => registroDia[h][nombre]?.estado === "trabajo"
-        ).length;
-        const counterEl = document.getElementById(`countHorario${h}`);
-        if (counterEl) counterEl.textContent = totalTrabajaron;
-      });
-
-      const grid = document.getElementById("gridPaseLista");
+      const grid = document.getElementById("gridLimpieza");
       grid.innerHTML = "";
 
-      const datosHorario = registroDia[horarioSeleccionado];
-
-      INTEGRANTES_INICIALES.forEach((nombre) => {
-        const item = datosHorario[nombre] || { estado: "sin_marcar", nota: "", actualizado: "" };
-        const estadoClassMap = {
-          trabajo: "estado-verde",
-          falta: "estado-rojo",
-          descanso: "estado-descanso",
-          sin_marcar: "estado-pendiente"
-        };
-        const badgeMap = {
-          trabajo: { cls: "badge-verde", label: "TRABAJÓ" },
-          falta: { cls: "badge-rojo", label: "FALTA" },
-          descanso: { cls: "badge-descanso", label: "DESCANSO" },
-          sin_marcar: { cls: "badge-pendiente", label: "SIN MARCAR" }
-        };
-
-        const b = badgeMap[item.estado] || badgeMap.sin_marcar;
+      fichas.forEach(f => {
         const card = document.createElement("div");
-        card.className = `ficha ${estadoClassMap[item.estado] || "estado-pendiente"}`;
+        const claseEstado = !f.participa ? "estado-descanso" : `estado-${f.estado}`;
+        card.className = `ficha ${claseEstado}`;
+
+        const badgeTexto = !f.participa
+          ? (f.turno === "Noche" ? "NO LIMPIA (NOCHE)" : "DESCANSO · NO TOCA")
+          : f.estado === "verde" ? "LISTO · VERDE"
+          : f.estado === "pendiente" ? "PENDIENTE"
+          : "SIN EVIDENCIA · ROJO";
+
+        const badgeClase = !f.participa ? "badge-descanso" : `badge-${f.estado}`;
 
         card.innerHTML = `
           <div class="ficha-top">
-            <strong style="font-size:1.08rem;">${nombre}</strong>
-            <span class="badge ${b.cls}">${b.label}</span>
+            <strong style="font-size:1.06rem;">${f.nombre}</strong>
+            <span class="badge ${badgeClase}">${badgeTexto}</span>
           </div>
-          <div class="meta-small">Fecha: ${fechaSeleccionada} · Horario: ${ETIQUETAS_HORARIO[horarioSeleccionado]}</div>
-
           <div class="campos">
-            <input
-              type="text"
-              data-pase-nota="${nombre}"
-              value="${(item.nota || "").replace(/"/g, "&quot;")}"
-              placeholder="Nota opcional (ej. cubrió turno, apoyo)"
-            />
+            <select data-limp-turno="${f.id}">
+              <option value="Manana" ${f.turno === "Manana" ? "selected" : ""}>Turno Mañana (Participa)</option>
+              <option value="Tarde" ${f.turno === "Tarde" ? "selected" : ""}>Turno Tarde (Participa)</option>
+              <option value="Noche" ${f.turno === "Noche" ? "selected" : ""}>Turno Noche (No limpia)</option>
+              <option value="Descanso" ${f.turno === "Descanso" ? "selected" : ""}>Descanso (No limpia)</option>
+            </select>
+            ${f.participa ? `
+              <select data-limp-area="${f.id}">
+                ${AREAS_LIMPIEZA.map(a => `<option value="${a}" ${f.area === a ? "selected" : ""}>${a}</option>`).join("")}
+              </select>
+            ` : `<div class="no-participa-msg">No participa en limpieza hoy (${f.turno}). No cuenta en rojo.</div>`}
           </div>
-
-          ${
-            item.fotoBiometrico
-              ? `
-                <div class="status-note">Entrada ${item.entradaAceptada ? "(ACEPTADA · bloqueada)" : "(pendiente aceptar)"}: ${item.horaBiometrico || "registrada"}</div>
-                <div style="margin-top:6px;">
-                  <img src="${item.fotoBiometrico}" alt="Foto biométrico entrada de ${nombre}" style="width:100%; max-height:130px; object-fit:cover; border-radius:9px; border:1px solid var(--border);" />
-                </div>
-              `
-              : `<div class="meta-small" style="color:#fbbf24;">Sin foto de entrada aún</div>`
-          }
-          ${
-            item.fotoSalida
-              ? `
-                <div class="status-note" style="color:#4ade80;">Salida ${item.salidaAceptada ? "(ACEPTADA · bloqueada)" : "(pendiente aceptar)"}: ${item.horaSalida || "registrada"}</div>
-                <div style="margin-top:6px;">
-                  <img src="${item.fotoSalida}" alt="Foto biométrico salida de ${nombre}" style="width:100%; max-height:130px; object-fit:cover; border-radius:9px; border:1px solid var(--border);" />
-                </div>
-              `
-              : `<div class="meta-small" style="color:#94a3b8;">Sin foto de salida aún</div>`
-          }
-
-          ${item.actualizado ? `<div class="meta-small">Actualizado: ${item.actualizado}</div>` : ""}
-
-          <div class="ficha-actions">
-            ${
-              item.entradaAceptada
-                ? `<span class="badge badge-verde">ENTRADA ACEPTADA</span>`
-                : `<button class="success" data-pase-foto="${nombre}">Entrada</button>`
-            }
-            ${
-              item.salidaAceptada
-                ? `<span class="badge badge-verde">SALIDA ACEPTADA</span>`
-                : `<button class="danger" data-pase-salida="${nombre}">Salida</button>`
-            }
-            <button class="secondary" data-pase-nombre="${nombre}" data-pase-estado="descanso">Descanso</button>
-          </div>
+          ${f.participa ? `
+            <div class="status-note">Fotos subidas: ${f.fotos.length} ${f.nota ? "· " + f.nota : ""}</div>
+            <div class="ficha-actions">
+              <button type="button" class="success" data-subir-limp="${f.id}">Subir foto evidencia</button>
+            </div>
+          ` : ""}
         `;
-
         grid.appendChild(card);
+      });
+
+      grid.querySelectorAll("[data-limp-turno]").forEach(sel => {
+        sel.addEventListener("change", async e => {
+          const id = Number(e.target.dataset.limpTurno);
+          const ficha = state.limpieza.fichas[id];
+          ficha.turno = e.target.value;
+          recalcularParticipacionLimpieza(ficha);
+          await saveState();
+          renderLimpieza();
+        });
+      });
+
+      grid.querySelectorAll("[data-limp-area]").forEach(sel => {
+        sel.addEventListener("change", async e => {
+          const id = Number(e.target.dataset.limpArea);
+          state.limpieza.fichas[id].area = e.target.value;
+          await saveState();
+        });
+      });
+
+      grid.querySelectorAll("[data-subir-limp]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const id = Number(btn.dataset.subirLimp);
+          abrirModalFoto({ tipo: "limpieza", id });
+        });
       });
     }
 
-    window.seleccionarHorario = function (horario) {
-      if (!HORARIOS.includes(horario)) return;
-      horarioSeleccionado = horario;
-      renderPaseLista();
-    };
-
-    inputFechaPase.addEventListener("change", (e) => {
-      fechaSeleccionada = e.target.value || obtenerFechaHoyISO();
-      asegurarRegistroFecha(fechaSeleccionada);
-      renderPaseLista();
+    document.getElementById("btnRotarLimpieza").addEventListener("click", async () => {
+      const activos = state.limpieza.fichas.filter(f => f.participa);
+      if (activos.length > 1) {
+        const areas = activos.map(f => f.area);
+        areas.unshift(areas.pop());
+        activos.forEach((f, i) => { f.area = areas[i]; });
+        await saveState();
+        renderLimpieza();
+      }
     });
 
-    /* --- VENTAS / ACEITES: MENSUAL (RANKING) + SEMANAL + CAPTURA ADMIN --- */
-    let subtabVentasActual = "mes";
-    const hoyVentasISO = obtenerFechaHoyISO();
-    const mesConsultaVentasEl = document.getElementById("mesConsultaVentas");
-    const fechaSemanaVentasEl = document.getElementById("fechaSemanaVentas");
-    const fechaCapturaVentasAdminEl = document.getElementById("fechaCapturaVentasAdmin");
-    const metaDiaVentasAdminEl = document.getElementById("metaDiaVentasAdmin");
+    document.getElementById("btnCerrarLimpiezaRojo").addEventListener("click", async () => {
+      state.limpieza.fichas.forEach(f => {
+        if (f.participa && f.fotos.length === 0) f.estado = "rojo";
+      });
+      await saveState();
+      renderLimpieza();
+    });
 
-    if (mesConsultaVentasEl) mesConsultaVentasEl.value = hoyVentasISO.slice(0, 7);
-    if (fechaSemanaVentasEl) fechaSemanaVentasEl.value = hoyVentasISO;
-    if (fechaCapturaVentasAdminEl) fechaCapturaVentasAdminEl.value = hoyVentasISO;
+    document.getElementById("btnReiniciarLimpieza").addEventListener("click", async () => {
+      state.limpieza.fichas.forEach(f => {
+        if (f.participa) {
+          f.estado = "rojo";
+          f.fotos = [];
+          f.nota = "";
+        }
+      });
+      await saveState();
+      renderLimpieza();
+    });
 
-    window.seleccionarSubtabVentas = function (subtab) {
-      subtabVentasActual = subtab === "semana" ? "semana" : "mes";
-      const btnMes = document.getElementById("subtab-ventas-mes");
-      const btnSem = document.getElementById("subtab-ventas-semana");
-      const blkMes = document.getElementById("bloqueVentasMes");
-      const blkSem = document.getElementById("bloqueVentasSemana");
-      if (btnMes) btnMes.classList.toggle("active", subtabVentasActual === "mes");
-      if (btnSem) btnSem.classList.toggle("active", subtabVentasActual === "semana");
-      if (blkMes) blkMes.style.display = subtabVentasActual === "mes" ? "block" : "none";
-      if (blkSem) blkSem.style.display = subtabVentasActual === "semana" ? "block" : "none";
-    };
-
-    function obtenerRangoSemanaLunesDomingo(fechaISO) {
-      const partes = (fechaISO || obtenerFechaHoyISO()).split("-").map(Number);
-      const dt = new Date(partes[0], (partes[1] || 1) - 1, partes[2] || 1);
-      const diaSemana = dt.getDay();
-      const diffLunes = diaSemana === 0 ? -6 : 1 - diaSemana;
-      const lunes = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate() + diffLunes);
-      const dias = [];
-      for (let i = 0; i < 7; i++) {
-        const d = new Date(lunes.getFullYear(), lunes.getMonth(), lunes.getDate() + i);
-        const y = d.getFullYear();
-        const m = String(d.getMonth() + 1).padStart(2, "0");
-        const day = String(d.getDate()).padStart(2, "0");
-        dias.push(`${y}-${m}-${day}`);
+    // PASE DE LISTA
+    function asegurarDiaLista(fecha) {
+      if (!state.asistencia[fecha]) {
+        state.asistencia[fecha] = { Manana: {}, Tarde: {}, Noche: {} };
       }
-      return { inicio: dias[0], fin: dias[6], dias };
+      ["Manana", "Tarde", "Noche"].forEach(t => {
+        if (!state.asistencia[fecha][t]) state.asistencia[fecha][t] = {};
+        CAJEROS.forEach(nombre => {
+          if (!state.asistencia[fecha][t][nombre]) {
+            state.asistencia[fecha][t][nombre] = {
+              estado: "pendiente",
+              entradaHora: "",
+              salidaHora: "",
+              nota: "",
+              updatedAt: ""
+            };
+          }
+        });
+      });
     }
 
-    function cargarFormularioCapturaVentasDeFecha(fechaISO) {
-      const fValid = fechaISO || obtenerFechaHoyISO();
-      const diaObj = asegurarRegistroVentasFecha(fValid, 6);
-      if (metaDiaVentasAdminEl) {
-        metaDiaVentasAdminEl.value = diaObj.metaDia ?? 6;
+    function renderLista() {
+      const fechaInput = document.getElementById("fechaLista");
+      if (!fechaInput.value) fechaInput.value = state.fechaLista || hoyISO();
+      const fecha = fechaInput.value;
+      state.fechaLista = fecha;
+      asegurarDiaLista(fecha);
+
+      ["Manana", "Tarde", "Noche"].forEach(t => {
+        document.getElementById(`tabLista-${t}`).classList.toggle("active", state.horarioLista === t);
+      });
+
+      const countTurno = turno =>
+        CAJEROS.filter(n => state.asistencia[fecha][turno][n].estado === "trabajando").length;
+
+      document.getElementById("cntListaManana").textContent = countTurno("Manana");
+      document.getElementById("cntListaTarde").textContent = countTurno("Tarde");
+      document.getElementById("cntListaNoche").textContent = countTurno("Noche");
+      document.getElementById("btnCerrarHorarioAdmin").disabled = !state.isAdmin;
+
+      const turnoActual = state.horarioLista;
+      const grid = document.getElementById("gridLista");
+      grid.innerHTML = "";
+
+      CAJEROS.forEach(nombre => {
+        const reg = state.asistencia[fecha][turnoActual][nombre];
+        const card = document.createElement("div");
+        const claseEstado =
+          reg.estado === "trabajando" ? "estado-verde" :
+          reg.estado === "descanso" ? "estado-descanso" :
+          reg.estado === "falta" ? "estado-rojo" : "estado-pendiente";
+
+        const badgeTexto =
+          reg.estado === "trabajando" ? "TRABAJÓ" :
+          reg.estado === "descanso" ? "DESCANSO" :
+          reg.estado === "falta" ? "FALTA" : "SIN MARCAR";
+
+        card.className = `ficha ${claseEstado}`;
+        card.innerHTML = `
+          <div class="ficha-top">
+            <strong style="font-size:1.06rem;">${nombre}</strong>
+            <span class="badge ${reg.estado === "trabajando" ? "badge-verde" : reg.estado === "descanso" ? "badge-descanso" : reg.estado === "falta" ? "badge-rojo" : "badge-pendiente"}">${badgeTexto}</span>
+          </div>
+          <div class="meta-small">Fecha: ${fecha} · Horario: ${turnoActual}</div>
+          <div class="campos">
+            <input type="text" data-nota-lista="${nombre}" value="${reg.nota || ""}" placeholder="Nota opcional..." />
+          </div>
+          <div class="meta-small">${reg.entradaHora ? "Entrada: " + reg.entradaHora : "Sin entrada registrada"}</div>
+          <div class="meta-small">${reg.salidaHora ? "Salida: " + reg.salidaHora : "Sin salida registrada"}</div>
+          <div class="ficha-actions">
+            <button type="button" class="success" data-entrada-lista="${nombre}">Entrada</button>
+            <button type="button" class="danger" data-salida-lista="${nombre}">Salida</button>
+            <button type="button" class="secondary" data-descanso-lista="${nombre}">Descanso</button>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+
+      grid.querySelectorAll("[data-nota-lista]").forEach(inp => {
+        inp.addEventListener("change", async e => {
+          const n = e.target.dataset.notaLista;
+          state.asistencia[fecha][turnoActual][n].nota = e.target.value;
+          await saveState();
+        });
+      });
+
+      grid.querySelectorAll("[data-entrada-lista]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const n = btn.dataset.entradaLista;
+          abrirModalFoto({ tipo: "entrada", nombre: n, fecha });
+        });
+      });
+
+      grid.querySelectorAll("[data-salida-lista]").forEach(btn => {
+        btn.addEventListener("click", async () => {
+          const n = btn.dataset.salidaLista;
+          const reg = state.asistencia[fecha][turnoActual][n];
+          reg.salidaHora = ahoraLegible();
+          reg.updatedAt = ahoraLegible();
+          await saveState();
+          renderLista();
+        });
+      });
+
+      grid.querySelectorAll("[data-descanso-lista]").forEach(btn => {
+        btn.addEventListener("click", async () => {
+          const n = btn.dataset.descansoLista;
+          const reg = state.asistencia[fecha][turnoActual][n];
+          reg.estado = "descanso";
+          reg.updatedAt = ahoraLegible();
+          await saveState();
+          renderLista();
+        });
+      });
+    }
+
+    ["Manana", "Tarde", "Noche"].forEach(t => {
+      document.getElementById(`tabLista-${t}`).addEventListener("click", () => {
+        state.horarioLista = t;
+        renderLista();
+      });
+    });
+
+    document.getElementById("fechaLista").addEventListener("change", renderLista);
+
+    // Al hacer corte / iniciar nuevo ciclo, el turno de Noche se registra en automático como asistencia
+    document.getElementById("btnCorteMedianoche").addEventListener("click", async () => {
+      const fecha = document.getElementById("fechaLista").value || hoyISO();
+      asegurarDiaLista(fecha);
+      CAJEROS.forEach(nombre => {
+        const nocheReg = state.asistencia[fecha].Noche[nombre];
+        if (nocheReg.estado === "pendiente") {
+          nocheReg.estado = "trabajando";
+          nocheReg.entradaHora = nocheReg.entradaHora || `Auto ciclo (${ahoraLegible()})`;
+          nocheReg.updatedAt = ahoraLegible();
+        }
+      });
+      await saveState();
+      renderLista();
+      alert("Corte/ciclo aplicado: el turno de Noche quedó registrado en automático como asistencia.");
+    });
+
+    document.getElementById("btnCerrarHorarioAdmin").addEventListener("click", async () => {
+      if (!state.isAdmin) {
+        alert("Solo el Administrador puede cerrar horario.");
+        return;
       }
-      const cont = document.getElementById("listaCapturaAceitesAdmin");
-      if (!cont) return;
+      const fecha = document.getElementById("fechaLista").value || hoyISO();
+      const turno = state.horarioLista;
+      asegurarDiaLista(fecha);
+      CAJEROS.forEach(nombre => {
+        const reg = state.asistencia[fecha][turno][nombre];
+        if (reg.estado === "pendiente") {
+          reg.estado = "falta";
+          reg.updatedAt = ahoraLegible();
+        }
+      });
+      await saveState();
+      renderLista();
+    });
 
-      const disabledAttr = esEncargadaActiva ? "" : "disabled";
+    // VENTAS DE ACEITES (CORTES MENSUALES DESDE EL DÍA 1)
+    function obtenerBloquesDelMes(yearMonth) {
+      const [y, m] = yearMonth.split("-").map(Number);
+      const ultimoDia = new Date(y, m, 0).getDate();
+      const bloques = [];
+      let inicio = 1;
+      let idx = 1;
+      while (inicio <= ultimoDia) {
+        const fin = Math.min(inicio + 6, ultimoDia);
+        const fechas = [];
+        for (let d = inicio; d <= fin; d++) {
+          const dd = String(d).padStart(2, "0");
+          const mm = String(m).padStart(2, "0");
+          fechas.push(`${y}-${mm}-${dd}`);
+        }
+        bloques.push({
+          idx,
+          label: `Bloque ${idx}: días ${inicio} al ${fin}`,
+          fechas
+        });
+        inicio = fin + 1;
+        idx++;
+      }
+      return bloques;
+    }
 
-      cont.innerHTML = INTEGRANTES_INICIALES.map((nombre) => {
-        const p = diaObj.personas[nombre] || { cantidad: 0, descanso: false };
+    function getVentaDia(fecha, nombre) {
+      if (!state.ventas[fecha] || !state.ventas[fecha][nombre]) {
+        return { vendido: 0, meta: 6, descanso: false };
+      }
+      return state.ventas[fecha][nombre];
+    }
+
+    function renderVentas() {
+      const mesInp = document.getElementById("mesVentas");
+      if (!mesInp.value) mesInp.value = hoyISO().slice(0, 7);
+      const ym = mesInp.value;
+
+      const capFechaInp = document.getElementById("fechaCapturaVentas");
+      if (!capFechaInp.value) capFechaInp.value = hoyISO();
+      const fechaCap = capFechaInp.value;
+
+      const bloques = obtenerBloquesDelMes(ym);
+      const selBloque = document.getElementById("selectBloqueMes");
+      const valorPrevio = selBloque.value;
+      selBloque.innerHTML = bloques.map(b => `<option value="${b.idx}">${b.label}</option>`).join("");
+      if (valorPrevio && bloques.some(b => String(b.idx) === valorPrevio)) {
+        selBloque.value = valorPrevio;
+      }
+      const bloqueActual = bloques.find(b => String(b.idx) === selBloque.value) || bloques[0];
+      document.getElementById("rangoBloqueTexto").textContent = `Mes ${ym} · ${bloqueActual.label}`;
+
+      // Totales del mes
+      let totalMes = 0, metaMes = 0;
+      const acumPorCajero = {};
+      CAJEROS.forEach(n => { acumPorCajero[n] = { vendido: 0, meta: 0 }; });
+
+      const [y, m] = ym.split("-").map(Number);
+      const ultimoDia = new Date(y, m, 0).getDate();
+      for (let d = 1; d <= ultimoDia; d++) {
+        const iso = `${y}-${String(m).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+        CAJEROS.forEach(n => {
+          const item = getVentaDia(iso, n);
+          const v = Number(item.vendido || 0);
+          const mt = item.descanso ? 0 : Number(item.meta || 0);
+          totalMes += v;
+          metaMes += mt;
+          acumPorCajero[n].vendido += v;
+          acumPorCajero[n].meta += mt;
+        });
+      }
+
+      const difMes = totalMes - metaMes;
+      document.getElementById("totalVentasMes").textContent = totalMes;
+      document.getElementById("totalMetaMes").textContent = metaMes;
+      const difEl = document.getElementById("totalDifMes");
+      difEl.textContent = difMes > 0 ? `+${difMes}` : difMes;
+      difEl.style.color = difMes >= 0 ? "#4ade80" : "#f87171";
+
+      // Tabla del bloque (días 1..7, etc.)
+      const thead = document.getElementById("theadBloqueVentas");
+      thead.innerHTML = `
+        <th>Cajero</th>
+        ${bloqueActual.fechas.map(f => `<th>${f.slice(8)}</th>`).join("")}
+        <th>Global</th>
+        <th>Meta</th>
+        <th>Faltan/Sobran</th>
+      `;
+
+      const tbody = document.getElementById("tbodyBloqueVentas");
+      tbody.innerHTML = "";
+      CAJEROS.forEach(n => {
+        let sumV = 0, sumM = 0;
+        const celdasDias = bloqueActual.fechas.map(f => {
+          const it = getVentaDia(f, n);
+          const v = Number(it.vendido || 0);
+          const mt = it.descanso ? 0 : Number(it.meta || 0);
+          sumV += v;
+          sumM += mt;
+          return `<td>${it.descanso ? "DESC" : v}</td>`;
+        }).join("");
+        const dif = sumV - sumM;
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td><strong>${n}</strong></td>
+          ${celdasDias}
+          <td><strong>${sumV}</strong></td>
+          <td>${sumM}</td>
+          <td style="font-weight:800; color:${dif >= 0 ? "#4ade80" : "#f87171"};">${dif > 0 ? "+" + dif : dif}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      // Ranking acumulado del mes
+      const rankList = document.getElementById("listaRankingMes");
+      const ordenados = [...CAJEROS].sort((a, b) => acumPorCajero[b].vendido - acumPorCajero[a].vendido);
+      rankList.innerHTML = ordenados.map((n, idx) => {
+        const v = acumPorCajero[n].vendido;
+        const mt = acumPorCajero[n].meta;
+        const dif = v - mt;
         return `
-          <div class="aceite-captura-row">
-            <div style="min-width:95px;">
-              <strong>${nombre}</strong>
-              <div class="meta-small">${p.descanso ? "Descanso marcado" : `Lleva: ${p.cantidad || 0} aceite(s)`}</div>
+          <div class="ranking-card ${idx === 0 ? "top-1" : ""}">
+            <div style="display:flex; align-items:center; gap:10px;">
+              <span class="puesto-pill">${idx + 1}°</span>
+              <div>
+                <strong>${n}</strong>
+                <div class="meta-small">Meta acumulada: ${mt} · Diferencia: <span style="color:${dif >= 0 ? "#4ade80" : "#f87171"}; font-weight:700;">${dif > 0 ? "+" + dif : dif}</span></div>
+              </div>
             </div>
-            <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
-              <input
-                type="number"
-                min="0"
-                max="300"
-                id="venta-cant-${nombre}"
-                value="${p.descanso ? 0 : (Number(p.cantidad) || 0)}"
-                ${disabledAttr}
-                ${p.descanso ? "disabled" : ""}
-                style="width:84px; text-align:center; font-weight:800;"
-              />
-              <label style="display:flex; align-items:center; gap:5px; font-size:0.8rem; color:#cbd5e1; cursor:pointer;">
-                <input
-                  type="checkbox"
-                  id="venta-desc-${nombre}"
-                  ${p.descanso ? "checked" : ""}
-                  ${disabledAttr}
-                  onchange="alternarDescansoCapturaVenta('${nombre}')"
-                />
+            <div style="text-align:right;">
+              <div style="font-size:1.12rem; font-weight:900; color:#facc15;">${v}</div>
+              <div class="meta-small">aceites</div>
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      // Captura por fecha
+      const capBox = document.getElementById("listaCapturaVentas");
+      capBox.innerHTML = CAJEROS.map(n => {
+        const it = getVentaDia(fechaCap, n);
+        return `
+          <div class="venta-row">
+            <div>
+              <strong>${n}</strong>
+              <div class="meta-small">Fecha: ${fechaCap}</div>
+            </div>
+            <div class="venta-inputs">
+              <label class="meta-small" style="margin:0;">
+                Vendió:
+                <input type="number" min="0" max="500" id="v-cant-${n}" value="${it.vendido}" />
+              </label>
+              <label class="meta-small" style="margin:0;">
+                Meta:
+                <input type="number" min="0" max="500" id="v-meta-${n}" value="${it.meta}" />
+              </label>
+              <label class="meta-small" style="margin:0; display:flex; align-items:center; gap:4px; cursor:pointer;">
+                <input type="checkbox" id="v-desc-${n}" ${it.descanso ? "checked" : ""} />
                 Descanso
               </label>
             </div>
@@ -2271,1519 +1159,212 @@
       }).join("");
     }
 
-    window.alternarDescansoCapturaVenta = function (nombre) {
-      const chk = document.getElementById(`venta-desc-${nombre}`);
-      const inp = document.getElementById(`venta-cant-${nombre}`);
-      if (!chk || !inp) return;
-      if (chk.checked) {
-        inp.value = 0;
-        inp.disabled = true;
-      } else {
-        inp.disabled = !esEncargadaActiva;
-      }
-    };
+    document.getElementById("mesVentas").addEventListener("change", renderVentas);
+    document.getElementById("selectBloqueMes").addEventListener("change", renderVentas);
+    document.getElementById("fechaCapturaVentas").addEventListener("change", renderVentas);
 
-    window.abrirAccesoAdminParaVentas = function () {
-      toggleModoEncargada();
-    };
+    document.getElementById("subtabVentasBloque").addEventListener("click", () => {
+      document.getElementById("subtabVentasBloque").classList.add("active");
+      document.getElementById("subtabVentasRanking").classList.remove("active");
+      document.getElementById("bloqueVentasDias").style.display = "block";
+      document.getElementById("bloqueVentasRanking").style.display = "none";
+    });
 
-    window.guardarCapturaVentasAdmin = function () {
-      if (!esEncargadaActiva) {
-        alert("Solo el Administrador puede publicar o modificar la venta de aceites y descansos.");
-        toggleModoEncargada();
+    document.getElementById("subtabVentasRanking").addEventListener("click", () => {
+      document.getElementById("subtabVentasRanking").classList.add("active");
+      document.getElementById("subtabVentasBloque").classList.remove("active");
+      document.getElementById("bloqueVentasRanking").style.display = "block";
+      document.getElementById("bloqueVentasDias").style.display = "none";
+    });
+
+    document.getElementById("btnGuardarVentasDia").addEventListener("click", async () => {
+      if (!state.isAdmin) {
+        alert("Activa el Modo Administrador para guardar o editar ventas.");
         return;
       }
-      const fValid = (fechaCapturaVentasAdminEl && fechaCapturaVentasAdminEl.value) || obtenerFechaHoyISO();
-      const metaVal = Math.max(0, Number(metaDiaVentasAdminEl ? metaDiaVentasAdminEl.value : 6) || 0);
-      const diaObj = asegurarRegistroVentasFecha(fValid, metaVal);
-      diaObj.metaDia = metaVal;
-      diaObj.actualizado = new Date().toLocaleString("es-MX", { dateStyle: "short", timeStyle: "short" });
+      const fechaCap = document.getElementById("fechaCapturaVentas").value || hoyISO();
+      if (!state.ventas[fechaCap]) state.ventas[fechaCap] = {};
+      CAJEROS.forEach(n => {
+        const vendido = Number(document.getElementById(`v-cant-${n}`).value || 0);
+        const meta = Number(document.getElementById(`v-meta-${n}`).value || 0);
+        const descanso = document.getElementById(`v-desc-${n}`).checked;
+        state.ventas[fechaCap][n] = { vendido, meta, descanso };
+      });
+      await saveState();
+      renderVentas();
+      alert(`Ventas guardadas para ${fechaCap}.`);
+    });
 
-      INTEGRANTES_INICIALES.forEach((nombre) => {
-        const chk = document.getElementById(`venta-desc-${nombre}`);
-        const inp = document.getElementById(`venta-cant-${nombre}`);
-        const esDesc = Boolean(chk && chk.checked);
-        const cantVal = esDesc ? 0 : Math.max(0, Number(inp ? inp.value : 0) || 0);
-        diaObj.personas[nombre] = {
-          cantidad: cantVal,
-          descanso: esDesc
+    // QUEJAS
+    let fotosQuejaTemp = [];
+    document.getElementById("quejaFotosInput").addEventListener("change", e => {
+      fotosQuejaTemp = [];
+      const prev = document.getElementById("quejaPreview");
+      prev.innerHTML = "";
+      Array.from(e.target.files || []).forEach(file => {
+        const reader = new FileReader();
+        reader.onload = ev => {
+          fotosQuejaTemp.push({ data: ev.target.result, hora: ahoraLegible() });
+          const img = document.createElement("img");
+          img.src = ev.target.result;
+          prev.appendChild(img);
         };
+        reader.readAsDataURL(file);
       });
-
-      guardarYRefrescar(true);
-      renderVentasAceites();
-      alert(`Registro de ventas del ${fValid} guardado.`);
-    };
-
-    function renderVentasAceites() {
-      const badgeAdmin = document.getElementById("estadoPermisoVentasAdmin");
-      if (badgeAdmin) {
-        badgeAdmin.textContent = esEncargadaActiva ? "ADMIN ACTIVO · PUEDE EDITAR" : "SOLO LECTURA · ADMIN EDITA";
-        badgeAdmin.className = `badge ${esEncargadaActiva ? "badge-verde" : "badge-pendiente"}`;
-      }
-
-      const mesPrefijo = (mesConsultaVentasEl && mesConsultaVentasEl.value) || obtenerFechaHoyISO().slice(0, 7);
-      const fechaSemRef = (fechaSemanaVentasEl && fechaSemanaVentasEl.value) || obtenerFechaHoyISO();
-      const semanaInfo = obtenerRangoSemanaLunesDomingo(fechaSemRef);
-
-      const rangoTxtEl = document.getElementById("rangoSemanaTexto");
-      if (rangoTxtEl) {
-        rangoTxtEl.textContent = `Semana del ${semanaInfo.inicio} al ${semanaInfo.fin}`;
-      }
-
-      const acumMes = {};
-      const descansosMes = {};
-      const acumSemana = {};
-      INTEGRANTES_INICIALES.forEach((n) => {
-        acumMes[n] = 0;
-        descansosMes[n] = 0;
-        acumSemana[n] = 0;
-      });
-
-      const todosLosDiasVentas = db.ventasAceites || {};
-      Object.keys(todosLosDiasVentas).forEach((fechaKey) => {
-        const dia = todosLosDiasVentas[fechaKey];
-        if (!dia || !dia.personas) return;
-        const esDelMes = fechaKey.startsWith(mesPrefijo);
-        const esDeLaSemana = semanaInfo.dias.includes(fechaKey);
-
-        INTEGRANTES_INICIALES.forEach((nombre) => {
-          const p = dia.personas[nombre] || { cantidad: 0, descanso: false };
-          const cant = p.descanso ? 0 : (Number(p.cantidad) || 0);
-          if (esDelMes) {
-            acumMes[nombre] += cant;
-            if (p.descanso) descansosMes[nombre] += 1;
-          }
-          if (esDeLaSemana) {
-            acumSemana[nombre] += cant;
-          }
-        });
-      });
-
-      const totalMesGral = Object.values(acumMes).reduce((a, b) => a + b, 0);
-      const totalSemGral = Object.values(acumSemana).reduce((a, b) => a + b, 0);
-
-      const rankingOrdenado = [...INTEGRANTES_INICIALES].sort((a, b) => acumMes[b] - acumMes[a]);
-      const liderNombre = rankingOrdenado[0] || "—";
-      const liderTotal = acumMes[liderNombre] || 0;
-
-      const elMesGral = document.getElementById("totalAceitesMesGeneral");
-      const elSemGral = document.getElementById("totalAceitesSemanaGeneral");
-      const elLider = document.getElementById("liderMesNombre");
-      if (elMesGral) elMesGral.textContent = totalMesGral;
-      if (elSemGral) elSemGral.textContent = totalSemGral;
-      if (elLider) elLider.textContent = `${liderNombre} (${liderTotal})`;
-
-      const listaRankEl = document.getElementById("listaRankingMensual");
-      if (listaRankEl) {
-        listaRankEl.innerHTML = rankingOrdenado.map((nombre, idx) => {
-          const puesto = idx + 1;
-          const totalP = acumMes[nombre] || 0;
-          const diff = liderTotal - totalP;
-          const descP = descansosMes[nombre] || 0;
-          const detallePuesto = puesto === 1
-            ? "¡Va en 1.er lugar del mes!"
-            : (diff === 0 ? "Empatado en el 1.er lugar" : `A ${diff} aceite(s) del 1.er lugar`);
-
-          return `
-            <div class="ranking-card ${puesto === 1 ? "top-1" : ""}">
-              <div style="display:flex; align-items:center; gap:10px;">
-                <span class="puesto-pill">${puesto}°</span>
-                <div>
-                  <strong style="font-size:0.98rem;">${nombre}</strong>
-                  <div class="meta-small">${detallePuesto}${descP > 0 ? ` · ${descP} descanso(s)` : ""}</div>
-                </div>
-              </div>
-              <div style="text-align:right;">
-                <div style="font-size:1.18rem; font-weight:900; color:${puesto === 1 ? "#facc15" : "#38bdf8"};">${totalP}</div>
-                <div class="meta-small">aceites</div>
-              </div>
-            </div>
-          `;
-        }).join("");
-      }
-
-      const tbodySem = document.getElementById("cuerpoTablaSemanalVentas");
-      if (tbodySem) {
-        tbodySem.innerHTML = INTEGRANTES_INICIALES.map((nombre) => {
-          const celdasDias = semanaInfo.dias.map((fDia) => {
-            const dObj = todosLosDiasVentas[fDia];
-            const p = dObj && dObj.personas ? dObj.personas[nombre] : null;
-            if (!p) return `<td style="color:var(--muted); text-align:center;">—</td>`;
-            if (p.descanso) return `<td style="color:#cbd5e1; font-weight:700; text-align:center;">Desc.</td>`;
-            const c = Number(p.cantidad) || 0;
-            return `<td style="text-align:center; font-weight:${c > 0 ? "800" : "400"}; color:${c > 0 ? "#4ade80" : "var(--muted)"};">${c}</td>`;
-          }).join("");
-
-          return `
-            <tr>
-              <td><strong>${nombre}</strong></td>
-              ${celdasDias}
-              <td style="text-align:center; font-weight:900; color:#38bdf8;">${acumSemana[nombre] || 0}</td>
-            </tr>
-          `;
-        }).join("");
-      }
-
-      const fechaCapActual = (fechaCapturaVentasAdminEl && fechaCapturaVentasAdminEl.value) || obtenerFechaHoyISO();
-      cargarFormularioCapturaVentasDeFecha(fechaCapActual);
-    }
-
-    if (mesConsultaVentasEl) mesConsultaVentasEl.addEventListener("change", renderVentasAceites);
-    if (fechaSemanaVentasEl) fechaSemanaVentasEl.addEventListener("change", renderVentasAceites);
-    if (fechaCapturaVentasAdminEl) {
-      fechaCapturaVentasAdminEl.addEventListener("change", (e) => {
-        const fElegida = e.target.value || obtenerFechaHoyISO();
-        asegurarRegistroVentasFecha(fElegida, 6);
-        cargarFormularioCapturaVentasDeFecha(fElegida);
-      });
-    }
-
-    let fotoEnRevision = null;
-
-    const modalRevisionEl = document.getElementById("modalRevisionFoto");
-    const revisionTituloEl = document.getElementById("revisionTitulo");
-    const revisionSubtituloEl = document.getElementById("revisionSubtitulo");
-    const revisionAvisoRepetidaEl = document.getElementById("revisionAvisoRepetida");
-    const revisionImgEl = document.getElementById("revisionImg");
-    const btnAceptarFotoRevision = document.getElementById("btnAceptarFotoRevision");
-    const btnTomarOtraFotoRevision = document.getElementById("btnTomarOtraFotoRevision");
-
-    function abrirRevisionFoto(datos) {
-      fotoEnRevision = datos;
-      guardarRevisionPendiente(datos);
-      const etiqueta = datos.tipo === "entrada" ? "ENTRADA" : "SALIDA";
-      revisionTituloEl.textContent = `Revisar archivo de ${etiqueta} — ${datos.nombre}`;
-      revisionSubtituloEl.innerHTML =
-        "Si se ve clara y bien la fecha/hora estampada, pulsa <strong>Aceptar foto</strong> (una vez aceptada ya no se puede corregir). Si no, pulsa <strong>Elegir otro archivo</strong>.";
-      if (revisionAvisoRepetidaEl) {
-        revisionAvisoRepetidaEl.textContent = datos.repetida
-          ? "⚠️ Atención: esta imagen ya se había subido antes. Revisa si es la foto correcta del día."
-          : "";
-      }
-      revisionImgEl.src = datos.imgData;
-      modalRevisionEl.classList.add("open");
-    }
-
-    function lanzarSelectorPaseLista(ctx) {
-      const registroDia = asegurarRegistroFecha(ctx.fecha);
-      const actual = registroDia[ctx.horario][ctx.nombre] || {};
-      if (ctx.tipo === "entrada" && actual.entradaAceptada) {
-        alert(`La foto de ENTRADA de ${ctx.nombre} ya fue aceptada y no se puede corregir.`);
-        return;
-      }
-      if (ctx.tipo === "salida" && actual.salidaAceptada) {
-        alert(`La foto de SALIDA de ${ctx.nombre} ya fue aceptada y no se puede corregir.`);
-        return;
-      }
-
-      dispararSelectorArchivos(async (files) => {
-        const file = files[0];
-        if (!file) return;
-        const huella = await calcularHuellaArchivo(file);
-        const repetida = esHuellaRepetida(huella);
-        const etiqueta = `${ctx.nombre} · ${ctx.tipo.toUpperCase()} (${ETIQUETAS_HORARIO[ctx.horario]})`;
-        const horaActual = obtenerFechaHoraEstampada();
-        const comprimida = await capturarYEstamparFotoAsync(file, etiqueta, horaActual, 560, 0.48);
-        if (!comprimida) {
-          alert("No se pudo procesar el archivo seleccionado. Intenta con otra imagen.");
-          return;
-        }
-        const ahoraCorto = new Date().toLocaleString("es-MX", { dateStyle: "short", timeStyle: "short" });
-        abrirRevisionFoto({
-          ...ctx,
-          imgData: comprimida,
-          huella,
-          repetida,
-          horaStr: ahoraCorto
-        });
-      }, null, false);
-    }
-
-    btnAceptarFotoRevision.addEventListener("click", () => {
-      if (!fotoEnRevision) return;
-      const { tipo, nombre, horario, fecha, nota, marcarTrabajo, imgData, huella, horaStr } = fotoEnRevision;
-      const registroDia = asegurarRegistroFecha(fecha);
-      const inputNotaActual = document.querySelector(`[data-pase-nota="${nombre}"]`);
-      const notaFinal = inputNotaActual ? inputNotaActual.value.trim() : nota;
-      const actual = registroDia[horario][nombre] || {
-        estado: "sin_marcar",
-        nota: "",
-        actualizado: "",
-        fotoBiometrico: "",
-        horaBiometrico: "",
-        huellaEntrada: "",
-        entradaTomada: false,
-        entradaAceptada: false,
-        fotoSalida: "",
-        horaSalida: "",
-        huellaSalida: "",
-        salidaTomada: false,
-        salidaAceptada: false,
-        obsFoto: ""
-      };
-
-      if (tipo === "entrada") {
-        registroDia[horario][nombre] = {
-          ...actual,
-          estado: marcarTrabajo ? "trabajo" : (actual.estado === "sin_marcar" ? "trabajo" : actual.estado),
-          nota: notaFinal,
-          fotoBiometrico: imgData,
-          horaBiometrico: horaStr,
-          huellaEntrada: huella || "",
-          entradaTomada: true,
-          entradaAceptada: true,
-          actualizado: horaStr
-        };
-      } else {
-        registroDia[horario][nombre] = {
-          ...actual,
-          estado: actual.estado === "sin_marcar" ? "trabajo" : actual.estado,
-          nota: notaFinal,
-          fotoSalida: imgData,
-          horaSalida: horaStr,
-          huellaSalida: huella || "",
-          salidaTomada: true,
-          salidaAceptada: true,
-          actualizado: horaStr
-        };
-      }
-
-      if (huella) {
-        registrarHuellasUsadas([huella]);
-      }
-
-      fotoEnRevision = null;
-      guardarRevisionPendiente(null);
-      modalRevisionEl.classList.remove("open");
-      guardarYRefrescar(true);
-      renderPaseLista();
-      renderPanelEncargada();
     });
 
-    btnTomarOtraFotoRevision.addEventListener("click", () => {
-      if (!fotoEnRevision) return;
-      const siguienteCtx = {
-        tipo: fotoEnRevision.tipo,
-        nombre: fotoEnRevision.nombre,
-        horario: fotoEnRevision.horario,
-        fecha: fotoEnRevision.fecha,
-        nota: fotoEnRevision.nota,
-        marcarTrabajo: fotoEnRevision.marcarTrabajo
-      };
-      fotoEnRevision = null;
-      guardarRevisionPendiente(null);
-      modalRevisionEl.classList.remove("open");
-      lanzarSelectorPaseLista(siguienteCtx);
-    });
-
-    document.getElementById("gridPaseLista").addEventListener("click", (e) => {
-      const btnFoto = e.target.closest("[data-pase-foto]");
-      if (btnFoto) {
-        const nombre = btnFoto.getAttribute("data-pase-foto");
-        const inputNota = document.querySelector(`[data-pase-nota="${nombre}"]`);
-        lanzarSelectorPaseLista({
-          tipo: "entrada",
-          nombre,
-          horario: horarioSeleccionado,
-          fecha: fechaSeleccionada,
-          nota: inputNota ? inputNota.value.trim() : "",
-          marcarTrabajo: false
-        });
-        return;
-      }
-
-      const btnSalida = e.target.closest("[data-pase-salida]");
-      if (btnSalida) {
-        const nombre = btnSalida.getAttribute("data-pase-salida");
-        const inputNota = document.querySelector(`[data-pase-nota="${nombre}"]`);
-        lanzarSelectorPaseLista({
-          tipo: "salida",
-          nombre,
-          horario: horarioSeleccionado,
-          fecha: fechaSeleccionada,
-          nota: inputNota ? inputNota.value.trim() : "",
-          marcarTrabajo: false
-        });
-      }
-    });
-
-    document.getElementById("gridPaseLista").addEventListener("click", (e) => {
-      const btn = e.target.closest("[data-pase-nombre]");
-      if (!btn) return;
-      const nombre = btn.getAttribute("data-pase-nombre");
-      const nuevoEstado = btn.getAttribute("data-pase-estado");
-      const registroDia = asegurarRegistroFecha(fechaSeleccionada);
-      const inputNota = document.querySelector(`[data-pase-nota="${nombre}"]`);
-      const previo = registroDia[horarioSeleccionado][nombre] || {};
-
-      if (nuevoEstado === "trabajo" && !previo.entradaAceptada) {
-        lanzarSelectorPaseLista({
-          tipo: "entrada",
-          nombre,
-          horario: horarioSeleccionado,
-          fecha: fechaSeleccionada,
-          nota: inputNota ? inputNota.value.trim() : "",
-          marcarTrabajo: true
-        });
-        return;
-      }
-
-      registroDia[horarioSeleccionado][nombre] = {
-        estado: nuevoEstado,
-        nota: inputNota ? inputNota.value.trim() : "",
-        actualizado: new Date().toLocaleString("es-MX", { dateStyle: "short", timeStyle: "short" }),
-        fotoBiometrico: previo.fotoBiometrico || "",
-        horaBiometrico: previo.horaBiometrico || "",
-        huellaEntrada: previo.huellaEntrada || "",
-        entradaTomada: Boolean(previo.entradaTomada || previo.fotoBiometrico),
-        entradaAceptada: Boolean(previo.entradaAceptada),
-        fotoSalida: previo.fotoSalida || "",
-        horaSalida: previo.horaSalida || "",
-        huellaSalida: previo.huellaSalida || "",
-        salidaTomada: Boolean(previo.salidaTomada || previo.fotoSalida),
-        salidaAceptada: Boolean(previo.salidaAceptada),
-        obsFoto: previo.obsFoto || ""
-      };
-
-      guardarYRefrescar(true);
-      renderPaseLista();
-    });
-
-    document.getElementById("gridPaseLista").addEventListener("change", (e) => {
-      const inputNota = e.target.closest("[data-pase-nota]");
-      if (!inputNota) return;
-      const nombre = inputNota.getAttribute("data-pase-nota");
-      const registroDia = asegurarRegistroFecha(fechaSeleccionada);
-      const actual = registroDia[horarioSeleccionado][nombre] || { estado: "sin_marcar", nota: "", actualizado: "" };
-
-      registroDia[horarioSeleccionado][nombre] = {
-        ...actual,
-        nota: inputNota.value.trim(),
-        actualizado: new Date().toLocaleString("es-MX", { dateStyle: "short", timeStyle: "short" })
-      };
-
-      guardarYRefrescar(true);
-    });
-
-    window.cerrarHorarioSinMarcar = function () {
-      const etiqueta = ETIQUETAS_HORARIO[horarioSeleccionado];
-      if (!confirm(`¿Cerrar ${etiqueta} (${fechaSeleccionada}) y marcar en rojo (falta) a quienes no marcaron su asistencia?`)) return;
-      const registroDia = asegurarRegistroFecha(fechaSeleccionada);
-      const ahora = new Date().toLocaleString("es-MX", { dateStyle: "short", timeStyle: "short" });
-      INTEGRANTES_INICIALES.forEach((nombre) => {
-        const actual = registroDia[horarioSeleccionado][nombre] || { estado: "sin_marcar", nota: "", actualizado: "" };
-        if (actual.estado === "sin_marcar") {
-          registroDia[horarioSeleccionado][nombre] = {
-            estado: "falta",
-            nota: actual.nota || "No marcó asistencia al cierre",
-            actualizado: ahora
-          };
-        }
+    document.getElementById("btnPublicarQueja").addEventListener("click", async () => {
+      const desc = document.getElementById("quejaDesc").value.trim();
+      const area = document.getElementById("quejaArea").value.trim();
+      if (!desc && !area) return alert("Escribe un área o descripción del reporte.");
+      state.quejas.unshift({
+        tipo: document.getElementById("quejaTipo").value,
+        persona: document.getElementById("quejaPersona").value,
+        area: area || "No especificada",
+        desc,
+        fotos: fotosQuejaTemp,
+        fechaHora: ahoraLegible()
       });
-      guardarYRefrescar(true);
-      renderPaseLista();
-    };
-
-    window.limpiarHorarioActual = function () {
-      const etiqueta = ETIQUETAS_HORARIO[horarioSeleccionado];
-      if (!confirm(`¿Limpiar el pase de lista de ${etiqueta} en la fecha ${fechaSeleccionada}?`)) return;
-      const registroDia = asegurarRegistroFecha(fechaSeleccionada);
-      INTEGRANTES_INICIALES.forEach((nombre) => {
-        registroDia[horarioSeleccionado][nombre] = {
-          estado: "sin_marcar",
-          nota: "",
-          actualizado: ""
-        };
-      });
-      guardarYRefrescar(true);
-      renderPaseLista();
-    };
-
-    let fichaPendienteDesbloqueo = null;
-
-    function solicitarAccesoTarjeta(id) {
-      const f = db.fichas.find(x => x.id === id);
-      if (!f) return;
-
-      if (esEncargadaActiva) {
-        abrirModal(id);
-        return;
-      }
-
-      fichaPendienteDesbloqueo = f;
-      document.getElementById("tituloClaveTarjeta").textContent = `Tarjeta de ${f.nombre}`;
-      document.getElementById("subtituloClaveTarjeta").textContent =
-        `Ingresa la clave de ${f.nombre} para subir, editar o quitar fotos de esta tarjeta.`;
-      document.getElementById("inputClaveTarjeta").value = "";
-      document.getElementById("errorClaveTarjeta").textContent = "";
-      document.getElementById("modalClaveTarjeta").classList.add("open");
-      setTimeout(() => document.getElementById("inputClaveTarjeta").focus(), 60);
-    }
-
-    window.cerrarModalClaveTarjeta = function () {
-      fichaPendienteDesbloqueo = null;
-      document.getElementById("modalClaveTarjeta").classList.remove("open");
-    };
-
-    window.validarClaveTarjeta = function () {
-      if (!fichaPendienteDesbloqueo) return;
-      const claveIngresada = (document.getElementById("inputClaveTarjeta").value || "").trim();
-      const claveCorrectaTarjeta = (db.clavesParticipantes && db.clavesParticipantes[fichaPendienteDesbloqueo.nombre]) || "";
-      const claveAdmin = db.adminPassword || PIN_ADMIN_DEFAULT;
-
-      if (claveIngresada && (claveIngresada === claveCorrectaTarjeta || claveIngresada === claveAdmin)) {
-        const idTarget = fichaPendienteDesbloqueo.id;
-        cerrarModalClaveTarjeta();
-        abrirModal(idTarget);
-      } else {
-        document.getElementById("errorClaveTarjeta").textContent =
-          "Clave incorrecta. No puedes subir ni quitar fotos en una tarjeta que no es tuya.";
-      }
-    };
-
-    document.getElementById("inputClaveTarjeta").addEventListener("keydown", (e) => {
-      if (e.key === "Enter") validarClaveTarjeta();
-    });
-
-    document.getElementById("gridFichas").addEventListener("click", (e) => {
-      const btn = e.target.closest("[data-action]");
-      if (!btn) return;
-      const action = btn.getAttribute("data-action");
-      const id = Number(btn.getAttribute("data-id"));
-      const f = db.fichas.find(x => x.id === id);
-      if (!f) return;
-
-      if (action === "toggle") {
-        f.noParticipa = !f.noParticipa;
-        if (!f.noParticipa) {
-          f.estado = (Array.isArray(f.fotos) && f.fotos.length > 0) ? "verde" : "pendiente";
-        }
-        renderTablero(true);
-      } else if (action === "subir") {
-        solicitarAccesoTarjeta(id);
-      }
-    });
-
-    document.getElementById("gridFichas").addEventListener("change", (e) => {
-      const el = e.target;
-      const action = el.getAttribute("data-action");
-      const id = Number(el.getAttribute("data-id"));
-      const f = db.fichas.find(x => x.id === id);
-      if (!f) return;
-
-      if (action === "turno") {
-        f.turno = el.value;
-        guardarYRefrescar(true);
-      } else if (action === "area") {
-        f.area = el.value;
-        guardarYRefrescar(true);
-      }
-    });
-
-    window.marcarPendientesEnRojo = function () {
-      db.fichas.forEach(f => {
-        if (!f.noParticipa && f.estado !== "verde") {
-          f.estado = "rojo";
-        }
-      });
-      renderTablero(true);
-    };
-
-    window.rotarSugerencia = function () {
-      db.fichas.forEach((f, idx) => {
-        f.area = AREAS[(idx + 1) % AREAS.length];
-        f.turno = f.turno === "Matutino" ? "Vespertino" : "Matutino";
-      });
-      renderTablero(true);
-    };
-
-    window.nuevaJornada = function () {
-      if (!esEncargadaActiva) {
-        alert("Solo el Administrador puede reiniciar toda la jornada (entra tocando 7 veces la pantalla).");
-        return;
-      }
-      if (!confirm("¿Reiniciar las 6 fichas para una nueva jornada?")) return;
-      db.fichas = db.fichas.map(f => ({
-        ...f,
-        estado: f.noParticipa ? "descanso" : "pendiente",
-        nota: "",
-        fotos: [],
-        fotosDetalle: [],
-        horaSubida: "",
-        calificacionEncargada: 0,
-        comentarioEncargada: "",
-        fechaCalificacionEncargada: ""
-      }));
-      renderTablero(true);
-      renderPanelEncargada();
-    };
-
-    function contarFotosDePunto(puntoId) {
-      return fotosTemporalesModal.filter(f => f.puntoId === puntoId).length;
-    }
-
-    function renderChecklistModal() {
-      const selEl = document.getElementById("selectTurnoIslaModal");
-      const clave = selEl ? selEl.value : "matutino_a";
-      const cfg = CHECKLIST_POR_TURNO_ISLA[clave] || CHECKLIST_POR_TURNO_ISLA.matutino_a;
-      const cont = document.getElementById("checklistPuntosModal");
-      if (!cont) return;
-
-      cont.innerHTML = cfg.items.map((item) => {
-        const cant = contarFotosDePunto(item.id);
-        const lleno = cant >= item.maxFotos;
-        return `
-          <div class="check-item">
-            <div class="check-item-top">
-              <div>
-                <div class="check-label">${item.nombre}</div>
-                <div class="check-meta">Fotos: ${cant} / ${item.maxFotos} (máx. ${item.maxFotos})</div>
-              </div>
-              <button type="button" class="${lleno ? "secondary" : "success"}" style="padding:6px 10px; font-size:0.76rem;" onclick="subirArchivoPunto('${item.id}')">
-                ${lleno ? "Límite alcanzado" : "Subir archivo"}
-              </button>
-            </div>
-          </div>
-        `;
-      }).join("");
-    }
-
-    window.cambiarTurnoIslaModal = function () {
-      const selEl = document.getElementById("selectTurnoIslaModal");
-      if (fichaActivaModal && selEl) {
-        fichaActivaModal.turnoIslaKey = selEl.value;
-      }
-      renderChecklistModal();
-    };
-
-    function persistirFotosEnFichaActiva(targetFicha, detalleArr, claveTI, cfgTI, horaStr) {
-      if (!targetFicha) return;
-      const fotosArr = detalleArr.map(x => x.src).filter(Boolean);
-      const huellasNuevas = detalleArr.map(x => x.huella).filter(Boolean);
-      registrarHuellasUsadas(huellasNuevas);
-
-      const notaVal = (document.getElementById("inputNota")?.value || targetFicha.nota || "").trim();
-      targetFicha.fotos = fotosArr;
-      targetFicha.fotosDetalle = [...detalleArr];
-      targetFicha.turnoIslaKey = claveTI;
-      targetFicha.area = cfgTI.titulo;
-      targetFicha.nota = notaVal;
-      targetFicha.horaSubida = fotosArr.length ? horaStr : "";
-      targetFicha.estado = fotosArr.length ? "verde" : "pendiente";
-      targetFicha.noParticipa = false;
-      guardarYRefrescar(true);
-      renderTablero(false);
-      renderPanelEncargada();
-    }
-
-    window.subirArchivoPunto = function (puntoId) {
-      const selEl = document.getElementById("selectTurnoIslaModal");
-      const clave = selEl ? selEl.value : (fichaActivaModal?.turnoIslaKey || "matutino_a");
-      const cfg = CHECKLIST_POR_TURNO_ISLA[clave] || CHECKLIST_POR_TURNO_ISLA.matutino_a;
-      const item = cfg.items.find(x => x.id === puntoId);
-      if (!item) return;
-
-      if (fotosTemporalesModal.length >= MAX_FOTOS) {
-        alert(`Solo se pueden subir hasta ${MAX_FOTOS} fotos por tarjeta.`);
-        return;
-      }
-      const cantActual = contarFotosDePunto(item.id);
-      if (cantActual >= item.maxFotos) {
-        alert(`Ya alcanzaste el límite de ${item.maxFotos} fotos para "${item.nombre}".`);
-        return;
-      }
-
-      const puntoSeguro = {
-        id: item.id,
-        nombre: item.nombre,
-        maxFotos: item.maxFotos,
-        turnoIslaKey: clave,
-        turnoIslaTitulo: cfg.titulo,
-        fichaId: fichaActivaModal ? fichaActivaModal.id : 0
-      };
-      guardarPuntoCapturaRespaldo(puntoSeguro);
-
-      const contador = document.getElementById("contadorFotosModal");
-      if (contador) contador.textContent = `Seleccionando archivos para ${item.nombre}...`;
-
-      dispararSelectorArchivos(
-        async (files) => {
-          const vigente = obtenerPuntoCapturaRespaldo() || puntoSeguro;
-          let targetFicha = fichaActivaModal;
-          if (!targetFicha && vigente.fichaId !== null && vigente.fichaId !== undefined) {
-            targetFicha = db.fichas.find(x => x.id === vigente.fichaId) || null;
-          }
-          if (targetFicha && !fichaActivaModal) {
-            abrirModal(targetFicha.id);
-          }
-
-          const huellasEnLote = new Set(fotosTemporalesModal.map(x => x.huella).filter(Boolean));
-          let agregadas = 0;
-          let repetidasDetectadas = 0;
-          let ultimaHoraStr = obtenerFechaHoraEstampada();
-
-          for (const file of files) {
-            if (fotosTemporalesModal.length >= MAX_FOTOS) break;
-            if (contarFotosDePunto(vigente.id) >= vigente.maxFotos) break;
-
-            const huella = await calcularHuellaArchivo(file);
-            if (esHuellaRepetida(huella, huellasEnLote)) {
-              repetidasDetectadas += 1;
-              continue;
-            }
-
-            const fechaHoraStr = obtenerFechaHoraEstampada();
-            ultimaHoraStr = fechaHoraStr;
-            const etiqueta = `${vigente.turnoIslaTitulo} · ${vigente.nombre}`;
-            const comprimidaEstampada = await capturarYEstamparFotoAsync(file, etiqueta, fechaHoraStr, 560, 0.48);
-
-            if (comprimidaEstampada) {
-              huellasEnLote.add(huella);
-              fotosTemporalesModal.push({
-                src: comprimidaEstampada,
-                huella,
-                fechaHora: fechaHoraStr,
-                puntoId: vigente.id,
-                puntoNombre: vigente.nombre,
-                maxFotos: vigente.maxFotos
-              });
-              agregadas += 1;
-            }
-          }
-
-          if (repetidasDetectadas > 0) {
-            alert(`Se omitieron ${repetidasDetectadas} foto(s) porque ya se habían subido antes (para evitar repetir fotos de otras entregas).`);
-          } else if (agregadas === 0) {
-            alert("No se pudo procesar el archivo seleccionado. Intenta con otra imagen.");
-          }
-
-          if (targetFicha && agregadas > 0) {
-            const claveAct = vigente.turnoIslaKey || clave;
-            const cfgAct = CHECKLIST_POR_TURNO_ISLA[claveAct] || cfg;
-            persistirFotosEnFichaActiva(targetFicha, fotosTemporalesModal, claveAct, cfgAct, ultimaHoraStr);
-          }
-
-          guardarPuntoCapturaRespaldo(null);
-          renderChecklistModal();
-          actualizarPreviewModal();
-        },
-        () => {
-          guardarPuntoCapturaRespaldo(null);
-          renderChecklistModal();
-          actualizarPreviewModal();
-        },
-        true
-      );
-    };
-
-    window.eliminarFotoIndividualModal = function (index) {
-      if (index < 0 || index >= fotosTemporalesModal.length) return;
-      fotosTemporalesModal.splice(index, 1);
-      if (fichaActivaModal) {
-        const selEl = document.getElementById("selectTurnoIslaModal");
-        const claveAct = selEl ? selEl.value : (fichaActivaModal.turnoIslaKey || "matutino_a");
-        const cfgAct = CHECKLIST_POR_TURNO_ISLA[claveAct] || CHECKLIST_POR_TURNO_ISLA.matutino_a;
-        persistirFotosEnFichaActiva(fichaActivaModal, fotosTemporalesModal, claveAct, cfgAct, obtenerFechaHoraEstampada());
-      }
-      renderChecklistModal();
-      actualizarPreviewModal();
-    };
-
-    function actualizarPreviewModal() {
-      const contador = document.getElementById("contadorFotosModal");
-      const aviso = document.getElementById("avisoLimiteModal");
-      const grid = document.getElementById("previewGridModal");
-
-      contador.textContent = `Fotos subidas: ${fotosTemporalesModal.length} / ${MAX_FOTOS} (máx. ${MAX_FOTOS})`;
-      aviso.textContent = "";
-
-      grid.innerHTML = fotosTemporalesModal
-        .map((item, i) => `
-          <div class="foto-card-item">
-            <button type="button" class="foto-del-btn" onclick="eliminarFotoIndividualModal(${i})" title="Quitar esta foto">✕</button>
-            <img src="${item.src}" alt="Foto ${i + 1}" />
-            <div class="foto-stamp-caption"><strong>${item.puntoNombre || "Evidencia"}</strong><br/>${item.fechaHora || ""}</div>
-          </div>
-        `)
-        .join("");
-    }
-
-    window.limpiarFotosModal = function () {
-      if (!confirm("¿Quitar todas las fotos de esta tarjeta?")) return;
-      fotosTemporalesModal = [];
-      if (fichaActivaModal) {
-        const selEl = document.getElementById("selectTurnoIslaModal");
-        const claveAct = selEl ? selEl.value : (fichaActivaModal.turnoIslaKey || "matutino_a");
-        const cfgAct = CHECKLIST_POR_TURNO_ISLA[claveAct] || CHECKLIST_POR_TURNO_ISLA.matutino_a;
-        persistirFotosEnFichaActiva(fichaActivaModal, [], claveAct, cfgAct, "");
-      }
-      renderChecklistModal();
-      actualizarPreviewModal();
-    };
-
-    function abrirModal(id) {
-      fichaActivaModal = db.fichas.find(x => x.id === id);
-      if (!fichaActivaModal) return;
-
-      const detallePrevio = Array.isArray(fichaActivaModal.fotosDetalle) && fichaActivaModal.fotosDetalle.length
-        ? fichaActivaModal.fotosDetalle
-        : (Array.isArray(fichaActivaModal.fotos)
-            ? fichaActivaModal.fotos.map((src) => ({
-                src,
-                huella: "",
-                fechaHora: fichaActivaModal.horaSubida || "",
-                puntoId: "general",
-                puntoNombre: fichaActivaModal.area || "Evidencia",
-                maxFotos: 15
-              }))
-            : []);
-
-      fotosTemporalesModal = [...detallePrevio];
-
-      const selEl = document.getElementById("selectTurnoIslaModal");
-      if (selEl) {
-        selEl.value = fichaActivaModal.turnoIslaKey || (fichaActivaModal.turno === "Vespertino" ? "vespertino_a" : "matutino_a");
-      }
-
-      document.getElementById("modalTitulo").textContent = `Evidencia de ${fichaActivaModal.nombre}`;
-      document.getElementById("inputNota").value = fichaActivaModal.nota || "";
-      renderChecklistModal();
-      actualizarPreviewModal();
-      document.getElementById("modalEvidencia").classList.add("open");
-    }
-
-    window.cerrarModal = function () {
-      fichaActivaModal = null;
-      fotosTemporalesModal = [];
-      guardarPuntoCapturaRespaldo(null);
-      document.getElementById("modalEvidencia").classList.remove("open");
-    };
-
-    window.guardarEvidencia = function () {
-      if (!fichaActivaModal) return;
-
-      const fotosFinales = fotosTemporalesModal.map(x => x.src);
-      const huellasFinales = fotosTemporalesModal.map(x => x.huella).filter(Boolean);
-      registrarHuellasUsadas(huellasFinales);
-
-      const nota = document.getElementById("inputNota").value.trim();
-      const ahora = obtenerFechaHoraEstampada();
-      const selEl = document.getElementById("selectTurnoIslaModal");
-      const claveTI = selEl ? selEl.value : "matutino_a";
-      const cfgTI = CHECKLIST_POR_TURNO_ISLA[claveTI] || CHECKLIST_POR_TURNO_ISLA.matutino_a;
-
-      const targetFicha = db.fichas.find(x => x.id === fichaActivaModal.id) || fichaActivaModal;
-      targetFicha.fotos = fotosFinales;
-      targetFicha.fotosDetalle = [...fotosTemporalesModal];
-      targetFicha.turnoIslaKey = claveTI;
-      targetFicha.area = cfgTI.titulo;
-      targetFicha.nota = nota;
-      targetFicha.horaSubida = fotosFinales.length ? ahora : "";
-      targetFicha.estado = fotosFinales.length ? "verde" : "pendiente";
-      targetFicha.noParticipa = false;
-
-      if (fotosFinales.length) {
-        if (!Array.isArray(db.evidencias)) db.evidencias = [];
-        db.evidencias.unshift({
-          id: Date.now(),
-          nombre: targetFicha.nombre,
-          turno: targetFicha.turno,
-          area: targetFicha.area,
-          nota,
-          hora: ahora,
-          fotos: fotosFinales
-        });
-      }
-
-      if ("Notification" in window && Notification.permission === "default") {
-        Notification.requestPermission().catch(() => {});
-      }
-
-      guardarYRefrescar(true);
-      const idGuardado = targetFicha.id;
-      const nombreGuardado = targetFicha.nombre;
-      const areaGuardada = targetFicha.area;
-      const cantGuardada = fotosFinales.length;
-      const horaGuardada = ahora;
-      cerrarModal();
-      renderTablero(false);
-      renderPanelEncargada();
-
-      const evGuardado = evaluarMetaChecklistFicha(targetFicha);
-      if (evGuardado.metaCumplida) {
-        const claveM = `${idGuardado}_${evGuardado.claveTI}_META_OK_${horaGuardada}`;
-        fichasNotificadasEnJornada.add(claveM);
-        dispararAlertaVisualYSonora(
-          `🔔 ¡${nombreGuardado} completó todas sus opciones (${evGuardado.opcionesCubiertas}/${evGuardado.totalOpciones})!`,
-          `${areaGuardada} · ${cantGuardada} fotos · ${horaGuardada}`,
-          idGuardado
-        );
-      } else if (cantGuardada > 0) {
-        reproducirSonidoNotificacion();
-        dispararAlertaVisualYSonora(
-          `📸 Evidencia guardada para ${nombreGuardado} (${evGuardado.opcionesCubiertas}/${evGuardado.totalOpciones} opciones)`,
-          `${areaGuardada} · ${cantGuardada} fotos · ${horaGuardada}`,
-          idGuardado
-        );
-      }
-    };
-
-    function actualizarPreviewQueja() {
-      const cont = document.getElementById("contadorFotosQueja");
-      const grid = document.getElementById("previewFotosQueja");
-      if (!cont || !grid) return;
-      cont.textContent = `Fotos de queja subidas: ${fotosQuejaTemporales.length} / 10`;
-      grid.innerHTML = fotosQuejaTemporales.map((f) => `
-        <div class="foto-card-item">
-          <img src="${f.src}" alt="Foto de queja" />
-          <div class="foto-stamp-caption">${f.fechaHora || ""}</div>
-        </div>
-      `).join("");
-    }
-
-    window.subirArchivoQueja = function () {
-      if (fotosQuejaTemporales.length >= 10) {
-        alert("Máximo 10 fotos por reporte de queja.");
-        return;
-      }
-      dispararSelectorArchivos(async (files) => {
-        const huellasEnLote = new Set(fotosQuejaTemporales.map(x => x.huella).filter(Boolean));
-        let repetidas = 0;
-
-        for (const file of files) {
-          if (fotosQuejaTemporales.length >= 10) break;
-          const huella = await calcularHuellaArchivo(file);
-          if (esHuellaRepetida(huella, huellasEnLote)) {
-            repetidas += 1;
-            continue;
-          }
-          const fechaHoraStr = obtenerFechaHoraEstampada();
-          const tipoVal = document.getElementById("quejaTipo")?.value || "limpieza";
-          const etiqueta = `QUEJA (${tipoVal.toUpperCase()})`;
-          const comprimida = await capturarYEstamparFotoAsync(file, etiqueta, fechaHoraStr, 560, 0.48);
-          if (comprimida) {
-            huellasEnLote.add(huella);
-            fotosQuejaTemporales.push({ src: comprimida, huella, fechaHora: fechaHoraStr });
-          }
-        }
-
-        if (repetidas > 0) {
-          alert(`Se omitieron ${repetidas} foto(s) repetidas de entregas anteriores.`);
-        }
-        actualizarPreviewQueja();
-      }, null, true);
-    };
-
-    window.limpiarFotosQuejaTemp = function () {
-      fotosQuejaTemporales = [];
-      actualizarPreviewQueja();
-    };
-
-    window.publicarQuejaReporte = function () {
-      const tipo = document.getElementById("quejaTipo")?.value || "limpieza";
-      const persona = document.getElementById("quejaPersona")?.value || "No aplica / General";
-      const area = (document.getElementById("quejaArea")?.value || "").trim();
-      const descripcion = (document.getElementById("quejaDescripcion")?.value || "").trim();
-
-      if (!descripcion && !fotosQuejaTemporales.length) {
-        alert("Escribe una descripción o sube al menos 1 archivo de foto para publicar la queja/reporte.");
-        return;
-      }
-
-      const ahora = obtenerFechaHoraEstampada();
-      registrarHuellasUsadas(fotosQuejaTemporales.map(x => x.huella).filter(Boolean));
-
-      if (!Array.isArray(db.quejas)) db.quejas = [];
-      db.quejas.unshift({
-        id: Date.now(),
-        tipo,
-        persona,
-        area: area || "Estación Faro Santander",
-        descripcion,
-        fechaHora: ahora,
-        fotos: fotosQuejaTemporales.map(x => x.src)
-      });
-
+      document.getElementById("quejaDesc").value = "";
       document.getElementById("quejaArea").value = "";
-      document.getElementById("quejaDescripcion").value = "";
-      fotosQuejaTemporales = [];
-      actualizarPreviewQueja();
-      guardarYRefrescar(true);
+      document.getElementById("quejaFotosInput").value = "";
+      document.getElementById("quejaPreview").innerHTML = "";
+      fotosQuejaTemp = [];
+      await saveState();
       renderQuejas();
-      alert("Queja / reporte guardado con fecha y hora.");
-    };
-
-    let filtroQuejaActual = "todas";
-
-    window.seleccionarFiltroQueja = function (tipo) {
-      filtroQuejaActual = tipo || "todas";
-      ["todas", "limpieza", "dano", "estado"].forEach((k) => {
-        const btn = document.getElementById(`filtro-queja-${k}`);
-        if (btn) btn.classList.toggle("active", k === filtroQuejaActual);
-      });
-      renderQuejas();
-    };
+    });
 
     function renderQuejas() {
-      const cont = document.getElementById("listaQuejasReportes");
-      if (!cont) return;
-      const listaCompleta = Array.isArray(db.quejas) ? db.quejas : [];
-      const lista = filtroQuejaActual === "todas"
-        ? listaCompleta
-        : listaCompleta.filter(q => (q.tipo || "limpieza") === filtroQuejaActual);
-
-      if (!lista.length) {
-        cont.innerHTML = `<div class="meta-small">${listaCompleta.length ? "No hay reportes en este filtro." : "No hay quejas o reportes registrados todavía."}</div>`;
+      const box = document.getElementById("listaQuejas");
+      if (!state.quejas.length) {
+        box.innerHTML = `<div class="meta-small">No hay reportes registrados todavía.</div>`;
         return;
       }
-
-      const etiquetasTipo = {
-        limpieza: "Falta de limpieza",
-        dano: "Cosa dañada / Falla",
-        estado: "Mal estado de la estación"
-      };
-
-      cont.innerHTML = lista.map((q) => `
-        <div class="queja-card tipo-${q.tipo || "limpieza"}">
+      box.innerHTML = state.quejas.map(q => `
+        <div class="summary-box" style="margin-bottom:10px;">
           <div class="ficha-top">
-            <strong>${etiquetasTipo[q.tipo] || "Reporte"}</strong>
-            <span class="badge badge-pendiente">${q.fechaHora || ""}</span>
+            <strong>${q.area} · ${q.persona}</strong>
+            <span class="badge badge-pendiente">${q.tipo.toUpperCase()}</span>
           </div>
-          <div class="meta-small"><strong>Área:</strong> ${q.area || "—"} · <strong>Involucrado:</strong> ${q.persona || "No aplica"}</div>
-          ${q.descripcion ? `<div style="margin-top:8px; font-size:0.86rem; color:#f8fafc;">${q.descripcion}</div>` : ""}
-          ${
-            Array.isArray(q.fotos) && q.fotos.length
-              ? `<div class="thumbs-grid">${q.fotos.map(src => `<img src="${src}" alt="Evidencia de reporte" />`).join("")}</div>`
-              : ""
-          }
+          <div class="meta-small">${q.fechaHora} · Fotos: ${q.fotos.length}</div>
+          <div style="margin-top:6px; font-size:0.86rem;">${q.desc}</div>
         </div>
       `).join("");
     }
 
-    window.cambiarVista = function (vista) {
-      if (vista === "encargada" && !esEncargadaActiva) {
-        toggleModoEncargada();
-        return;
-      }
-      document.querySelectorAll(".section-view").forEach(s => s.classList.remove("active"));
-      document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
-      const sec = document.getElementById(`view-${vista}`);
-      if (sec) sec.classList.add("active");
-      const nav = document.getElementById(`nav-${vista}`);
-      if (nav) nav.classList.add("active");
-      if (vista === "encargada") {
-        renderPanelEncargada();
-      } else if (vista === "ventas") {
-        renderVentasAceites();
-      }
-    };
+    // MODAL FOTO (LIMPIEZA Y ENTRADA CON DETECCIÓN DE TURNO +-1H)
+    let contextoFoto = null;
+    let fotoDataActual = "";
 
-    (function setupPWA() {
-      try {
-        const manifestData = {"name": "Faro Santander — Limpieza y Mantenimiento", "short_name": "Faro Santander", "start_url": ".", "scope": ".", "display": "standalone", "background_color": "#0f172a", "theme_color": "#0c4a6e", "icons": [{"src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='36' fill='%230c4a6e'/%3E%3Ctext x='50%25' y='56%25' dominant-baseline='middle' text-anchor='middle' font-size='96' fill='%23f8fafc' font-family='Arial,sans-serif' font-weight='bold'%3EFS%3C/text%3E%3C/svg%3E", "sizes": "192x192", "type": "image/svg+xml", "purpose": "any maskable"}, {"src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='96' fill='%230c4a6e'/%3E%3Ctext x='50%25' y='56%25' dominant-baseline='middle' text-anchor='middle' font-size='250' fill='%23f8fafc' font-family='Arial,sans-serif' font-weight='bold'%3EFS%3C/text%3E%3C/svg%3E", "sizes": "512x512", "type": "image/svg+xml", "purpose": "any maskable"}]};
-        const manifestBlob = new Blob([JSON.stringify(manifestData)], { type: "application/manifest+json" });
-        const manifestUrl = URL.createObjectURL(manifestBlob);
-        const linkEl = document.getElementById("pwaManifestLink");
-        if (linkEl) linkEl.href = manifestUrl;
-
-        if ("serviceWorker" in navigator) {
-          const swCode = `
-            self.addEventListener("install", (event) => {
-              self.skipWaiting();
-            });
-            self.addEventListener("activate", (event) => {
-              event.waitUntil(self.clients.claim());
-            });
-            self.addEventListener("fetch", (event) => {});
-          `;
-          const swBlob = new Blob([swCode], { type: "application/javascript" });
-          const swUrl = URL.createObjectURL(swBlob);
-          navigator.serviceWorker.register(swUrl).catch(() => {});
-        }
-      } catch (err) {
-        console.warn("PWA setup:", err);
-      }
-    })();
-
-    function reiniciarPaseListaDiaSilencioso(fechaISO) {
-      if (!db.paseLista || typeof db.paseLista !== "object") {
-        db.paseLista = {};
-      }
-      db.paseLista[fechaISO] = crearDiaPaseListaVacio();
+    function abrirModalFoto(ctx) {
+      contextoFoto = ctx;
+      fotoDataActual = "";
+      document.getElementById("inputFotoArchivo").value = "";
+      document.getElementById("inputNotaModal").value = "";
+      const img = document.getElementById("previewFotoModal");
+      img.src = "";
+      img.style.display = "none";
+      document.getElementById("modalFotoTitulo").textContent =
+        ctx.tipo === "entrada" ? `Entrada de ${ctx.nombre}` : `Evidencia de limpieza`;
+      document.getElementById("modalFoto").classList.add("open");
     }
 
-    function aplicarReinicioAutomaticoDelDia(hoyISO) {
-      fechaSeleccionada = hoyISO;
-      inputFechaPase.value = hoyISO;
-      reiniciarPaseListaDiaSilencioso(hoyISO);
-      db.fichas = db.fichas.map(f => ({
-        ...f,
-        estado: f.noParticipa ? "descanso" : "pendiente",
-        nota: "",
-        fotos: [],
-        fotosDetalle: [],
-        horaSubida: "",
-        calificacionEncargada: 0,
-        comentarioEncargada: "",
-        fechaCalificacionEncargada: ""
-      }));
-      localStorage.setItem(ULTIMA_FECHA_KEY, hoyISO);
-      guardarYRefrescar(true);
-    }
-
-    function verificarCambioDeDiaAutomatico(forzarRender = true) {
-      const hoyISO = obtenerFechaHoyISO();
-      const ultimaFechaGuardada = localStorage.getItem(ULTIMA_FECHA_KEY);
-
-      if (ultimaFechaGuardada !== hoyISO) {
-        aplicarReinicioAutomaticoDelDia(hoyISO);
-        if (forzarRender) {
-          renderTablero(false);
-          renderPaseLista();
-          renderVentasAceites();
-          renderPanelEncargada();
-        }
-        return true;
-      }
-
-      if (!db.paseLista || !db.paseLista[hoyISO]) {
-        reiniciarPaseListaDiaSilencioso(hoyISO);
-        localStorage.setItem(ULTIMA_FECHA_KEY, hoyISO);
-        guardarYRefrescar(true);
-        if (forzarRender) {
-          renderPaseLista();
-        }
-      }
-      return false;
-    }
-
-    function generarResumenCierreMedianoche(fechaISO) {
-      const registroDia = asegurarRegistroFecha(fechaISO);
-      const resumen = {
-        fecha: fechaISO,
-        generadoA: "00:00",
-        actualizado: new Date().toLocaleString("es-MX", { dateStyle: "short", timeStyle: "short" }),
-        porHorario: {}
+    document.getElementById("inputFotoArchivo").addEventListener("change", e => {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = ev => {
+        fotoDataActual = ev.target.result;
+        const img = document.getElementById("previewFotoModal");
+        img.src = fotoDataActual;
+        img.style.display = "block";
       };
-      HORARIOS.forEach((h) => {
-        const trabajaron = [];
-        const faltaron = [];
-        const descansaron = [];
-        const sinMarcar = [];
-        INTEGRANTES_INICIALES.forEach((nombre) => {
-          const item = registroDia[h]?.[nombre] || { estado: "sin_marcar" };
-          if (item.estado === "trabajo") trabajaron.push(nombre);
-          else if (item.estado === "falta") faltaron.push(nombre);
-          else if (item.estado === "descanso") descansaron.push(nombre);
-          else sinMarcar.push(nombre);
-        });
-        resumen.porHorario[h] = { trabajaron, faltaron, descansaron, sinMarcar };
-      });
-      return resumen;
-    }
-
-    function aplicarCierreAutomaticoEntradasSalidas(forzarRender = true) {
-      const hoyISO = obtenerFechaHoyISO();
-      const ahora = new Date();
-      const pasoMedianocheHoy = (ahora.getHours() * 60 + ahora.getMinutes()) >= 0;
-      let huboCambios = false;
-
-      if (!db.cierresMedianoche || typeof db.cierresMedianoche !== "object") {
-        db.cierresMedianoche = {};
-      }
-
-      Object.keys(db.paseLista || {}).forEach((fechaKey) => {
-        const esDiaAnterior = fechaKey < hoyISO;
-        const esHoyDespuesMedianoche = fechaKey === hoyISO && pasoMedianocheHoy;
-        if (!esDiaAnterior && !esHoyDespuesMedianoche) return;
-
-        const resumenGenerado = generarResumenCierreMedianoche(fechaKey);
-        const previoResumen = JSON.stringify(db.cierresMedianoche[fechaKey] || {});
-        const nuevoResumen = JSON.stringify(resumenGenerado);
-        if (previoResumen !== nuevoResumen) {
-          db.cierresMedianoche[fechaKey] = resumenGenerado;
-          huboCambios = true;
-        }
-      });
-
-      if (huboCambios) {
-        guardarYRefrescar(true);
-        if (forzarRender) {
-          renderPaseLista();
-          renderPanelEncargada();
-        }
-      }
-      return huboCambios;
-    }
-
-    const SESSION_ENCARGADA_KEY = "faro_santander_admin_activo_v31";
-    let esEncargadaActiva = sessionStorage.getItem(SESSION_ENCARGADA_KEY) === "1";
-
-    const fechaControlEncargadaEl = document.getElementById("fechaControlEncargada");
-    const turnoControlEncargadaEl = document.getElementById("turnoControlEncargada");
-    if (fechaControlEncargadaEl) fechaControlEncargadaEl.value = obtenerFechaHoyISO();
-
-    function actualizarInterfazEncargada() {
-      const badgeHeader = document.getElementById("badgeEncargadaActiva");
-      if (badgeHeader) {
-        badgeHeader.style.display = esEncargadaActiva ? "inline-block" : "none";
-      }
-      renderVentasAceites();
-      renderPanelEncargada();
-    }
-
-    window.toggleModoEncargada = function () {
-      if (esEncargadaActiva) {
-        cambiarVista("encargada");
-        return;
-      }
-      const errEl = document.getElementById("errorPinEncargada");
-      const inputEl = document.getElementById("inputPinEncargada");
-      if (errEl) errEl.textContent = "";
-      if (inputEl) inputEl.value = "";
-      document.getElementById("modalPinEncargada").classList.add("open");
-      if (inputEl) setTimeout(() => inputEl.focus(), 60);
-    };
-
-    window.cerrarModalPinEncargada = function () {
-      document.getElementById("modalPinEncargada").classList.remove("open");
-    };
-
-    window.validarPinEncargada = function () {
-      const inputEl = document.getElementById("inputPinEncargada");
-      const errEl = document.getElementById("errorPinEncargada");
-      const pinIngresado = (inputEl ? inputEl.value : "").trim();
-      const claveAdminActual = db.adminPassword || PIN_ADMIN_DEFAULT;
-
-      if (pinIngresado === claveAdminActual) {
-        esEncargadaActiva = true;
-        sessionStorage.setItem(SESSION_ENCARGADA_KEY, "1");
-        cerrarModalPinEncargada();
-        actualizarInterfazEncargada();
-        const vistaActiva = document.querySelector(".section-view.active");
-        if (vistaActiva && vistaActiva.id === "view-ventas") {
-          renderVentasAceites();
-        } else {
-          cambiarVista("encargada");
-        }
-      } else if (errEl) {
-        errEl.textContent = "Contraseña incorrecta. Acceso exclusivo para el Administrador.";
-      }
-    };
-
-    document.getElementById("inputPinEncargada").addEventListener("keydown", (e) => {
-      if (e.key === "Enter") validarPinEncargada();
+      reader.readAsDataURL(file);
     });
 
-    window.cerrarSesionEncargada = function () {
-      esEncargadaActiva = false;
-      sessionStorage.removeItem(SESSION_ENCARGADA_KEY);
-      actualizarInterfazEncargada();
-      cambiarVista("tablero");
-    };
+    document.getElementById("btnCancelarFoto").addEventListener("click", () => {
+      document.getElementById("modalFoto").classList.remove("open");
+      contextoFoto = null;
+    });
 
-    window.cambiarContrasenaAdmin = function () {
-      if (!esEncargadaActiva) return;
-      const nueva = (document.getElementById("nuevoPinAdminInput").value || "").trim();
-      const conf = (document.getElementById("confirmarPinAdminInput").value || "").trim();
-      if (nueva.length < 4) {
-        alert("La contraseña debe tener al menos 4 caracteres.");
-        return;
-      }
-      if (nueva !== conf) {
-        alert("Las dos contraseñas no coinciden. Vuelve a escribirlas.");
-        return;
-      }
-      db.adminPassword = nueva;
-      document.getElementById("nuevoPinAdminInput").value = "";
-      document.getElementById("confirmarPinAdminInput").value = "";
-      guardarYRefrescar(true);
-      alert("Contraseña de Administrador actualizada y guardada en la nube. Solo tú la conoces.");
-    };
+    document.getElementById("btnConfirmarFoto").addEventListener("click", async () => {
+      if (!contextoFoto) return;
+      const nota = document.getElementById("inputNotaModal").value.trim();
 
-    window.guardarClavesParticipantesAdmin = function () {
-      if (!esEncargadaActiva) return;
-      if (!db.clavesParticipantes) db.clavesParticipantes = {};
-      INTEGRANTES_INICIALES.forEach((nombre) => {
-        const inp = document.getElementById(`clave-part-${nombre}`);
-        if (inp) {
-          const val = inp.value.trim();
-          if (val.length >= 3) {
-            db.clavesParticipantes[nombre] = val;
-          }
-        }
-      });
-      guardarYRefrescar(true);
-      renderPanelEncargada();
-      alert("Claves individuales de las tarjetas guardadas.");
-    };
-
-    window.borrarFotoAdminDeFicha = function (fichaId, fotoIdx) {
-      if (!esEncargadaActiva) return;
-      const f = db.fichas.find(x => x.id === fichaId);
-      if (!f || !Array.isArray(f.fotos)) return;
-      if (!confirm(`¿Quitar esta foto de la tarjeta de ${f.nombre}?`)) return;
-      f.fotos.splice(fotoIdx, 1);
-      if (Array.isArray(f.fotosDetalle)) {
-        f.fotosDetalle.splice(fotoIdx, 1);
-      }
-      if (f.fotos.length === 0 && !f.noParticipa) {
-        f.estado = "pendiente";
-        f.horaSubida = "";
-      }
-      guardarYRefrescar(true);
-      renderTablero(false);
-      renderPanelEncargada();
-    };
-
-    window.guardarEvaluacionEncargada = function (fichaId) {
-      if (!esEncargadaActiva) {
-        alert("Solo el Administrador con sesión activa puede calificar y publicar comentarios.");
-        toggleModoEncargada();
-        return;
-      }
-      const f = db.fichas.find(x => x.id === fichaId);
-      if (!f) return;
-
-      const selCal = document.getElementById(`cal-encargada-${fichaId}`);
-      const inpCom = document.getElementById(`com-encargada-${fichaId}`);
-      const cal = selCal ? Number(selCal.value) : 0;
-      const com = inpCom ? inpCom.value.trim() : "";
-      const ahora = new Date().toLocaleString("es-MX", { dateStyle: "short", timeStyle: "short" });
-
-      f.calificacionEncargada = cal;
-      f.comentarioEncargada = com;
-      f.fechaCalificacionEncargada = ahora;
-
-      guardarYRefrescar(true);
-      renderTablero(false);
-      renderPanelEncargada();
-      alert(`Evaluación de ${f.nombre} guardada.`);
-    };
-
-    function renderPanelEncargada() {
-      const contAsistencia = document.getElementById("resumenQuienesTrabajaron");
-      const contCalif = document.getElementById("listaCalificacionEncargada");
-      const tbodyTabla = document.getElementById("tablaResumenTotalAdmin");
-      const contClaves = document.getElementById("listaClavesParticipantesAdmin");
-      if (!contAsistencia || !contCalif) return;
-
-      const fechaConsulta = (fechaControlEncargadaEl && fechaControlEncargadaEl.value) || obtenerFechaHoyISO();
-      const turnoFiltro = (turnoControlEncargadaEl && turnoControlEncargadaEl.value) || "TODOS";
-      const registroDia = asegurarRegistroFecha(fechaConsulta);
-
-      if (tbodyTabla) {
-        tbodyTabla.innerHTML = INTEGRANTES_INICIALES.map((nombre) => {
-          const ficha = db.fichas.find(x => x.nombre === nombre) || {};
-          const turnosInfo = HORARIOS.map((h) => {
-            const reg = registroDia[h]?.[nombre] || { estado: "sin_marcar" };
-            const mapCorto = {
-              trabajo: `✅ ${ETIQUETAS_HORARIO[h]}`,
-              falta: `❌ ${ETIQUETAS_HORARIO[h]}`,
-              descanso: `⚪ ${ETIQUETAS_HORARIO[h]}`,
-              sin_marcar: ""
-            };
-            return mapCorto[reg.estado] || "";
-          }).filter(Boolean).join("<br/>") || "Sin registro";
-
-          const estadoLimpieza = ficha.noParticipa
-            ? "Descanso (no le toca)"
-            : (ficha.estado === "verde" ? "✅ Cumplió (Verde)" : (ficha.estado === "rojo" ? "❌ Sin evidencia (Rojo)" : "⏳ Pendiente"));
-
-          const cantFotos = Array.isArray(ficha.fotos) ? ficha.fotos.length : 0;
-          const calStr = ficha.calificacionEncargada ? `★ ${ficha.calificacionEncargada}/5` : "—";
-
-          return `
-            <tr>
-              <td><strong>${nombre}</strong></td>
-              <td>${turnosInfo}</td>
-              <td>${estadoLimpieza}<br/><span style="color:var(--muted);">${ficha.area || ""}</span></td>
-              <td>${cantFotos} foto(s)</td>
-              <td>${calStr}</td>
-            </tr>
-          `;
-        }).join("");
+      if (contextoFoto.tipo === "entrada") {
+        const ahora = new Date();
+        const detectado = detectarTurnoPorHora(ahora) || state.horarioLista;
+        const fecha = contextoFoto.fecha;
+        asegurarDiaLista(fecha);
+        const reg = state.asistencia[fecha][detectado][contextoFoto.nombre];
+        reg.estado = "trabajando";
+        reg.entradaHora = ahoraLegible();
+        if (nota) reg.nota = nota;
+        reg.updatedAt = ahoraLegible();
+        state.horarioLista = detectado;
+        await saveState();
+        renderLista();
+      } else if (contextoFoto.tipo === "limpieza") {
+        const ficha = state.limpieza.fichas[contextoFoto.id];
+        if (fotoDataActual) ficha.fotos.push({ data: fotoDataActual, hora: ahoraLegible() });
+        if (nota) ficha.nota = nota;
+        ficha.estado = "verde";
+        await saveState();
+        renderLimpieza();
       }
 
-      const horariosAMostrar = turnoFiltro === "TODOS" ? HORARIOS : [turnoFiltro];
-      const trabajaronSet = new Set();
-      const filasHtml = [];
+      document.getElementById("modalFoto").classList.remove("open");
+      contextoFoto = null;
+    });
 
-      horariosAMostrar.forEach((h) => {
-        INTEGRANTES_INICIALES.forEach((nombre) => {
-          const item = registroDia[h][nombre] || { estado: "sin_marcar" };
-          if (item.estado === "trabajo") trabajaronSet.add(nombre);
-          const etiquetaEstado = {
-            trabajo: "TRABAJÓ",
-            falta: "FALTA",
-            descanso: "DESCANSO",
-            sin_marcar: "SIN MARCAR"
-          }[item.estado] || "SIN MARCAR";
-
-          const badgeCls = {
-            trabajo: "badge-verde",
-            falta: "badge-rojo",
-            descanso: "badge-descanso",
-            sin_marcar: "badge-pendiente"
-          }[item.estado] || "badge-pendiente";
-
-          filasHtml.push(`
-            <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; padding:8px 10px; border-radius:10px; background:var(--card-2); border:1px solid var(--border); margin-bottom:6px; flex-wrap:wrap;">
-              <div>
-                <strong>${nombre}</strong>
-                <span class="meta-small" style="margin-left:6px;">· ${ETIQUETAS_HORARIO[h]}</span>
-                ${item.horaBiometrico ? `<div class="meta-small">Entrada: ${item.horaBiometrico}</div>` : ""}
-                ${item.horaSalida ? `<div class="meta-small">Salida: ${item.horaSalida}</div>` : ""}
-                ${item.nota ? `<div class="meta-small">Nota: ${item.nota}</div>` : ""}
-              </div>
-              <span class="badge ${badgeCls}">${etiquetaEstado}</span>
-            </div>
-          `);
-        });
-      });
-
-      const listaQuienes = Array.from(trabajaronSet);
-      const cierreDia = db.cierresMedianoche && db.cierresMedianoche[fechaConsulta];
-      const resumenCorteHtml = cierreDia
-        ? `<div style="margin-bottom:10px; padding:10px; border-radius:10px; background:rgba(14,165,233,0.12); border:1px solid #38bdf8;">
-             <div style="font-weight:800; color:#7dd3fc; font-size:0.84rem;">Corte automático de las 12:00 a.m. (00:00) · ${fechaConsulta}</div>
-             <div class="meta-small" style="color:#e2e8f0; margin-top:4px;">
-               • Mañana trabajaron: ${cierreDia.porHorario?.Manana?.trabajaron?.join(", ") || "Ninguno"}<br/>
-               • Tarde trabajaron: ${cierreDia.porHorario?.Tarde?.trabajaron?.join(", ") || "Ninguno"}<br/>
-               • Noche trabajaron: ${cierreDia.porHorario?.Noche?.trabajaron?.join(", ") || "Ninguno"}
-             </div>
-           </div>`
-        : "";
-
-      contAsistencia.innerHTML = `
-        ${resumenCorteHtml}
-        <div class="status-note" style="margin-bottom:8px;">
-          Sí asistieron (${listaQuienes.length}): ${listaQuienes.length ? listaQuienes.join(", ") : "Nadie marcado como 'Trabajó' aún"}
-        </div>
-        ${filasHtml.join("")}
-      `;
-
-      contCalif.innerHTML = db.fichas.map((f) => {
-        const cantFotos = Array.isArray(f.fotos) ? f.fotos.length : 0;
-        return `
-          <div class="galeria-card">
-            <div class="ficha-top">
-              <strong>${f.nombre}</strong>
-              <span class="badge ${cantFotos > 0 ? "badge-verde" : "badge-pendiente"}">${cantFotos} foto(s)</span>
-            </div>
-            <div class="meta-small">Turno: ${f.turno} · Área: ${f.area}</div>
-            ${
-              cantFotos > 0
-                ? `<div class="thumbs-grid">
-                    ${f.fotos.map((src, idxFoto) => `
-                      <div class="foto-card-item">
-                        <button type="button" class="foto-del-btn" onclick="borrarFotoAdminDeFicha(${f.id}, ${idxFoto})" title="Quitar foto">✕</button>
-                        <img src="${src}" alt="Foto de ${f.nombre}" />
-                      </div>
-                    `).join("")}
-                  </div>`
-                : `<div class="meta-small" style="color:#fbbf24;">Sin fotos subidas todavía</div>`
-            }
-            <div class="campos" style="margin-top:10px;">
-              <label style="font-size:0.78rem; color:#cbd5e1;">
-                Calificación (1 a 5):
-                <select id="cal-encargada-${f.id}" style="margin-top:4px;">
-                  <option value="0" ${!f.calificacionEncargada ? "selected" : ""}>Sin calificar</option>
-                  <option value="1" ${f.calificacionEncargada === 1 ? "selected" : ""}>★☆☆☆☆ (1 - Deficiente)</option>
-                  <option value="2" ${f.calificacionEncargada === 2 ? "selected" : ""}>★★☆☆☆ (2 - Regular)</option>
-                  <option value="3" ${f.calificacionEncargada === 3 ? "selected" : ""}>★★★☆☆ (3 - Aceptable)</option>
-                  <option value="4" ${f.calificacionEncargada === 4 ? "selected" : ""}>★★★★☆ (4 - Buena)</option>
-                  <option value="5" ${f.calificacionEncargada === 5 ? "selected" : ""}>★★★★★ (5 - Excelente)</option>
-                </select>
-              </label>
-              <label style="font-size:0.78rem; color:#cbd5e1;">
-                Comentario del Administrador:
-                <input type="text" id="com-encargada-${f.id}" value="${(f.comentarioEncargada || "").replace(/"/g, "&quot;")}" placeholder="Escribe tu observación o comentario..." style="margin-top:4px;" />
-              </label>
-            </div>
-            <div class="ficha-actions">
-              <button type="button" class="success" onclick="guardarEvaluacionEncargada(${f.id})">Publicar calificación y comentario</button>
-              <button type="button" class="secondary" onclick="solicitarAccesoTarjeta(${f.id})">Abrir tarjeta de ${f.nombre}</button>
-            </div>
-          </div>
-        `;
-      }).join("");
-
-      if (contClaves) {
-        contClaves.innerHTML = INTEGRANTES_INICIALES.map((nombre) => {
-          const claveActual = (db.clavesParticipantes && db.clavesParticipantes[nombre]) || CLAVES_DEFAULT_PARTICIPANTES[nombre];
-          return `
-            <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
-              <strong style="min-width:85px; font-size:0.84rem;">${nombre}:</strong>
-              <input type="text" id="clave-part-${nombre}" value="${claveActual}" maxlength="12" placeholder="Clave de ${nombre}" />
-            </div>
-          `;
-        }).join("");
-      }
-    }
-
-    window.solicitarAccesoTarjeta = solicitarAccesoTarjeta;
-
-    if (fechaControlEncargadaEl) fechaControlEncargadaEl.addEventListener("change", renderPanelEncargada);
-    if (turnoControlEncargadaEl) turnoControlEncargadaEl.addEventListener("change", renderPanelEncargada);
-
-    verificarCambioDeDiaAutomatico(false);
-    aplicarCierreAutomaticoEntradasSalidas(false);
-    document.addEventListener("visibilitychange", () => {
-      if (!document.hidden) {
-        verificarCambioDeDiaAutomatico(true);
-        aplicarCierreAutomaticoEntradasSalidas(true);
+    // MODO ADMINISTRADOR
+    const adminBtn = document.getElementById("adminToggleBtn");
+    adminBtn.addEventListener("click", async () => {
+      if (state.isAdmin) {
+        state.isAdmin = false;
+        adminBtn.textContent = "Modo Visitante (Entrar Admin)";
+        await saveState();
+        autoAbrirLimpiezaEnDiaCorrespondiente();
+        renderLimpieza();
+        renderLista();
+        renderVentas();
+      } else {
+        document.getElementById("inputClaveAdmin").value = "";
+        document.getElementById("errorClaveAdmin").textContent = "";
+        document.getElementById("modalAdmin").classList.add("open");
       }
     });
-    window.addEventListener("focus", () => {
-      verificarCambioDeDiaAutomatico(true);
-      aplicarCierreAutomaticoEntradasSalidas(true);
-    });
-    setInterval(() => {
-      verificarCambioDeDiaAutomatico(true);
-      aplicarCierreAutomaticoEntradasSalidas(true);
-    }, 15000);
 
-    renderTablero(false);
-    renderPaseLista();
-    renderVentasAceites();
-    actualizarInterfazEncargada();
+    document.getElementById("btnCerrarModalAdmin").addEventListener("click", () => {
+      document.getElementById("modalAdmin").classList.remove("open");
+    });
+
+    document.getElementById("btnEntrarAdmin").addEventListener("click", async () => {
+      const val = document.getElementById("inputClaveAdmin").value;
+      if (val === state.adminPass) {
+        state.isAdmin = true;
+        adminBtn.textContent = "MODO ADMINISTRADOR ACTIVO (Salir)";
+        document.getElementById("modalAdmin").classList.remove("open");
+        await saveState();
+        renderLimpieza();
+        renderLista();
+        renderVentas();
+      } else {
+        document.getElementById("errorClaveAdmin").textContent = "Contraseña incorrecta.";
+      }
+    });
+
+    // NAV EVENTOS
+    vistas.forEach(v => {
+      document.getElementById(`nav-${v}`).addEventListener("click", () => mostrarVista(v));
+    });
+
+    // INICIALIZACIÓN
+    renderLimpieza();
+    renderLista();
+    renderVentas();
     renderQuejas();
-
-    const pendienteRev = obtenerRevisionPendiente();
-    if (pendienteRev && pendienteRev.imgData) {
-      cambiarVista("asistencia");
-      abrirRevisionFoto(pendienteRev);
-    }
-  </script>
-
-  <script>
-    (function () {
-      let toquesRapidos = 0;
-      let timerToques = null;
-      const META_TOQUES = 7;
-      const VENTANA_MS = 1600;
-
-      document.addEventListener("click", (e) => {
-        if (e.target.closest("button, a, input, textarea, select, .modal-backdrop")) {
-          toquesRapidos = 0;
-          return;
-        }
-        toquesRapidos += 1;
-        clearTimeout(timerToques);
-        if (toquesRapidos >= META_TOQUES) {
-          toquesRapidos = 0;
-          if (typeof toggleModoEncargada === "function") {
-            toggleModoEncargada();
-          }
-          return;
-        }
-        timerToques = setTimeout(() => {
-          toquesRapidos = 0;
-        }, VENTANA_MS);
-      }, true);
-    })();
+    autoAbrirLimpiezaEnDiaCorrespondiente();
   </script>
 </body>
 </html>
