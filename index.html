@@ -383,6 +383,54 @@
       font-size: 0.82rem;
       margin-bottom: 12px;
     }
+
+    .banner-alerta {
+      background: rgba(217, 119, 6, 0.18);
+      border: 1px solid #fbbf24;
+      color: #fef3c7;
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-size: 0.82rem;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .chat-box {
+      background: var(--card-2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px;
+      max-height: 220px;
+      overflow-y: auto;
+      display: grid;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .chat-msg {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 10px;
+      padding: 8px 10px;
+      font-size: 0.8rem;
+    }
+
+    .chat-msg.admin-msg {
+      border-color: #38bdf8;
+      background: rgba(14, 165, 233, 0.14);
+    }
+
+    .chat-meta {
+      font-size: 0.7rem;
+      color: var(--muted);
+      margin-bottom: 3px;
+      display: flex;
+      justify-content: space-between;
+    }
   </style>
 </head>
 <body>
@@ -396,9 +444,14 @@
   </header>
 
   <main>
-    <!-- 1. LIMPIEZA (MIÉRCOLES Y DOMINGOS · 4 PARTICIPAN · EVIDENCIAS POR PUNTO) -->
+    <!-- 1. LIMPIEZA (MIÉRCOLES Y DOMINGOS · 4 PARTICIPAN · EVIDENCIAS POR PUNTO + CLAVE POR TARJETA + AVISOS) -->
     <section id="view-limpieza" class="section-view">
       <div id="limpiezaDiaAviso" class="banner-info" style="display:none;"></div>
+
+      <div id="avisoMotivadorLimpieza" class="banner-alerta">
+        <span id="textoMotivadorLimpieza">Revisando avance de limpieza...</span>
+        <button id="btnSonarAviso" type="button" class="btn-sm secondary">Probar aviso</button>
+      </div>
 
       <div class="summary-box">
         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
@@ -421,6 +474,26 @@
       </div>
 
       <div id="gridLimpieza" class="grid-6"></div>
+
+      <!-- TABLÓN / CHAT DE AVISOS Y RECADOS -->
+      <div class="summary-box" style="margin-top:14px;">
+        <strong>Avisos y recados de limpieza</strong>
+        <div class="meta-small">El administrador puede mandar recordatorios de tiempo o limpieza y el equipo puede dejar recados.</div>
+        <div id="chatLimpiezaLista" class="chat-box"></div>
+        <div class="campos">
+          <select id="chatRemitente">
+            <option value="Administrador">Administrador</option>
+            <option value="Ana">Ana</option>
+            <option value="Julio">Julio</option>
+            <option value="Alma">Alma</option>
+            <option value="Fátima">Fátima</option>
+            <option value="Xochitl">Xochitl</option>
+            <option value="Karla">Karla</option>
+          </select>
+          <input id="chatMensajeInput" type="text" placeholder="Escribe un aviso o recado (ej. Ya pasó buen rato y faltan fotos)..." />
+          <button id="btnEnviarChatLimpieza" type="button">Enviar recado</button>
+        </div>
+      </div>
     </section>
 
     <!-- 2. PASE DE LISTA -->
@@ -550,8 +623,8 @@
       <div class="summary-box">
         <strong>Guía rápida de uso</strong>
         <div class="meta-small" style="line-height:1.5; margin-top:8px;">
-          • <strong>Limpieza:</strong> Se muestra en automático miércoles y domingos para los 4 cajeros de Mañana (2) y Tarde (2). Noche y Descanso no participan ni cuentan en rojo. Cada punto requiere su propia foto de evidencia.<br/>
-          • <strong>Pase de lista:</strong> Al tocar <em>Entrada</em>, abre la cámara del teléfono para tomar foto al biométrico/hora y detecta automáticamente el turno con ±1 hora de tolerancia. Al iniciar el nuevo ciclo de medianoche, el turno de Noche queda cubierto como asistencia.<br/>
+          • <strong>Limpieza:</strong> Se muestra en automático miércoles y domingos para los 4 cajeros de Mañana (2) y Tarde (2). Cada tarjeta tiene contraseña para que nadie más suba o borre evidencias.<br/>
+          • <strong>Pase de lista:</strong> Al tocar <em>Entrada</em>, abre la cámara del teléfono para tomar foto al biométrico/hora y detecta automáticamente el turno con ±1 hora de tolerancia.<br/>
           • <strong>Ventas:</strong> Los bloques inician el día 1 de cada mes y avanzan cada 7 días dentro del mismo mes. Calcula automáticamente <em>Ventas Global</em> y <em>Faltan o sobran</em>.
         </div>
       </div>
@@ -565,6 +638,22 @@
     <button id="nav-quejas" type="button" class="nav-btn">Quejas</button>
     <button id="nav-ayuda" type="button" class="nav-btn">Ayuda</button>
   </nav>
+
+  <!-- MODAL CONTRASEÑA DE TARJETA -->
+  <div id="modalClaveTarjeta" class="modal-backdrop">
+    <div class="modal-box">
+      <h3 id="modalClaveTarjetaTitulo" style="margin-top:0;">Clave de tarjeta</h3>
+      <div id="modalClaveTarjetaSub" class="meta-small">Ingresa la clave asignada para gestionar evidencias de esta tarjeta.</div>
+      <div class="campos">
+        <input id="inputClaveTarjeta" type="password" placeholder="Clave de la tarjeta" />
+        <div id="errorClaveTarjeta" class="meta-small" style="color:#f87171;"></div>
+      </div>
+      <div class="ficha-actions" style="margin-top:14px;">
+        <button id="btnConfirmarClaveTarjeta" type="button" class="success">Desbloquear</button>
+        <button id="btnCancelarClaveTarjeta" type="button" class="secondary">Cancelar</button>
+      </div>
+    </div>
+  </div>
 
   <!-- MODAL CÁMARA / EVIDENCIA LIMPIEZA Y PASE DE LISTA -->
   <div id="modalFoto" class="modal-backdrop">
@@ -603,6 +692,14 @@
     const FIREBASE_DB_URL = "";
 
     const CAJEROS = ["Ana", "Julio", "Alma", "Fátima", "Xochitl", "Karla"];
+    const CLAVES_TARJETAS = {
+      "Ana": "1101",
+      "Julio": "1102",
+      "Alma": "1103",
+      "Fátima": "1104",
+      "Xochitl": "1105",
+      "Karla": "1106"
+    };
 
     const PAQUETES_LIMPIEZA = [
       {
@@ -697,6 +794,24 @@
       return null;
     }
 
+    function reproducirAvisoSonoro(tipo = "alerta") {
+      try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtx) return;
+        const ctx = new AudioCtx();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(tipo === "exito" ? 784 : 587.33, ctx.currentTime);
+        gain.gain.setValueAtTime(0.08, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.35);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.36);
+      } catch {}
+    }
+
     function crearPuntosDesdePaquete(paqueteObj) {
       return paqueteObj.puntos.map(nombrePunto => ({
         nombre: nombrePunto,
@@ -715,6 +830,16 @@
         horarioLista: "Manana",
         limpieza: {
           fecha,
+          inicioJornadaMs: Date.now(),
+          desbloqueadas: {},
+          mensajes: [
+            {
+              autor: "Administrador",
+              esAdmin: true,
+              texto: "Recuerden ir subiendo sus evidencias a tiempo para cerrar su turno sin pendientes.",
+              hora: ahoraLegible()
+            }
+          ],
           fichas: CAJEROS.map((nombre, idx) => {
             const turno = idx < 2 ? "Manana" : idx < 4 ? "Tarde" : idx === 4 ? "Noche" : "Descanso";
             const participa = turno === "Manana" || turno === "Tarde";
@@ -722,6 +847,7 @@
             return {
               id: idx,
               nombre,
+              clave: CLAVES_TARJETAS[nombre] || "1234",
               turno,
               participa,
               paqueteTitulo: paq.titulo,
@@ -741,9 +867,15 @@
     let state = loadState();
 
     function normalizarLimpieza(limp) {
-      if (!limp || !Array.isArray(limp.fichas)) return estadoInicial().limpieza;
+      const baseLimp = estadoInicial().limpieza;
+      if (!limp || !Array.isArray(limp.fichas)) return baseLimp;
+      if (!limp.inicioJornadaMs) limp.inicioJornadaMs = Date.now();
+      if (!limp.desbloqueadas || typeof limp.desbloqueadas !== "object") limp.desbloqueadas = {};
+      if (!Array.isArray(limp.mensajes)) limp.mensajes = baseLimp.mensajes;
+
       limp.fichas.forEach((f, idx) => {
         const paqDefault = PAQUETES_LIMPIEZA[idx % PAQUETES_LIMPIEZA.length];
+        if (!f.clave) f.clave = CLAVES_TARJETAS[f.nombre] || "1234";
         if (!f.paqueteTitulo) f.paqueteTitulo = paqDefault.titulo;
         if (!Array.isArray(f.puntos) || f.puntos.length === 0) {
           f.puntos = crearPuntosDesdePaquete(paqDefault);
@@ -837,6 +969,40 @@
       else ficha.estado = "rojo";
     }
 
+    function tieneAccesoTarjeta(ficha) {
+      return Boolean(state.isAdmin || state.limpieza.desbloqueadas[ficha.nombre]);
+    }
+
+    function renderChatLimpieza() {
+      const box = document.getElementById("chatLimpiezaLista");
+      const msgs = state.limpieza.mensajes || [];
+      if (!msgs.length) {
+        box.innerHTML = `<div class="meta-small">Sin avisos o recados todavía.</div>`;
+        return;
+      }
+      box.innerHTML = msgs.map(m => `
+        <div class="chat-msg ${m.esAdmin ? "admin-msg" : ""}">
+          <div class="chat-meta">
+            <strong>${m.autor}${m.esAdmin ? " · ADMIN" : ""}</strong>
+            <span>${m.hora}</span>
+          </div>
+          <div>${m.texto}</div>
+        </div>
+      `).join("");
+      box.scrollTop = box.scrollHeight;
+    }
+
+    function actualizarBannerMotivador(activos, verde) {
+      const txt = document.getElementById("textoMotivadorLimpieza");
+      const minsTranscurridos = Math.max(1, Math.floor((Date.now() - (state.limpieza.inicioJornadaMs || Date.now())) / 60000));
+      if (activos > 0 && verde === activos) {
+        txt.textContent = `¡Listo! Los ${activos} participantes completaron su limpieza (tiempo transcurrido: ${minsTranscurridos} min).`;
+      } else {
+        const pendientes = Math.max(0, activos - verde);
+        txt.textContent = `Avance: ${verde}/${activos} completos · Faltan ${pendientes} · Tiempo en curso: ${minsTranscurridos} min. ¡A darle para cerrar en verde!`;
+      }
+    }
+
     function renderLimpieza() {
       const hoy = hoyISO();
       const esHoyLimpieza = esDiaLimpieza(hoy);
@@ -871,6 +1037,7 @@
       document.getElementById("limpRojo").textContent = rojo;
       document.getElementById("limpPendiente").textContent = pendiente;
       document.getElementById("limpFuera").textContent = fuera;
+      actualizarBannerMotivador(activos, verde);
 
       const grid = document.getElementById("gridLimpieza");
       grid.innerHTML = "";
@@ -888,21 +1055,27 @@
 
         const badgeClase = !f.participa ? "badge-descanso" : `badge-${f.estado}`;
         const puntosListos = f.puntos.filter(p => p.fotos && p.fotos.length > 0).length;
+        const desbloqueada = tieneAccesoTarjeta(f);
 
         card.innerHTML = `
           <div class="ficha-top">
             <strong style="font-size:1.06rem;">${f.nombre}</strong>
             <span class="badge ${badgeClase}">${badgeTexto}</span>
           </div>
+          <div class="ficha-actions" style="margin-top:8px;">
+            <button type="button" class="btn-sm ${desbloqueada ? "ghost" : "secondary"}" data-toggle-clave="${f.id}">
+              ${desbloqueada ? "Tarjeta desbloqueada (Bloquear)" : "Clave tarjeta (Bloquear/Subir)"}
+            </button>
+          </div>
           <div class="campos">
-            <select data-limp-turno="${f.id}">
+            <select data-limp-turno="${f.id}" ${!desbloqueada ? "disabled" : ""}>
               <option value="Manana" ${f.turno === "Manana" ? "selected" : ""}>Turno Mañana (Participa)</option>
               <option value="Tarde" ${f.turno === "Tarde" ? "selected" : ""}>Turno Tarde (Participa)</option>
               <option value="Noche" ${f.turno === "Noche" ? "selected" : ""}>Turno Noche (No limpia)</option>
               <option value="Descanso" ${f.turno === "Descanso" ? "selected" : ""}>Descanso (No limpia)</option>
             </select>
             ${f.participa ? `
-              <select data-limp-paquete="${f.id}">
+              <select data-limp-paquete="${f.id}" ${!desbloqueada ? "disabled" : ""}>
                 ${PAQUETES_LIMPIEZA.map(pq => `<option value="${pq.titulo}" ${f.paqueteTitulo === pq.titulo ? "selected" : ""}>${pq.titulo}</option>`).join("")}
               </select>
               <div class="status-note">Evidencias completas: ${puntosListos} / ${f.puntos.length} puntos</div>
@@ -915,7 +1088,7 @@
                         <div class="punto-nombre">${pt.nombre}</div>
                         <div class="punto-sub">${ok ? `Fotos: ${pt.fotos.length} · ${pt.fotos[pt.fotos.length - 1].hora}` : "Pendiente de foto"}${pt.nota ? " · " + pt.nota : ""}</div>
                       </div>
-                      <button type="button" class="btn-sm ${ok ? "secondary" : "success"}" data-subir-punto="${f.id}|${pIdx}">${ok ? "+ Foto" : "Foto"}</button>
+                      <button type="button" class="btn-sm ${ok ? "secondary" : "success"}" data-subir-punto="${f.id}|${pIdx}" ${!desbloqueada ? "disabled" : ""}>${ok ? "+ Foto" : "Foto"}</button>
                     </div>
                   `;
                 }).join("")}
@@ -926,10 +1099,25 @@
         grid.appendChild(card);
       });
 
+      grid.querySelectorAll("[data-toggle-clave]").forEach(btn => {
+        btn.addEventListener("click", async () => {
+          const id = Number(btn.dataset.toggleClave);
+          const ficha = state.limpieza.fichas[id];
+          if (state.limpieza.desbloqueadas[ficha.nombre]) {
+            delete state.limpieza.desbloqueadas[ficha.nombre];
+            await saveState();
+            renderLimpieza();
+          } else {
+            abrirModalClaveTarjeta(ficha);
+          }
+        });
+      });
+
       grid.querySelectorAll("[data-limp-turno]").forEach(sel => {
         sel.addEventListener("change", async e => {
           const id = Number(e.target.dataset.limpTurno);
           const ficha = state.limpieza.fichas[id];
+          if (!tieneAccesoTarjeta(ficha)) return;
           ficha.turno = e.target.value;
           actualizarEstadoFichaLimpieza(ficha);
           await saveState();
@@ -941,6 +1129,7 @@
         sel.addEventListener("change", async e => {
           const id = Number(e.target.dataset.limpPaquete);
           const ficha = state.limpieza.fichas[id];
+          if (!tieneAccesoTarjeta(ficha)) return;
           const elegido = PAQUETES_LIMPIEZA.find(pq => pq.titulo === e.target.value) || PAQUETES_LIMPIEZA[0];
           ficha.paqueteTitulo = elegido.titulo;
           ficha.puntos = crearPuntosDesdePaquete(elegido);
@@ -953,10 +1142,40 @@
       grid.querySelectorAll("[data-subir-punto]").forEach(btn => {
         btn.addEventListener("click", () => {
           const [fId, pId] = btn.dataset.subirPunto.split("|").map(Number);
+          const ficha = state.limpieza.fichas[fId];
+          if (!tieneAccesoTarjeta(ficha)) {
+            abrirModalClaveTarjeta(ficha);
+            return;
+          }
           abrirModalFoto({ tipo: "limpieza_punto", fichaId: fId, puntoId: pId });
         });
       });
+
+      renderChatLimpieza();
     }
+
+    document.getElementById("btnSonarAviso").addEventListener("click", () => {
+      reproducirAvisoSonoro("alerta");
+      alert("Aviso sonoro activado: revisa qué áreas siguen pendientes para cerrar a tiempo.");
+    });
+
+    document.getElementById("btnEnviarChatLimpieza").addEventListener("click", async () => {
+      const inp = document.getElementById("chatMensajeInput");
+      const texto = inp.value.trim();
+      if (!texto) return;
+      const autor = document.getElementById("chatRemitente").value;
+      const esAdmin = autor === "Administrador" || state.isAdmin;
+      state.limpieza.mensajes.push({
+        autor,
+        esAdmin,
+        texto,
+        hora: ahoraLegible()
+      });
+      inp.value = "";
+      reproducirAvisoSonoro("alerta");
+      await saveState();
+      renderChatLimpieza();
+    });
 
     document.getElementById("btnRotarLimpieza").addEventListener("click", async () => {
       const activos = state.limpieza.fichas.filter(f => f.participa);
@@ -995,6 +1214,8 @@
           f.estado = "rojo";
         }
       });
+      state.limpieza.desbloqueadas = {};
+      state.limpieza.inicioJornadaMs = Date.now();
       await saveState();
       renderLimpieza();
     });
@@ -1412,6 +1633,34 @@
       `).join("");
     }
 
+    let fichaPendienteClave = null;
+    function abrirModalClaveTarjeta(ficha) {
+      fichaPendienteClave = ficha;
+      document.getElementById("modalClaveTarjetaTitulo").textContent = `Tarjeta de ${ficha.nombre}`;
+      document.getElementById("inputClaveTarjeta").value = "";
+      document.getElementById("errorClaveTarjeta").textContent = "";
+      document.getElementById("modalClaveTarjeta").classList.add("open");
+    }
+
+    document.getElementById("btnCancelarClaveTarjeta").addEventListener("click", () => {
+      document.getElementById("modalClaveTarjeta").classList.remove("open");
+      fichaPendienteClave = null;
+    });
+
+    document.getElementById("btnConfirmarClaveTarjeta").addEventListener("click", async () => {
+      if (!fichaPendienteClave) return;
+      const val = document.getElementById("inputClaveTarjeta").value.trim();
+      if (val === fichaPendienteClave.clave || val === state.adminPass) {
+        state.limpieza.desbloqueadas[fichaPendienteClave.nombre] = true;
+        document.getElementById("modalClaveTarjeta").classList.remove("open");
+        fichaPendienteClave = null;
+        await saveState();
+        renderLimpieza();
+      } else {
+        document.getElementById("errorClaveTarjeta").textContent = "Clave incorrecta para esta tarjeta.";
+      }
+    });
+
     let contextoFoto = null;
     let fotoDataActual = "";
 
@@ -1483,9 +1732,19 @@
           alert("Toma o selecciona una foto de evidencia para este punto.");
           return;
         }
+        const estadoPrevio = ficha.estado;
         punto.fotos.push({ data: fotoDataActual, hora: ahoraLegible() });
         if (nota) punto.nota = nota;
         actualizarEstadoFichaLimpieza(ficha);
+        if (ficha.estado === "verde" && estadoPrevio !== "verde") {
+          reproducirAvisoSonoro("exito");
+          state.limpieza.mensajes.push({
+            autor: "Sistema",
+            esAdmin: false,
+            texto: `${ficha.nombre} completó todas sus evidencias de ${ficha.paqueteTitulo}.`,
+            hora: ahoraLegible()
+          });
+        }
         await saveState();
         renderLimpieza();
       }
@@ -1553,6 +1812,12 @@
     vistas.forEach(v => {
       document.getElementById(`nav-${v}`).addEventListener("click", () => mostrarVista(v));
     });
+
+    setInterval(() => {
+      const activos = state.limpieza.fichas.filter(f => f.participa).length;
+      const verdes = state.limpieza.fichas.filter(f => f.participa && f.estado === "verde").length;
+      actualizarBannerMotivador(activos, verdes);
+    }, 30000);
 
     renderLimpieza();
     renderLista();
