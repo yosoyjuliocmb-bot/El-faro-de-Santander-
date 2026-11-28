@@ -4,7 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#0c4a6e" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Faro G500" />
   <title>Clave 0307-17 A&amp;C-el faro de Santander</title>
+  <link id="pwaManifestLink" rel="manifest" href="" />
   <style>
     :root {
       --bg: #0f172a;
@@ -44,7 +49,7 @@
     }
 
     .brand-title { font-size: 1.12rem; font-weight: 800; margin: 0; user-select: none; }
-    .brand-sub { font-size: 0.8rem; color: #bae6fd; margin-top: 2px; }
+    .brand-sub { font-size: 0.8rem; color: #bae6fd; margin-top: 2px; user-select: none; }
 
     .header-badges {
       display: flex;
@@ -73,6 +78,18 @@
       background: rgba(22, 163, 74, 0.22);
       border: 1px solid #4ade80;
       color: #dcfce7;
+      display: none;
+      cursor: pointer;
+    }
+
+    .install-btn {
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: #0284c7;
+      border: 1px solid #7dd3fc;
+      color: #ffffff;
       display: none;
       cursor: pointer;
     }
@@ -238,6 +255,26 @@
       font-size: 0.7rem;
       color: var(--muted);
       margin-top: 2px;
+    }
+
+    .punto-thumb {
+      width: 44px;
+      height: 44px;
+      object-fit: cover;
+      border-radius: 7px;
+      border: 1px solid var(--border);
+      margin-top: 6px;
+      display: inline-block;
+      margin-right: 4px;
+    }
+
+    .entrada-foto-preview {
+      width: 100%;
+      max-height: 130px;
+      object-fit: cover;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      margin-top: 8px;
     }
 
     .campos { margin-top: 10px; display: grid; gap: 8px; }
@@ -458,15 +495,16 @@
 <body>
   <header>
     <h1 id="tituloApp" class="brand-title">Clave 0307-17 A&amp;C-el faro de Santander</h1>
-    <div class="brand-sub">Estación G500 · 6 cajeros · Limpieza, Pase de Lista y Ventas de Aceites</div>
+    <div id="subtituloApp" class="brand-sub">Estación G500 · 6 cajeros · Limpieza, Pase de Lista y Ventas de Aceites</div>
     <div class="header-badges">
       <span id="syncStatus" class="sync-pill">Respaldo local activo</span>
+      <button id="btnInstalarApp" type="button" class="install-btn">Instalar App</button>
       <span id="adminActiveTag" class="admin-active-tag">Admin activo (Salir)</span>
     </div>
   </header>
 
   <main>
-    <!-- 1. LIMPIEZA (MIÉRCOLES Y DOMINGOS · 4 PARTICIPAN · EVIDENCIAS POR PUNTO + CLAVE POR TARJETA + AVISOS) -->
+    <!-- 1. LIMPIEZA -->
     <section id="view-limpieza" class="section-view">
       <div id="limpiezaDiaAviso" class="banner-info" style="display:none;"></div>
 
@@ -495,7 +533,6 @@
         </div>
       </div>
 
-      <!-- APARTADO DE ADMINISTRADOR PARA PONER / CAMBIAR CONTRASEÑAS DE LAS TARJETAS -->
       <div id="panelClavesAdmin" class="summary-box" style="border-color:#0ea5e9; display:none;">
         <strong>Configurar contraseñas de tarjetas (Solo Administrador)</strong>
         <div class="meta-small">Asigna o cambia la clave de cada tarjeta para proteger sus evidencias de limpieza.</div>
@@ -507,7 +544,6 @@
 
       <div id="gridLimpieza" class="grid-6"></div>
 
-      <!-- TABLÓN / CHAT DE AVISOS Y RECADOS -->
       <div class="summary-box" style="margin-top:14px;">
         <strong>Avisos y recados de limpieza</strong>
         <div class="meta-small">El administrador puede mandar recordatorios de tiempo o limpieza y el equipo puede dejar recados.</div>
@@ -522,7 +558,7 @@
             <option value="Xochitl">Xochitl</option>
             <option value="Karla">Karla</option>
           </select>
-          <input id="chatMensajeInput" type="text" placeholder="Escribe un aviso o recado (ej. Ya pasó buen rato y faltan fotos)..." />
+          <input id="chatMensajeInput" type="text" placeholder="Escribe un aviso o recado..." />
           <button id="btnEnviarChatLimpieza" type="button">Enviar recado</button>
         </div>
       </div>
@@ -536,7 +572,7 @@
           <input id="fechaLista" type="date" style="width:auto;" />
         </div>
         <div class="meta-small">
-          Detección automática al marcar <strong>Entrada</strong> (±1 hora): Mañana <code>06:00–08:00</code> · Tarde <code>13:00–15:00</code> · Noche <code>19:00–21:00</code>. Al iniciar el nuevo ciclo de medianoche, el turno de Noche se registra en automático como asistencia.
+          Detección automática al marcar <strong>Entrada</strong> (±1 hora): Mañana <code>06:00–08:00</code> · Tarde <code>13:00–15:00</code> · Noche <code>19:00–21:00</code>.
         </div>
 
         <div class="tabs-3">
@@ -560,7 +596,7 @@
       <div id="gridLista" class="grid-6"></div>
     </section>
 
-    <!-- 3. VENTAS DE ACEITES (CORTES MENSUALES DESDE EL DÍA 1) -->
+    <!-- 3. VENTAS DE ACEITES -->
     <section id="view-ventas" class="section-view">
       <div class="summary-box">
         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
@@ -653,11 +689,12 @@
     <!-- 5. AYUDA -->
     <section id="view-ayuda" class="section-view">
       <div class="summary-box">
-        <strong>Guía rápida de uso</strong>
+        <strong>Guía rápida de uso e instalación</strong>
         <div class="meta-small" style="line-height:1.5; margin-top:8px;">
+          • <strong>Instalar en el teléfono:</strong> Abre el enlace web (<code>https://...</code>) en Chrome, toca el botón <em>Instalar App</em> arriba o entra al menú de Chrome (⋮) → <em>Instalar aplicación</em>.<br/>
           • <strong>Limpieza:</strong> Se muestra en automático miércoles y domingos para los 4 cajeros de Mañana (2) y Tarde (2). Cada tarjeta tiene contraseña para que nadie más suba o borre evidencias.<br/>
-          • <strong>Pase de lista:</strong> Al tocar <em>Entrada</em>, abre la cámara del teléfono para tomar foto al biométrico/hora y detecta automáticamente el turno con ±1 hora de tolerancia.<br/>
-          • <strong>Ventas:</strong> Los bloques inician el día 1 de cada mes y avanzan cada 7 días dentro del mismo mes. Calcula automáticamente <em>Ventas Global</em> y <em>Faltan o sobran</em>.
+          • <strong>Pase de lista:</strong> Al tocar <em>Entrada</em>, abre la cámara del teléfono para tomar foto al biométrico/hora, guarda la imagen en la ficha y detecta el turno con ±1 hora de tolerancia.<br/>
+          • <strong>Ventas:</strong> Los bloques inician el día 1 de cada mes y avanzan cada 7 días dentro del mismo mes.
         </div>
       </div>
     </section>
@@ -691,7 +728,7 @@
   <div id="modalFoto" class="modal-backdrop">
     <div class="modal-box">
       <h3 id="modalFotoTitulo" style="margin-top:0;">Tomar foto evidencia</h3>
-      <div id="modalFotoSub" class="meta-small">Se abrirá la cámara del teléfono para tomar la foto con fecha y hora.</div>
+      <div id="modalFotoSub" class="meta-small">Se abrirá la cámara del teléfono para tomar la foto y guardarla en el registro.</div>
       <div class="campos">
         <input id="inputFotoArchivo" type="file" accept="image/*" capture="environment" />
         <img id="previewFotoModal" src="" alt="" style="display:none; width:100%; max-height:220px; object-fit:contain; border-radius:10px; border:1px solid var(--border); background:#0b1220;" />
@@ -708,7 +745,7 @@
   <div id="modalAdmin" class="modal-backdrop">
     <div class="modal-box">
       <h3 style="margin-top:0;">Acceso Administrador</h3>
-      <div class="meta-small">Ingresa la clave de administrador para habilitar acciones administrativas.</div>
+      <div class="meta-small">Ingresa la clave de administrador. Se cerrará automáticamente tras 3 minutos de inactividad.</div>
       <div class="campos">
         <input id="inputClaveAdmin" type="password" placeholder="Contraseña de administrador" />
         <div id="errorClaveAdmin" class="meta-small" style="color:#f87171;"></div>
@@ -721,6 +758,72 @@
   </div>
 
   <script>
+    (function inicializarPWA() {
+      const iconoSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+        <rect width="512" height="512" rx="110" fill="#0c4a6e"/>
+        <circle cx="256" cy="256" r="185" fill="#0ea5e9" opacity="0.22"/>
+        <text x="256" y="245" text-anchor="middle" font-family="sans-serif" font-size="112" font-weight="900" fill="#ffffff">G500</text>
+        <text x="256" y="330" text-anchor="middle" font-family="sans-serif" font-size="54" font-weight="700" fill="#bae6fd">EL FARO</text>
+      </svg>`;
+      const iconUrl = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(iconoSvg);
+
+      const manifestObj = {
+        name: "Clave 0307-17 A&C - El Faro de Santander",
+        short_name: "Faro G500",
+        description: "Control de limpieza, pase de lista y ventas de aceites",
+        start_url: location.href,
+        scope: location.origin + location.pathname.replace(/[^/]*$/, ""),
+        display: "standalone",
+        orientation: "portrait",
+        background_color: "#0f172a",
+        theme_color: "#0c4a6e",
+        icons: [
+          { src: iconUrl, sizes: "192x192", type: "image/svg+xml", purpose: "any maskable" },
+          { src: iconUrl, sizes: "512x512", type: "image/svg+xml", purpose: "any maskable" }
+        ]
+      };
+
+      const manifestBlob = new Blob([JSON.stringify(manifestObj)], { type: "application/manifest+json" });
+      const manifestURL = URL.createObjectURL(manifestBlob);
+      const linkEl = document.getElementById("pwaManifestLink");
+      if (linkEl) linkEl.href = manifestURL;
+
+      if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")) {
+        const swCode = `
+          self.addEventListener("install", e => { self.skipWaiting(); });
+          self.addEventListener("activate", e => { e.waitUntil(self.clients.claim()); });
+          self.addEventListener("fetch", e => {
+            e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
+          });
+        `;
+        const swBlob = new Blob([swCode], { type: "application/javascript" });
+        const swUrl = URL.createObjectURL(swBlob);
+        navigator.serviceWorker.register(swUrl).catch(() => {});
+      }
+    })();
+
+    let deferredInstallPrompt = null;
+    const btnInstalarApp = document.getElementById("btnInstalarApp");
+
+    window.addEventListener("beforeinstallprompt", e => {
+      e.preventDefault();
+      deferredInstallPrompt = e;
+      btnInstalarApp.style.display = "inline-block";
+    });
+
+    btnInstalarApp.addEventListener("click", async () => {
+      if (!deferredInstallPrompt) return;
+      deferredInstallPrompt.prompt();
+      await deferredInstallPrompt.userChoice;
+      deferredInstallPrompt = null;
+      btnInstalarApp.style.display = "none";
+    });
+
+    window.addEventListener("appinstalled", () => {
+      btnInstalarApp.style.display = "none";
+      deferredInstallPrompt = null;
+    });
+
     const FIREBASE_DB_URL = "";
 
     const CAJEROS = ["Ana", "Julio", "Alma", "Fátima", "Xochitl", "Karla"];
@@ -737,69 +840,41 @@
       {
         titulo: "Turno matutino isla A",
         puntos: [
-          "Bocatoma 1",
-          "Bocatoma 2",
-          "Bocatoma 3",
-          "Bocatoma descarga",
-          "Motobomba abierta",
-          "Moto bomba cerrada",
-          "Pozo 1",
-          "Pozo 2",
-          "Pozo 3",
-          "Cuarto de basura",
-          "Aceitera",
-          "Dispensador"
+          "Bocatoma 1", "Bocatoma 2", "Bocatoma 3", "Bocatoma descarga",
+          "Motobomba abierta", "Moto bomba cerrada", "Pozo 1", "Pozo 2",
+          "Pozo 3", "Cuarto de basura", "Aceitera", "Dispensador"
         ]
       },
       {
         titulo: "Turno matutino isla B",
         puntos: [
-          "Bocatoma 1",
-          "Bocatoma 2",
-          "Bocatoma 3",
-          "Bocatoma 4",
-          "Bocatoma descarga",
-          "Motobomba abierta",
-          "Moto bomba cerrada",
-          "Pozo 1",
-          "Pozo 2",
-          "Pozo 3",
-          "Aceitera",
-          "Dispensador"
+          "Bocatoma 1", "Bocatoma 2", "Bocatoma 3", "Bocatoma 4",
+          "Bocatoma descarga", "Motobomba abierta", "Moto bomba cerrada",
+          "Pozo 1", "Pozo 2", "Pozo 3", "Aceitera", "Dispensador"
         ]
       },
       {
         titulo: "Turno vespertino isla A",
         puntos: [
-          "Bocatoma 1",
-          "Bocatoma 2",
-          "Bocatoma 3",
-          "Bocatoma 4",
-          "Bocatoma descarga",
-          "Motobomba abierta",
-          "Moto bomba cerrada",
-          "Cuarto eléctrico",
-          "Aceitera",
-          "Dispensador"
+          "Bocatoma 1", "Bocatoma 2", "Bocatoma 3", "Bocatoma 4",
+          "Bocatoma descarga", "Motobomba abierta", "Moto bomba cerrada",
+          "Cuarto eléctrico", "Aceitera", "Dispensador"
         ]
       },
       {
         titulo: "Turno vespertino isla B",
         puntos: [
-          "Pozo 1",
-          "Pozo 2",
-          "Pozo 3",
-          "Pozo 4",
-          "Pozo 5",
-          "Cuarto compresora",
-          "Aceitera",
-          "Dispensador"
+          "Pozo 1", "Pozo 2", "Pozo 3", "Pozo 4", "Pozo 5",
+          "Cuarto compresora", "Aceitera", "Dispensador"
         ]
       }
     ];
 
     const STORAGE_KEY = "faro_santander_app_v2";
     const ADMIN_PASS_DEFAULT = "1985";
+    const ADMIN_TIMEOUT_MS = 3 * 60 * 1000;
+
+    let adminTimer = null;
 
     function hoyISO() {
       const d = new Date();
@@ -824,6 +899,32 @@
       if (mins >= 780 && mins <= 900) return "Tarde";
       if (mins >= 1140 && mins <= 1260) return "Noche";
       return null;
+    }
+
+    function comprimirImagenDataUrl(dataUrl, maxWidth = 800, quality = 0.72) {
+      return new Promise(resolve => {
+        const img = new Image();
+        img.onload = () => {
+          let w = img.width;
+          let h = img.height;
+          if (w > maxWidth) {
+            h = Math.round((h * maxWidth) / w);
+            w = maxWidth;
+          }
+          const canvas = document.createElement("canvas");
+          canvas.width = w;
+          canvas.height = h;
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(img, 0, 0, w, h);
+          try {
+            resolve(canvas.toDataURL("image/jpeg", quality));
+          } catch {
+            resolve(dataUrl);
+          }
+        };
+        img.onerror = () => resolve(dataUrl);
+        img.src = dataUrl;
+      });
     }
 
     function reproducirAvisoSonoro(tipo = "alerta") {
@@ -934,6 +1035,7 @@
         if (!raw) return estadoInicial();
         const base = estadoInicial();
         const parsed = { ...base, ...JSON.parse(raw) };
+        parsed.isAdmin = false;
         parsed.clavesTarjetas = { ...CLAVES_TARJETAS, ...(parsed.clavesTarjetas || {}) };
         parsed.limpieza = normalizarLimpieza(parsed.limpieza, parsed.clavesTarjetas);
         return parsed;
@@ -944,20 +1046,25 @@
 
     async function saveState() {
       state.updatedAt = Date.now();
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      const payload = { ...state, isAdmin: false };
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+        document.getElementById("syncStatus").textContent = "Respaldo local activo";
+      } catch {
+        document.getElementById("syncStatus").textContent = "Memoria llena: borra fotos viejas";
+      }
+
       if (FIREBASE_DB_URL) {
         try {
           await fetch(`${FIREBASE_DB_URL}.json`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(state)
+            body: JSON.stringify(payload)
           });
           document.getElementById("syncStatus").textContent = "Nube y respaldo local activos";
         } catch {
           document.getElementById("syncStatus").textContent = "Respaldo local (sin red)";
         }
-      } else {
-        document.getElementById("syncStatus").textContent = "Respaldo local activo";
       }
     }
 
@@ -1001,7 +1108,7 @@
       const algunoConFoto = ficha.puntos.some(p => p.fotos && p.fotos.length > 0);
       if (todosConFoto) ficha.estado = "verde";
       else if (algunoConFoto) ficha.estado = "pendiente";
-      else ficha.estado = "rojo";
+      else f.estado = "rojo";
     }
 
     function tieneAccesoTarjeta(ficha) {
@@ -1152,11 +1259,18 @@
               <div class="puntos-lista">
                 ${f.puntos.map((pt, pIdx) => {
                   const ok = pt.fotos && pt.fotos.length > 0;
+                  const ultimaFoto = ok ? pt.fotos[pt.fotos.length - 1].data : "";
                   return `
                     <div class="punto-item ${ok ? "listo" : ""}">
-                      <div>
+                      <div style="flex:1;">
                         <div class="punto-nombre">${pt.nombre}</div>
-                        <div class="punto-sub">${ok ? `Fotos: ${pt.fotos.length} · ${pt.fotos[pt.fotos.length - 1].hora}` : "Pendiente de foto"}${pt.nota ? " · " + pt.nota : ""}</div>
+                        <div class="punto-sub">${ok ? `Guardadas: ${pt.fotos.length} · ${pt.fotos[pt.fotos.length - 1].hora}` : "Pendiente de foto"}${pt.nota ? " · " + pt.nota : ""}</div>
+                        ${ok ? `
+                          <div>
+                            <img src="${ultimaFoto}" alt="${pt.nombre}" class="punto-thumb" />
+                            ${desbloqueada ? `<button type="button" class="btn-sm ghost" data-borrar-foto-punto="${f.id}|${pIdx}" style="vertical-align:top; margin-top:6px;">Quitar foto</button>` : ""}
+                          </div>
+                        ` : ""}
                       </div>
                       <button type="button" class="btn-sm ${ok ? "secondary" : "success"}" data-subir-punto="${f.id}|${pIdx}" ${!desbloqueada ? "disabled" : ""}>${ok ? "+ Foto" : "Foto"}</button>
                     </div>
@@ -1218,6 +1332,21 @@
             return;
           }
           abrirModalFoto({ tipo: "limpieza_punto", fichaId: fId, puntoId: pId });
+        });
+      });
+
+      grid.querySelectorAll("[data-borrar-foto-punto]").forEach(btn => {
+        btn.addEventListener("click", async () => {
+          const [fId, pId] = btn.dataset.borrarFotoPunto.split("|").map(Number);
+          const ficha = state.limpieza.fichas[fId];
+          if (!tieneAccesoTarjeta(ficha)) return;
+          const punto = ficha.puntos[pId];
+          if (punto && Array.isArray(punto.fotos) && punto.fotos.length > 0) {
+            punto.fotos.pop();
+            actualizarEstadoFichaLimpieza(ficha);
+            await saveState();
+            renderLimpieza();
+          }
         });
       });
 
@@ -1301,6 +1430,7 @@
             state.asistencia[fecha][t][nombre] = {
               estado: "pendiente",
               entradaHora: "",
+              entradaFoto: "",
               salidaHora: "",
               nota: "",
               updatedAt: ""
@@ -1357,7 +1487,8 @@
           <div class="campos">
             <input type="text" data-nota-lista="${nombre}" value="${reg.nota || ""}" placeholder="Nota opcional..." />
           </div>
-          <div class="meta-small">${reg.entradaHora ? "Entrada: " + reg.entradaHora : "Sin entrada registrada"}</div>
+          <div class="meta-small">${reg.entradaHora ? "Entrada guardada: " + reg.entradaHora : "Sin entrada registrada"}</div>
+          ${reg.entradaFoto ? `<img src="${reg.entradaFoto}" alt="Foto entrada ${nombre}" class="entrada-foto-preview" />` : ""}
           <div class="meta-small">${reg.salidaHora ? "Salida: " + reg.salidaHora : "Sin salida registrada"}</div>
           <div class="ficha-actions">
             <button type="button" class="success" data-entrada-lista="${nombre}">Entrada</button>
@@ -1648,20 +1779,22 @@
     });
 
     let fotosQuejaTemp = [];
-    document.getElementById("quejaFotosInput").addEventListener("change", e => {
+    document.getElementById("quejaFotosInput").addEventListener("change", async e => {
       fotosQuejaTemp = [];
       const prev = document.getElementById("quejaPreview");
       prev.innerHTML = "";
-      Array.from(e.target.files || []).forEach(file => {
-        const reader = new FileReader();
-        reader.onload = ev => {
-          fotosQuejaTemp.push({ data: ev.target.result, hora: ahoraLegible() });
-          const img = document.createElement("img");
-          img.src = ev.target.result;
-          prev.appendChild(img);
-        };
-        reader.readAsDataURL(file);
-      });
+      for (const file of Array.from(e.target.files || [])) {
+        const rawData = await new Promise(res => {
+          const r = new FileReader();
+          r.onload = ev => res(ev.target.result);
+          r.readAsDataURL(file);
+        });
+        const comprimida = await comprimirImagenDataUrl(rawData);
+        fotosQuejaTemp.push({ data: comprimida, hora: ahoraLegible() });
+        const img = document.createElement("img");
+        img.src = comprimida;
+        prev.appendChild(img);
+      }
     });
 
     document.getElementById("btnPublicarQueja").addEventListener("click", async () => {
@@ -1699,6 +1832,11 @@
           </div>
           <div class="meta-small">${q.fechaHora} · Fotos: ${q.fotos.length}</div>
           <div style="margin-top:6px; font-size:0.86rem;">${q.desc}</div>
+          ${q.fotos && q.fotos.length ? `
+            <div class="thumbs-grid">
+              ${q.fotos.map(f => `<img src="${f.data}" alt="Evidencia reporte" />`).join("")}
+            </div>
+          ` : ""}
         </div>
       `).join("");
     }
@@ -1761,17 +1899,18 @@
       }, 120);
     }
 
-    document.getElementById("inputFotoArchivo").addEventListener("change", e => {
+    document.getElementById("inputFotoArchivo").addEventListener("change", async e => {
       const file = e.target.files && e.target.files[0];
       if (!file) return;
-      const reader = new FileReader();
-      reader.onload = ev => {
-        fotoDataActual = ev.target.result;
-        const img = document.getElementById("previewFotoModal");
-        img.src = fotoDataActual;
-        img.style.display = "block";
-      };
-      reader.readAsDataURL(file);
+      const rawData = await new Promise(res => {
+        const reader = new FileReader();
+        reader.onload = ev => res(ev.target.result);
+        reader.readAsDataURL(file);
+      });
+      fotoDataActual = await comprimirImagenDataUrl(rawData);
+      const img = document.getElementById("previewFotoModal");
+      img.src = fotoDataActual;
+      img.style.display = "block";
     });
 
     document.getElementById("btnCancelarFoto").addEventListener("click", () => {
@@ -1784,6 +1923,10 @@
       const nota = document.getElementById("inputNotaModal").value.trim();
 
       if (contextoFoto.tipo === "entrada") {
+        if (!fotoDataActual) {
+          alert("Toma o selecciona la foto de entrada para guardarla.");
+          return;
+        }
         const ahora = new Date();
         const detectado = detectarTurnoPorHora(ahora) || state.horarioLista;
         const fecha = contextoFoto.fecha;
@@ -1791,6 +1934,7 @@
         const reg = state.asistencia[fecha][detectado][contextoFoto.nombre];
         reg.estado = "trabajando";
         reg.entradaHora = ahoraLegible();
+        reg.entradaFoto = fotoDataActual;
         if (nota) reg.nota = nota;
         reg.updatedAt = ahoraLegible();
         state.horarioLista = detectado;
@@ -1825,8 +1969,30 @@
     });
 
     const adminTag = document.getElementById("adminActiveTag");
+
+    async function cerrarAdminAutomatico() {
+      if (!state.isAdmin) return;
+      clearTimeout(adminTimer);
+      adminTimer = null;
+      state.isAdmin = false;
+      document.getElementById("modalAdmin").classList.remove("open");
+      await saveState();
+      autoAbrirLimpiezaEnDiaCorrespondiente();
+      actualizarUIAdmin();
+    }
+
+    function reiniciarTemporizadorAdmin() {
+      clearTimeout(adminTimer);
+      if (state.isAdmin) {
+        adminTimer = setTimeout(() => {
+          cerrarAdminAutomatico();
+        }, ADMIN_TIMEOUT_MS);
+      }
+    }
+
     function actualizarUIAdmin() {
       adminTag.style.display = state.isAdmin ? "inline-block" : "none";
+      reiniciarTemporizadorAdmin();
       renderLimpieza();
       renderLista();
       renderVentas();
@@ -1839,29 +2005,33 @@
       document.getElementById("modalAdmin").classList.add("open");
     }
 
-    function bindLongPress(el, cb) {
-      let timer = null;
-      const start = () => {
-        clearTimeout(timer);
-        timer = setTimeout(cb, 750);
-      };
-      const cancel = () => clearTimeout(timer);
-      el.addEventListener("touchstart", start, { passive: true });
-      el.addEventListener("touchend", cancel);
-      el.addEventListener("touchcancel", cancel);
-      el.addEventListener("mousedown", start);
-      el.addEventListener("mouseup", cancel);
-      el.addEventListener("mouseleave", cancel);
-    }
+    let toquesDiscretos = 0;
+    let timerToques = null;
+    document.getElementById("subtituloApp").addEventListener("click", () => {
+      toquesDiscretos++;
+      clearTimeout(timerToques);
+      timerToques = setTimeout(() => { toquesDiscretos = 0; }, 1800);
+      if (toquesDiscretos >= 5) {
+        toquesDiscretos = 0;
+        clearTimeout(timerToques);
+        solicitarAccesoAdmin();
+      }
+    });
 
-    bindLongPress(document.getElementById("tituloApp"), solicitarAccesoAdmin);
-    bindLongPress(document.getElementById("syncStatus"), solicitarAccesoAdmin);
+    ["click", "touchstart", "keydown"].forEach(ev => {
+      document.addEventListener(ev, () => {
+        if (state.isAdmin) reiniciarTemporizadorAdmin();
+      }, { passive: true });
+    });
+
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden && state.isAdmin) {
+        cerrarAdminAutomatico();
+      }
+    });
 
     adminTag.addEventListener("click", async () => {
-      state.isAdmin = false;
-      await saveState();
-      autoAbrirLimpiezaEnDiaCorrespondiente();
-      actualizarUIAdmin();
+      await cerrarAdminAutomatico();
     });
 
     document.getElementById("btnCerrarModalAdmin").addEventListener("click", () => {
